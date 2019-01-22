@@ -1,0 +1,34 @@
+eixo x
+273
+336
+399
+460
+525
+
+y 
+443.000000000000
+444.000000000000
+444.000000000000
+445.000000000000
+445.000000000000
+
+tempo
+easy full speed - 0,535
+easy slow	- 0,723
+easy slower	- 0,819
+easy slowest	- 1,094
+
+medium full speed - 0,439
+medium slow	- 0,543
+medium slower	- 0,630
+medium slowest	- 0,874
+
+hard full speed - 0,369
+hard slow - 0,474
+hard slower - 0,573
+hard slowest - 0,749
+
+expert full speed - 0,307 
+expert slow - 0,402
+expert slower - 0,493
+expert slowest - 0,652
