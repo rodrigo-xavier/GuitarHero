@@ -3,4 +3,4 @@ Instalação do Ambiente de Desenvolvimento
 
 * Procedimento realizado nos seguintes SO's:
 
-  * `Windows 10`_;
+  * `Windows 10;
