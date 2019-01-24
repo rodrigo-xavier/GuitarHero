@@ -6,7 +6,6 @@ function configure_video(vid)
     vid.FramesPerTrigger = 1;
     vid.TriggerRepeat = Inf;
     vid.ReturnedColorspace = 'rgb';
-    % src.FrameRate = '30';
+    vid.Timeout = 50;
     start(vid)
-    %[x,y] = getpts;
 end
