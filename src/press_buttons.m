@@ -120,12 +120,12 @@ function press_buttons(vid, galileo)
             %tempo_apertando = 0;
             %tic;
 
-            fprintf(conexao,'%c', APERTA);  
+            fprintf(conexao,'%c', APERTA_SEM_SOLTAR);  
         end
 
         %quando o rastro acaba solta
         %Se esta_apertando e nao ha mais rastro passando
-        if  (esta_apertando) && ...
+        if  (holding_button) && ...
             ~((imgO(293,275,R) >= red_min && imgO(293,275,R) <= red_max) && ...
             (imgO(292,275,R) >= red_min && imgO(292,275,R) <= red_max) && ...
             (imgO(291,275,R) >= red_min && imgO(291,275,R) <= red_max) && ...
@@ -150,6 +150,7 @@ function press_buttons(vid, galileo)
         end
         
         imagesc(imgO);
+        
     end
 end
 
