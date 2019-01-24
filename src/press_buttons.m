@@ -1,4 +1,15 @@
 function press_buttons(vid, galileo)
+    % escolhe o nivel que sera jogado
+
+    % opcoes de niveis disponiveis
+    niveis_easy = ['easy_slowest' 'easy_slower' 'easy_slow' 'easy_full_speed'];
+    niveis_medium = ['medium_slowest' 'medium_slower' 'medium_slow' 'medium_full_speed'];
+    niveis_hard = ['hard_slowest' 'hard_slower' 'hard_slow' 'hard_full_speed'];
+    niveis_expert = ['expert_slowest' 'expert_slower' 'expert_slow' 'expert_full_speed'];
+
+    % nivel escolhido
+    nivel = niveis_easy(1); % easy_slowest
+
     % cores
     % salvar um arquivo em disco com as variaveis
     % para mudar para apenas load('cores.mat')
@@ -25,7 +36,7 @@ function press_buttons(vid, galileo)
     SOLTA = char(102);
 
     % tempo
-    tempo_espera = 0.5;
+    [tempo_aperta, tempo_espera] = escolhe_tempos(nivel);
 
     while true
         % get image from camera
@@ -53,6 +64,7 @@ function press_buttons(vid, galileo)
         %detect red    
         if(redPixel >= red_min && redPixel <= red_max)
             fprintf(galileo,'%c', APERTA_E_SOLTA);
+            % pause tempo_espera
         end
 
         %detect yellow
