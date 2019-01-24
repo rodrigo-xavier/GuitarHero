@@ -1,4 +1,4 @@
-function press_button(vid, galileo)
+function press_buttons(vid, galileo)
     % colors
     red_min = 175;
     red_max = 255;

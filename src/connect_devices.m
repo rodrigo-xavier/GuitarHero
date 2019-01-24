@@ -10,7 +10,7 @@ function [vid, galileo] = connect_devices()
             fopen(galileo);
             break;
         catch
-            sprintf(strcat('Porta\t', COMX, ' Falhou'));
+            disp(strcat('Porta\t', COMX, ' Falhou'));
         end
 
         counter = counter + 1;
@@ -24,7 +24,7 @@ function [vid, galileo] = connect_devices()
             vid = videoinput('winvideo', counter, 'I420_640x480');
             break;
         catch
-            sprintf(strcat('Porta\t', COMX, ' Falhou'));
+            disp(strcat('Porta\t', COMX, ' Falhou'));
         end
 
         counter = counter + 1;

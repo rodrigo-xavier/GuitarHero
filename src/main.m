@@ -10,7 +10,4 @@ end
 
 [vid, galileo] = connect_devices();
 configure_video(vid);
-press_button(vid, galileo);
-
-% Perguntar se press_button é um nome Okay?
-% Perguntar se video.m será utilizado
+press_buttons(vid, galileo);
