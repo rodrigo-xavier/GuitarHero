@@ -2,10 +2,10 @@ function press_buttons(vid, galileo)
     % escolhe o nivel que sera jogado
 
     % opcoes de niveis disponiveis
-    niveis_easy = ['easy_slowest' 'easy_slower' 'easy_slow' 'easy_full_speed'];
-    niveis_medium = ['medium_slowest' 'medium_slower' 'medium_slow' 'medium_full_speed'];
-    niveis_hard = ['hard_slowest' 'hard_slower' 'hard_slow' 'hard_full_speed'];
-    niveis_expert = ['expert_slowest' 'expert_slower' 'expert_slow' 'expert_full_speed'];
+    niveis_easy = ["easy_slowest", "easy_slower", "easy_slow", "easy_full_speed"];
+    niveis_medium = ["medium_slowest", "medium_slower", "medium_slow", "medium_full_speed"];
+    niveis_hard = ["hard_slowest", "hard_slower", "hard_slow", "hard_full_speed"];
+    niveis_expert = ["expert_slowest", "expert_slower", "expert_slow", "expert_full_speed"];
 
     % nivel escolhido
     nivel = niveis_easy(1); % easy_slowest
@@ -36,7 +36,7 @@ function press_buttons(vid, galileo)
     SOLTA = char(102);
 
     % tempo
-    [tempo_aperta, tempo_espera] = escolhe_tempos(nivel);
+    [tempo_aperta, tempo_espera] = chose_times(nivel);
 
     while true
         % get image from camera
