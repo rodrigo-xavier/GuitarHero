@@ -64,6 +64,10 @@ function press_buttons(vid, galileo)
         %detect red    
         if(redPixel >= red_min && redPixel <= red_max)
             fprintf(galileo,'%c', APERTA_E_SOLTA);
+            start = tic;
+            while(toc_start < 0.5)
+                imagesc(imgO);
+            end
             % pause tempo_espera
         end
 
