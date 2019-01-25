@@ -2,10 +2,10 @@ function press_buttons(vid, galileo)
     % escolhe o nivel que sera jogado
 
     % opcoes de niveis disponiveis
-    niveis_easy = ['easy_slowest' 'easy_slower' 'easy_slow' 'easy_full_speed'];
-    niveis_medium = ['medium_slowest' 'medium_slower' 'medium_slow' 'medium_full_speed'];
-    niveis_hard = ['hard_slowest' 'hard_slower' 'hard_slow' 'hard_full_speed'];
-    niveis_expert = ['expert_slowest' 'expert_slower' 'expert_slow' 'expert_full_speed'];
+    niveis_easy = ["easy_slowest", "easy_slower", "easy_slow", "easy_full_speed"];
+    niveis_medium = ["medium_slowest", "medium_slower", "medium_slow", "medium_full_speed"];
+    niveis_hard = ["hard_slowest", "hard_slower", "hard_slow", "hard_full_speed"];
+    niveis_expert = ["expert_slowest", "expert_slower", "expert_slow", "expert_full_speed"];
 
     % nivel escolhido
     nivel = niveis_easy(1); % easy_slowest
@@ -36,7 +36,7 @@ function press_buttons(vid, galileo)
     SOLTA = char(102);
 
     % tempo
-    [tempo_aperta, tempo_espera] = escolhe_tempos(nivel);
+    [tempo_aperta, tempo_espera] = chose_times(nivel);
 
     while true
         % get image from camera
@@ -46,7 +46,7 @@ function press_buttons(vid, galileo)
         G = 2;
         B = 3;
 
-        % Verificar se os pixels estão corretos
+        % Verificar se os pixels estao corretos
         greenPixel = imgO(312,230,G);
         redPixel = imgO(311,274,R);
         yellowPixelR = imgO(312,311,R);
@@ -63,29 +63,33 @@ function press_buttons(vid, galileo)
 
         %detect red    
         if(redPixel >= red_min && redPixel <= red_max)
+            galileo_dorme(galileo, tempo_aperta);
             fprintf(galileo,'%c', APERTA_E_SOLTA);
             start = tic;
-            while(toc_start < 0.5)
+            while(toc(start) < tempo_espera)
+                % Nao realiza nenhuma acao por um periodo curto de tempo
+                % para evitar que seja apertado mais de uma vez para a
+                % mesma nota
+                imgO = getdata(vid,1,'uint8');
                 imagesc(imgO);
             end
-            % pause tempo_espera
         end
 
         %detect yellow
         if(yellowPixelR >= yellowR_min && yellowPixelR <= yellowR_max && ...
-        yellowPixelG >= yellowG_min && yellowPixelG <= yellowG_min )
+        yellowPixelG >= yellowG_min && yellowPixelG <= yellowG_max )
         % do something
         end
 
         %detect blue
         if(bluePixelG >= blueG_min && bluePixelG <= blueG_max && ...
-            bluePixelB >= blueB_min && bluePixelB <= blueB_min )
+            bluePixelB >= blueB_min && bluePixelB <= blueB_max )
             % do something
         end
 
         %detect orange
         if(orangePixelR >= orangeR_min && orangePixelR <= orangeR_max && ...
-            orangePixelG >= orangeG_min && orangePixelG <= orangeG_min )
+            orangePixelG >= orangeG_min && orangePixelG <= orangeG_max )
             % do something
         end
         
@@ -93,14 +97,18 @@ function press_buttons(vid, galileo)
     end
 end
 
-function aperta_e_segura(tempo)
-    % Função que envia ao arduino o comando para manter
-    % o botão apertado por `tempo` milisegundos.
+function aperta_e_segura(galileo, tempo)
+    % Funcao que envia ao arduino o comando para manter
+    % o botao apertado por `tempo` milisegundos.
+    
+    tempo_string = strcat(char(112),int2str(tempo),char(113));
+    fprintf(galileo,'%s', tempo_string);
+end
 
-    fprintf(galileo,'%c', char(254)); %start
-    tempo_string = int2str(tempo);
-    for n=1:strlength(tempo_string)
-        fprintf(galileo,'%c', char(tempo_string(n))); % envia um digito por vez
-    end
-    fprintf(galileo,'%c', char(255)); %end
+function galileo_dorme(galileo, tempo)
+    % Funcao que deixa o arduino dormindo
+    % por `tempo` milisegundos.
+
+    tempo_string = strcat(char(114),int2str(tempo),char(115));
+    fprintf(galileo,'%s', tempo_string);
 end
