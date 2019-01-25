@@ -44,27 +44,22 @@ void loop() {
   
   // Segura o botão por determinado tempo
   // Codificação para enviar o tempo
-  // char(254) -> inicio de recebimento de parâmetros de tempo
-  // char (255) -> fim de recebimento
-  // Ex: enviar, na ordem: char(254), char(5), char(1), char(255)
-  // o programa decodificará como 51.
-  // Enviar sempre valores de 0 a 9 para serem concatenados
-  if(incomingByte == char(254)){
-    i = 1;
-    int total = 0;
-    do{
-      if (Serial.available() > 0) { // Esse if evita bugs
-        incomingByte = Serial.read();
-      }
-      int digito = (int)incomingByte;
-      if(digito<10){
-        total += digito * pow(10,i);
-        i++;
-      }
-    }while(incomingByte != char(255));
+  // p + tempo desejado + q
+  if(incomingByte == char(112)){ // p=char(112)
+    String str = Serial.readStringUntil(char(113)); // q=char(113)
+    int time1 = str.toInt();
     digitalWrite(L1, HIGH);
-    delay(total);
+    delay(time1);
     digitalWrite(L1, LOW);
+  }
+
+  // Dorme por determinado tempo
+  // Codificação para enviar o tempo
+  // r + tempo desejado + s
+  if(incomingByte == char(114)){ // r=char(114)
+    String str = Serial.readStringUntil(char(115)); // s=char(115)
+    int time1 = str.toInt();
+    delay(time1);
   }
 
 }
