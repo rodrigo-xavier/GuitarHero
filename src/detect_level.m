@@ -16,23 +16,13 @@ function time = detect_level(vid, galileo)
     orangeG_min = 95;
     orangeG_max = 255;
 
-    % acoes
-    APERTA_E_SOLTA = char(100);
-    APERTA_SEM_SOLTAR = char(101);
-    SOLTA = char(102);
-
-    % tempo
-    [tempo_aperta, tempo_espera] = chose_times(nivel);
-
     while true
-        % get image from camera
         imgO = getdata(vid,1,'uint8');
 
         R = 1;
         G = 2;
         B = 3;
 
-        % Verificar se os pixels estao corretos
         greenPixel = imgO(312,230,G);
         redPixel = imgO(311,274,R);
         yellowPixelR = imgO(312,311,R);
@@ -44,77 +34,64 @@ function time = detect_level(vid, galileo)
         
         %detect green
         if(greenPixel >= green_min && greenPixel <= green_max)
-            galileo_dorme(galileo, tempo_aperta);
-            fprintf(galileo,'%c', APERTA_E_SOLTA);
             start = tic;
             while(toc(start) < tempo_espera)
-                % Nao realiza nenhuma acao por um periodo curto de tempo
-                % para evitar que seja apertado mais de uma vez para a
-                % mesma nota
                 imgO = getdata(vid,1,'uint8');
                 imagesc(imgO);
             end
+            time = time_calculator(tic_toc)
         end
 
         %detect red    
         if(redPixel >= red_min && redPixel <= red_max)
-            galileo_dorme(galileo, tempo_aperta);
-            fprintf(galileo,'%c', APERTA_E_SOLTA);
             start = tic;
             while(toc(start) < tempo_espera)
-                % Nao realiza nenhuma acao por um periodo curto de tempo
-                % para evitar que seja apertado mais de uma vez para a
-                % mesma nota
                 imgO = getdata(vid,1,'uint8');
                 imagesc(imgO);
             end
+            time = time_calculator(tic_toc)
         end
 
         %detect yellow
         if(yellowPixelR >= yellowR_min && yellowPixelR <= yellowR_max && ...
         yellowPixelG >= yellowG_min && yellowPixelG <= yellowG_max )
-            galileo_dorme(galileo, tempo_aperta);
-            fprintf(galileo,'%c', APERTA_E_SOLTA);
             start = tic;
             while(toc(start) < tempo_espera)
-                % Nao realiza nenhuma acao por um periodo curto de tempo
-                % para evitar que seja apertado mais de uma vez para a
-                % mesma nota
                 imgO = getdata(vid,1,'uint8');
                 imagesc(imgO);
             end
+            time = time_calculator(tic_toc)
         end
 
         %detect blue
         if(bluePixelG >= blueG_min && bluePixelG <= blueG_max && ...
             bluePixelB >= blueB_min && bluePixelB <= blueB_max )
-            galileo_dorme(galileo, tempo_aperta);
-            fprintf(galileo,'%c', APERTA_E_SOLTA);
             start = tic;
             while(toc(start) < tempo_espera)
-                % Nao realiza nenhuma acao por um periodo curto de tempo
-                % para evitar que seja apertado mais de uma vez para a
-                % mesma nota
                 imgO = getdata(vid,1,'uint8');
                 imagesc(imgO);
             end
+            time = time_calculator(tic_toc)
         end
 
         %detect orange
         if(orangePixelR >= orangeR_min && orangePixelR <= orangeR_max && ...
             orangePixelG >= orangeG_min && orangePixelG <= orangeG_max )
-            galileo_dorme(galileo, tempo_aperta);
-            fprintf(galileo,'%c', APERTA_E_SOLTA);
             start = tic;
             while(toc(start) < tempo_espera)
-                % Nao realiza nenhuma acao por um periodo curto de tempo
-                % para evitar que seja apertado mais de uma vez para a
-                % mesma nota
                 imgO = getdata(vid,1,'uint8');
                 imagesc(imgO);
             end
+            time = time_calculator(tic_toc)
         end
-        
         imagesc(imgO);
     end
+end
+
+function T2 = time_calculator(T1)
+    D1 = 300;
+    D2 = 250;
+
+    V = T1/D1;
+    T2 = D2/V;
 end
