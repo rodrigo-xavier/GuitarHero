@@ -26,21 +26,21 @@ function time = detect_level(vid, galileo)
         G = 2;
         B = 3;
 
-        greenPixel1 = imgO(312,230,G);
-        redPixel1 = imgO(311,274,R);
-        yellowPixelR1 = imgO(312,311,R);
-        yellowPixelG1 = imgO(312,311,G);
-        bluePixelG1 = imgO(312,354,G);
-        bluePixelB1 = imgO(312,354,B);
-        orangePixelR1 = imgO(311,395,R);
-        orangePixelG1 = imgO(311,395,G);
+        greenPixel1 = imgO(260,238,G);
+        redPixel1 = imgO(286,237,R);
+        yellowPixelR1 = imgO(313,237,R);
+        yellowPixelG1 = imgO(313,237,G);
+        bluePixelG1 = imgO(343,237,G);
+        bluePixelB1 = imgO(343,237,B);
+        orangePixelR1 = imgO(367,238,R);
+        orangePixelG1 = imgO(367,238,G);
         
         %detect green
         if(greenPixel1 >= green_min && greenPixel1 <= green_max)
             start = tic;
 
             while (t == 0)
-                greenPixel2 = imgO(312,130,G);
+                greenPixel2 = imgO(241,287,G);
 
                 imgO = getdata(vid,1,'uint8');
 
@@ -57,7 +57,7 @@ function time = detect_level(vid, galileo)
             start = tic;
 
             while (t == 0)
-                redPixel2 = imgO(311,174,R);
+                redPixel2 = imgO(273,287,R);
 
                 imgO = getdata(vid,1,'uint8');
 
@@ -75,8 +75,8 @@ function time = detect_level(vid, galileo)
             start = tic;
 
             while (t == 0)
-                yellowPixelR2 = imgO(312,211,R);
-                yellowPixelG2 = imgO(312,211,G);
+                yellowPixelR2 = imgO(311,288,R);
+                yellowPixelG2 = imgO(311,288,G);
 
                 imgO = getdata(vid,1,'uint8');
 
@@ -94,8 +94,8 @@ function time = detect_level(vid, galileo)
             start = tic;
 
             while (t == 0)
-                bluePixelG2 = imgO(312,254,G);
-                bluePixelB2 = imgO(312,254,B);
+                bluePixelG2 = imgO(354,287,G);
+                bluePixelB2 = imgO(354,287,B);
 
                 imgO = getdata(vid,1,'uint8');
 
@@ -114,8 +114,8 @@ function time = detect_level(vid, galileo)
             start = tic;
 
             while (t == 0)
-                orangePixelR2 = imgO(311,295,R);
-                orangePixelG2 = imgO(311,295,G);
+                orangePixelR2 = imgO(388,286,R);
+                orangePixelG2 = imgO(388,286,G);
 
                 imgO = getdata(vid,1,'uint8');
 
