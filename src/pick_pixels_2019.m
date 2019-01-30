@@ -1,8 +1,3 @@
-%Limpar area de trabalho
-clear all;
-close all;
-clc;
-
 % Encerra conexão com galileo se estiver conectado
 if exist('galileo','var') == true
     fclose(galileo);
@@ -19,5 +14,5 @@ configure_video(vid);
 % get image from camera
 imgO = getdata(vid,1,'uint8');
 
-figure, imshow(ImgO);
+figure, imshow(imgO);
 [x,y] = getpts;
