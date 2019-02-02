@@ -89,6 +89,20 @@ void setup() {
     traceStates[i]->finished = true;
   }
 
+  // obtém o tempo do matlab
+  while(true){
+    if (Serial.available() > 0) {
+      incomingByte = Serial.read();
+      if(incomingByte == 'a'){
+        String str = Serial.readStringUntil('b');
+        int time1 = str.toInt();
+        Serial.println(time1);
+        incomingByte = '\0';
+        break;
+      }
+    }
+  }
+
   delay(5000);
 }
 
