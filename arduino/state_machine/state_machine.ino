@@ -96,13 +96,13 @@ void loop(){
   if (Serial.available() > 0) {
     incomingByte = Serial.read();
     
-    if(incomingByte == 'b'){
+    if(incomingByte == char(100)){
       ind=get_simpleStates_index();
       simpleStates[ind] = new SimpleState(L1, millis(), offtime);
       incomingByte = '\0';
     }
     
-    if(incomingByte == 'c'){
+    if(incomingByte == char(101)){
       ind = get_traceStates_index();
       Serial.println(ind);
       traceStates[ind] = new TraceState(L1, millis(), offtime);
@@ -110,7 +110,7 @@ void loop(){
       incomingByte = '\0';
     }
 
-    if(incomingByte == 'd' && !traceQueue.isEmpty()){
+    if(incomingByte == char(102) && !traceQueue.isEmpty()){
       first_item = traceQueue.front();
       if(!traceStates[first_item]->finished && traceStates[first_item]->pressed){
         ind = traceQueue.pop();

@@ -96,19 +96,3 @@ function press_buttons(vid, galileo)
         imagesc(imgO);
     end
 end
-
-function aperta_e_segura(galileo, tempo)
-    % Funcao que envia ao arduino o comando para manter
-    % o botao apertado por `tempo` milisegundos.
-    
-    tempo_string = strcat(char(112),int2str(tempo),char(113));
-    fprintf(galileo,'%s', tempo_string);
-end
-
-function galileo_dorme(galileo, tempo)
-    % Funcao que deixa o arduino dormindo
-    % por `tempo` milisegundos.
-
-    tempo_string = strcat(char(114),int2str(tempo),char(115));
-    fprintf(galileo,'%s', tempo_string);
-end
