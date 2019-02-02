@@ -1,7 +1,0 @@
-Ideia: 
-* Criar um array de estados de tamanho fixo (por exemplo 10 estados).
-* Ter uma lista de estados livres e uma de estados ocupados. 
-* Assim que o estado ficar ocupado por mais de 30s (por ex.), ele será 
-realocado para a lista de estados livres.
-* O estado pode ter um tipo ("aperto simples" ou "segurar no rastro"), que definirá sua ação.
-* Cada tipo de estado terá um tempo de espera diferente.
