@@ -1,166 +1,154 @@
-class NotaMusical
-{
-  // Class Member Variables
-  // These are initialized at startup
-  
-  int L1pin; // the number of the LED pin
-  
-  long OnTime; // milliseconds of on-time
-  long OffTime;
+#include <QueueArray.h>
 
-  // These maintain the current state
+#define N_SIMPLE_STATES 10
+#define N_TRACE_STATES 10
 
-  int L1; // L1 used to set the LED
-  bool terminou;
-
-  unsigned long previousMillis; // will store last time LED was updated
-
-  // Constructor - creates a Flasher
-  // and initializes the member variables and state
+class SimpleState{
   public:
-    NotaMusical(long on, long off)
-    {
-      L1pin = 3;
-      pinMode(L1pin, OUTPUT);
-      OnTime = on;
-      OffTime = off;
+    int pin;
+    unsigned long offTime; // offtime entre detectar a nota e o momento de apertar
+    bool finished;
+    unsigned long previousMillis;
     
-      L1 = LOW;
-      previousMillis = 0;
-      terminou = false;
+  public:
+    SimpleState(int pin, unsigned long prev, unsigned long offtime){
+      pin=pin;
+      pinMode(pin, OUTPUT);
+      offTime = offtime;
+      finished = false;
+      previousMillis = prev;
     }
-    void Update(bool rastro)
-    {
-      // check to see if it's time to change the state of the LED
-      unsigned long currentMillis = millis();
-  
-      if(!terminou && rastro && (L1 == HIGH) && (currentMillis - previousMillis >= OnTime))
-      {
-        L1 = LOW; // Turn it off
-        previousMillis = currentMillis; // Remember the time
-        digitalWrite(L1pin, L1); // Update the actual LED
 
-        // Adicionar à lista de estados livres
-        terminou = true;
-      }
-      else if (!terminou && (L1 == LOW) && (currentMillis - previousMillis >= OffTime))
-      {
-        previousMillis = currentMillis;
-
-        if(rastro){ // Só aperta
-          L1 = HIGH;
-          digitalWrite(L1, HIGH);
-        }
-        else{ // Aperta e solta
-          digitalWrite(L1, HIGH);
+    void Update(){
+        unsigned long currentMillis = millis();
+        if((currentMillis-previousMillis)>= offTime){
+          Serial.print(currentMillis);
+          digitalWrite(pin, HIGH);
           delay(50);
-          // Solta o botão
-          digitalWrite(L1, LOW);
-
-          // Adicionar à lista de estados livres
-          terminou = true;
+          digitalWrite(pin, LOW);
+          this->finished = true;
         }
-      }
-    }
-
-    int getTerminou(){
-      return terminou;
     }
 };
 
+class TraceState{
+  public:
+    int pin;
+    bool finished;
+    bool pressed;
+    unsigned long offTime; // offtime entre detectar a nota e o momento de apertar
+    unsigned long previousMillis;
 
-unsigned char incomingByte = '\0';
-//unsigned int incomingTime = 0;
+  public:
+    TraceState(int pin; unsigned long prev, unsigned long offTime){
+      pin=pin;
+      pinMode(pin, OUTPUT);
+      finished = false;
+      pressed = false;
+      previousMillis = prev;
+      offTime = offTime;
+    }
+
+    void Update(){
+      // Aperta após passado o offtime
+      unsigned long currentMillis = millis();
+      if(!pressed && (currentMillis-previousMillis)>= offTime){
+        digitalWrite(this->pin, HIGH);
+        this->pressed = true;
+      }
+    }
+    void Soltar(){
+      digitalWrite(pin, LOW);
+      this->pressed = false;
+      finished = true;
+    }
+};
+
 int L1 = 3;
-int i = 0, tempo = 0, state;
+unsigned long offtime = 1100;
+unsigned char incomingByte = '\0';
 
-#define NUM_ROWS 10
-int freeRows[10] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+int freeStates[N_SIMPLE_STATES]={1,1,1,1,1,1,1,1,1,1};
+SimpleState *simpleStates[N_SIMPLE_STATES];
+TraceState *traceStates[N_TRACE_STATES];
+QueueArray <int> traceQueue;
 
-int on_time = 0;
-int off_time = 1100;
-
-bool start = true;
-NotaMusical *states[NUM_ROWS];
+int ind = 0, first_item;
 
 void setup() {
-  pinMode(L1, OUTPUT);  
   Serial.begin(115200);
-
-  for(int row=0; row<NUM_ROWS; row++){
-    states[row] = new NotaMusical(on_time, off_time);
+  
+  for(int i=0; i<N_SIMPLE_STATES; i++){
+    freeStates[i] = 1;
+    simpleStates[i] = new SimpleState(L1, millis(), offtime);
+    simpleStates[i]->finished = true;
   }
+
+  for(int i=0; i<N_TRACE_STATES; i++){
+    traceStates[i] = new TraceState(L1, millis(), offtime);
+    traceStates[i]->finished = true;
+  }
+
+  delay(5000);
 }
 
-void loop() {
-
-  state = get_state();
-  bool rastro = false;
-  states[state]->Update(rastro);
-
-  // Esse if evita bugs
+void loop(){
   if (Serial.available() > 0) {
     incomingByte = Serial.read();
-  }
+    
+    if(incomingByte == char(100)){
+      ind=get_simpleStates_index();
+      simpleStates[ind] = new SimpleState(L1, millis(), offtime);
+      incomingByte = '\0';
+    }
+    
+    if(incomingByte == char(101)){
+      ind = get_traceStates_index();
+      Serial.println(ind);
+      traceStates[ind] = new TraceState(L1, millis(), offtime);
+      traceQueue.push(ind);
+      incomingByte = '\0';
+    }
 
-  if(incomingByte == char(100)){
-    aperto_simples();
-    incomingByte = '\0';
-  }
-  if(incomingByte == char(101)){
-    aperta_sem_soltar();
-    incomingByte = '\0';
-  }
-  if(incomingByte == char(102)){
-    solta();
-    incomingByte = '\0';
-  }
-
-}
-
-void free_states(){
-  for(int row=0; row<NUM_ROWS; row++){
-    if(states[row]->getTerminou()){
-      freeRows[row] = 1;
-    }else{
-      freeRows[row] = 0;
+    if(incomingByte == char(102) && !traceQueue.isEmpty()){
+      first_item = traceQueue.front();
+      if(!traceStates[first_item]->finished && traceStates[first_item]->pressed){
+        ind = traceQueue.pop();
+        traceStates[ind]->Soltar();
+        incomingByte = '\0';
+      }
     }
   }
+
+  checkAllOnStates();
+  
 }
 
-int get_state(){
-  for(int row=0; row<NUM_ROWS; row++){
-    if(freeRows[row])
-      return row;
-    
+int get_simpleStates_index(){
+  for(int i=0; i<N_SIMPLE_STATES; i++){
+    if(simpleStates[i]->finished)
+      return i;
   }
+  return -1;
 }
 
-void aperto_simples(){
-  // Aperta L1 se '01100100'(=char(100)) for enviado ao arduino, 
-  // soltando em seguida, com o menor tempo possível
-
-  // delay(600);
-  digitalWrite(L1, HIGH);
-  delay(50);
-
-  // Solta o botão
-  digitalWrite(L1, LOW);
+int get_traceStates_index(){
+  for(int i=0; i<N_TRACE_STATES; i++){
+    if(traceStates[i]->finished)
+      return i;
+  }
+  return -1;
 }
 
-void aperta_sem_soltar(){
-  // Apenas aperta o botão L1, sem soltar, se '01100101'(=char(101)) 
-  // for enviado ao arduino.
-  
-  // Aperta o botão
-  digitalWrite(L1, HIGH);
-}
+void checkAllOnStates(){
+  for(int i=0; i<N_SIMPLE_STATES; i++){
+    if(!simpleStates[i]->finished) // se nao foi finished ainda
+      simpleStates[i]->Update();
+    
 
-void solta(){
-  // Apenas solta o botão L1 se '01100110'(=char(102))
-  // for enviado ao arduino.
-  
-  // Solta o botão
-  digitalWrite(L1, LOW);
-  
+    if(i < N_TRACE_STATES){
+      if(!traceStates[i]->finished)
+        traceStates[i]->Update();
+    }
+  }
 }
