@@ -95,8 +95,8 @@ void setup() {
       incomingByte = Serial.read();
       if(incomingByte == 'a'){
         String str = Serial.readStringUntil('b');
-        int time1 = str.toInt();
-        Serial.println(time1);
+        offtime = str.toInt();
+        Serial.println(offtime);
         incomingByte = '\0';
         break;
       }
