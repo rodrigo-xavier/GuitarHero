@@ -52,6 +52,9 @@ function press_buttons(vid, galileo)
     % situacao do botao
     holding_button = false;
 
+    % situacao do botao
+    holding_button = false;
+
     while true
         % get image from camera
         imgO = getdata(vid,1,'uint8');
