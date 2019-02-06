@@ -45,7 +45,7 @@ class TraceState{
       finished = false;
       pressed = false;
       previousMillis = prev;
-      offTime = 1100;
+      offTime = 1220;
     }
 
     void Update(){
