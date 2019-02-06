@@ -47,7 +47,7 @@ class TraceState{
       pressed = false;
       previousMillis = prev;
       soltar = false;
-      offTime = 1220;
+      offTime = 1250;
     }
 
     void Update(){
@@ -117,20 +117,20 @@ void loop(){
   if (Serial.available() > 0) {
     incomingByte = Serial.read();
     
-    if(incomingByte == 'a'){
+    if(incomingByte == char(100)){
       ind=get_simpleStates_index();
       simpleStates[ind] = new SimpleState(millis());
       incomingByte = '\0';
     }
     
-    if(incomingByte == 'b'){
+    if(incomingByte == char(101)){
       ind = get_traceStates_index();
       traceStates[ind] = new TraceState(millis());
       traceQueue.push(ind);
       incomingByte = '\0';
     }
 
-    if(incomingByte == 'c' && !traceQueue.isEmpty()){
+    if(incomingByte == char(102) && !traceQueue.isEmpty()){
       first_item = traceQueue.front();
       if(!traceStates[first_item]->finished && traceStates[first_item]->pressed){
         ind = traceQueue.pop();
