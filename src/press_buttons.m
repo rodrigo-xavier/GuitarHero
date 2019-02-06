@@ -37,6 +37,17 @@ function press_buttons(vid, galileo)
 
     % tempo
     [tempo_aperta, tempo_espera] = chose_times(nivel);
+    % envia o tempo para o arduino
+%     while true
+%         time_to_send = strcat('a', int2str(tempo_aperta), 'b');
+%         fprintf(galileo, "%s", time_to_send);
+%         if (galileo.BytesAvailable > 0)
+%             out = fscanf(galileo,'%c',s.BytesAvailable);
+%             if(str2num(out)==tempo_aperta)
+%                 break;
+%             end
+%         end
+%     end
 
     while true
         % get image from camera
@@ -95,20 +106,4 @@ function press_buttons(vid, galileo)
         
         imagesc(imgO);
     end
-end
-
-function aperta_e_segura(galileo, tempo)
-    % Funcao que envia ao arduino o comando para manter
-    % o botao apertado por `tempo` milisegundos.
-    
-    tempo_string = strcat(char(112),int2str(tempo),char(113));
-    fprintf(galileo,'%s', tempo_string);
-end
-
-function galileo_dorme(galileo, tempo)
-    % Funcao que deixa o arduino dormindo
-    % por `tempo` milisegundos.
-
-    tempo_string = strcat(char(114),int2str(tempo),char(115));
-    fprintf(galileo,'%s', tempo_string);
 end

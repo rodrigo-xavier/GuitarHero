@@ -1,65 +1,166 @@
-unsigned char incomingByte = '\0';
-//unsigned int incomingTime = 0;
+#include <QueueArray.h>
+
+#define N_SIMPLE_STATES 10
+#define N_TRACE_STATES 10
+
+class SimpleState{
+  public:
+    int pin;
+    unsigned long offTime; // offtime entre detectar a nota e o momento de apertar
+    bool finished;
+    unsigned long previousMillis;
+    
+  public:
+    SimpleState(unsigned long prev){
+      pin=3;
+      pinMode(pin, OUTPUT);
+      offTime = 1100;
+      finished = false;
+      previousMillis = prev;
+    }
+
+    void Update(){
+        unsigned long currentMillis = millis();
+        if((currentMillis-previousMillis)>= offTime){
+          digitalWrite(pin, HIGH);
+          delay(50);
+          digitalWrite(pin, LOW);
+          this->finished = true;
+        }
+    }
+};
+
+class TraceState{
+  public:
+    int pin;
+    bool finished;
+    bool pressed;
+    unsigned long offTime; // offtime entre detectar a nota e o momento de apertar
+    unsigned long previousMillis;
+
+  public:
+    TraceState(unsigned long prev){
+      pin=3;
+      pinMode(pin, OUTPUT);
+      finished = false;
+      pressed = false;
+      previousMillis = prev;
+      offTime = 1100;
+    }
+
+    void Update(){
+      // Aperta após passado o offtime
+      unsigned long currentMillis = millis();
+      if(!pressed && (currentMillis-previousMillis)>= offTime){
+        digitalWrite(this->pin, HIGH);
+        this->pressed = true;
+      }
+    }
+    void Soltar(){
+      digitalWrite(pin, LOW);
+      this->pressed = false;
+      finished = true;
+    }
+};
+
 int L1 = 3;
-int i = 0;
+unsigned long offtime = 1100;
+unsigned char incomingByte = '\0';
+
+int freeStates[N_SIMPLE_STATES]={1,1,1,1,1,1,1,1,1,1};
+SimpleState *simpleStates[N_SIMPLE_STATES];
+TraceState *traceStates[N_TRACE_STATES];
+QueueArray <int> traceQueue;
+
+int ind = 0, first_item;
 
 void setup() {
-  pinMode(L1, OUTPUT);  
   Serial.begin(115200);
+  
+  for(int i=0; i<N_SIMPLE_STATES; i++){
+    freeStates[i] = 1;
+    simpleStates[i] = new SimpleState(millis());
+    simpleStates[i]->finished = true;
+  }
+
+  for(int i=0; i<N_TRACE_STATES; i++){
+    traceStates[i] = new TraceState(millis());
+    traceStates[i]->finished = true;
+  }
+
+  // obtém o tempo do matlab
+//  while(true){
+//    if (Serial.available() > 0) {
+//      incomingByte = Serial.read();
+//      if(incomingByte == 'a'){
+//        String str = Serial.readStringUntil('b');
+//        offtime = str.toInt();
+//        Serial.println(offtime);
+//        incomingByte = '\0';
+//        break;
+//      }
+//    }
+//  }
+
+  delay(5000);
 }
 
-void loop() {
-  
-  // Esse if evita bugs
+void loop(){
   if (Serial.available() > 0) {
     incomingByte = Serial.read();
+    
+    if(incomingByte == char(100)){
+      ind=get_simpleStates_index();
+      simpleStates[ind] = new SimpleState(millis());
+      incomingByte = '\0';
+    }
+    
+    if(incomingByte == char(101)){
+      ind = get_traceStates_index();
+      traceStates[ind] = new TraceState(millis());
+      traceQueue.push(ind);
+      incomingByte = '\0';
+    }
+
+    if(incomingByte == char(102) && !traceQueue.isEmpty()){
+      first_item = traceQueue.front();
+      if(!traceStates[first_item]->finished && traceStates[first_item]->pressed){
+        ind = traceQueue.pop();
+        traceStates[ind]->Soltar();
+        incomingByte = '\0';
+      }
+    }
   }
 
-  // Aperta L1 se '01100100'(=char(100)) for enviado ao arduino, 
-  // soltando em seguida, com o menor tempo possível
-  if(incomingByte == char(100)){
-    // delay(600);
-    digitalWrite(L1, HIGH);
-    delay(50);
-
-    // Solta o botão
-    incomingByte = '\0';
-    digitalWrite(L1, LOW);
-  }
-
-  // Apenas aperta o botão L1, sem soltar, se '01100101'(=char(101)) 
-  // for enviado ao arduino.
-  if(incomingByte == char(101)){
-    // Aperta o botão
-    digitalWrite(L1, HIGH);
-  }
-
-  // Apenas solta o botão L1 se '01100110'(=char(102))
-  // for enviado ao arduino.
-  if(incomingByte == char(102)){
-    // Solta o botão
-    incomingByte = '\0';
-    digitalWrite(L1, LOW);
-  }
+  checkAllOnStates();
   
-  // Segura o botão por determinado tempo
-  // Codificação para enviar o tempo
-  // p + tempo desejado + q
-  if(incomingByte == char(112)){ // p=char(112)
-    String str = Serial.readStringUntil(char(113)); // q=char(113)
-    int time1 = str.toInt();
-    digitalWrite(L1, HIGH);
-    delay(time1);
-    digitalWrite(L1, LOW);
-  }
+}
 
-  // Dorme por determinado tempo
-  // Codificação para enviar o tempo
-  // r + tempo desejado + s
-  if(incomingByte == char(114)){ // r=char(114)
-    String str = Serial.readStringUntil(char(115)); // s=char(115)
-    int time1 = str.toInt();
-    delay(time1);
+int get_simpleStates_index(){
+  for(int i=0; i<N_SIMPLE_STATES; i++){
+    if(simpleStates[i]->finished)
+      return i;
   }
+  return -1;
+}
 
+int get_traceStates_index(){
+  for(int i=0; i<N_TRACE_STATES; i++){
+    if(traceStates[i]->finished)
+      return i;
+  }
+  return -1;
+}
+
+void checkAllOnStates(){
+  for(int i=0; i<N_SIMPLE_STATES; i++){
+    if(!simpleStates[i]->finished) // se nao foi finished ainda
+      simpleStates[i]->Update();
+    
+
+    if(i < N_TRACE_STATES){
+      if(!traceStates[i]->finished)
+        traceStates[i]->Update();
+    }
+  }
 }
