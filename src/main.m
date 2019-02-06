@@ -10,5 +10,5 @@ end
 
 [vid, galileo] = connect_devices();
 configure_video(vid);
-time = detect_level(vid, galileo);
+time = detect_level(vid);
 press_buttons(vid, galileo);

@@ -40,7 +40,7 @@ function press_buttons(vid, galileo)
 
     while true
         % get image from camera
-        imgO = getdata(vid,1,'uint8');
+        % imgO = getdata(vid,1,'uint8');
 
         R = 1;
         G = 2;
@@ -70,7 +70,7 @@ function press_buttons(vid, galileo)
                 % Nao realiza nenhuma acao por um periodo curto de tempo
                 % para evitar que seja apertado mais de uma vez para a
                 % mesma nota
-                imgO = getdata(vid,1,'uint8');
+                % imgO = getdata(vid,1,'uint8');
                 imagesc(imgO);
             end
         end
