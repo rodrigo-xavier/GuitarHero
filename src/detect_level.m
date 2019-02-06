@@ -27,8 +27,8 @@ function time = detect_level(vid)
         B = 3;
 
         greenPixelUp1 = imgO(260,238,G);
-        greenPixelUp2 = imgO(260,237,G);
-        greenPixelUp3 = imgO(261,238,G);
+        % greenPixelUp2 = imgO(260,237,G);
+        % greenPixelUp3 = imgO(261,238,G);
         redPixelUp1 = imgO(286,237,R);
         yellowPixelRUp1 = imgO(313,237,R);
         yellowPixelGUp1 = imgO(313,237,G);
@@ -41,31 +41,27 @@ function time = detect_level(vid)
         [redPixelUp, dists] = findNearestNeighbors(imgO, redPixelUp1, 8);
         
         %detect green
-        if(greenPixelUp >= green_min && greenPixelUp <= green_max)
+        if(greenPixelUp1 >= green_min && greenPixelUp1 <= green_max)
             tic;
 
             while (t == 0)
                 imgO = getdata(vid,1,'uint8');
                 greenPixelDown1 = imgO(241,287,G);
 
-                [greenPixelDown, dists] = findNearestNeighbors(imgO, greenPixelUp1, 8);
-
-                if(greenPixelDown >= green_min && greenPixelDown <= green_max)
+                if(greenPixelDown1 >= green_min && greenPixelDown1 <= green_max)
                     t = time_calculator(toc);
                 end
             end
 
         %detect red    
-        elseif(redPixelUp >= red_min && redPixelUp <= red_max)
+        elseif(redPixelUp1 >= red_min && redPixelUp1 <= red_max)
             tic;
 
             while (t == 0)
                 imgO = getdata(vid,1,'uint8');
                 redPixelDown1 = imgO(273,287,R);
 
-                [redPixelDown, dists] = findNearestNeighbors(imgO, redPixelUp1, 8);
-
-                if(redPixelDown >= red_min && redPixelDown <= red_max)
+                if(redPixelDown1 >= red_min && redPixelDown1 <= red_max)
                     t = time_calculator(toc);
                 end
             end
