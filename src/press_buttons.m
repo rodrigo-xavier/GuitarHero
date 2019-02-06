@@ -37,6 +37,17 @@ function press_buttons(vid, galileo)
 
     % tempo
     [tempo_aperta, tempo_espera] = chose_times(nivel);
+    % envia o tempo para o arduino
+%     while true
+%         time_to_send = strcat('a', int2str(tempo_aperta), 'b');
+%         fprintf(galileo, "%s", time_to_send);
+%         if (galileo.BytesAvailable > 0)
+%             out = fscanf(galileo,'%c',s.BytesAvailable);
+%             if(str2num(out)==tempo_aperta)
+%                 break;
+%             end
+%         end
+%     end
 
     % situacao do botao
     holding_button = false;
@@ -59,14 +70,17 @@ function press_buttons(vid, galileo)
         orangePixelR = imgO(311,395,R);
         orangePixelG = imgO(311,395,G);
         
+        %Segura botao no rastro
+        %Se nao esta apertando e passa o rastro pela primeira vez
+        holding_button = rastro_detection(galileo, imgO, holding_button);
+        
         %detect green
         if(greenPixel >= green_min && greenPixel <= green_max)
             % do something
         end
 
         %detect red    
-        if(redPixel >= red_min && redPixel <= red_max)
-            galileo_dorme(galileo, tempo_aperta);
+        if(redPixel >= red_min && redPixel <= red_max && holding_button==false)
             fprintf(galileo,'%c', APERTA_E_SOLTA);
             start = tic;
             while(toc(start) < tempo_espera)
@@ -96,27 +110,7 @@ function press_buttons(vid, galileo)
             % do something
         end
 
-        %Segura botao no rastro
-        %Se nao esta apertando e passa o rastro pela primeira vez
-        holding_button = rastro_detection(galileo, imgO, holding_button);
-
         imagesc(imgO);
 
     end
-end
-
-function aperta_e_segura(galileo, tempo)
-    % Funcao que envia ao arduino o comando para manter
-    % o botao apertado por `tempo` milisegundos.
-    
-    tempo_string = strcat(char(112),int2str(tempo),char(113));
-    fprintf(galileo,'%s', tempo_string);
-end
-
-function galileo_dorme(galileo, tempo)
-    % Funcao que deixa o arduino dormindo
-    % por `tempo` milisegundos.
-
-    tempo_string = strcat(char(114),int2str(tempo),char(115));
-    fprintf(galileo,'%s', tempo_string);
 end
