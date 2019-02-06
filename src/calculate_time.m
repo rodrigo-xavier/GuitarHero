@@ -18,7 +18,7 @@ function from_one_red_note(vid, galileo)
         % get image from camera
         imgO = getdata(vid,1,'uint8');
 
-        if (imgO(293,275,1) >= 175 && imgO(311,274,1) <= 255)
+        if (imgO(293,275,1) >= 175 && imgO(293,275,1) <= 255)
             tic;
         end
     
