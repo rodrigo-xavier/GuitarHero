@@ -37,8 +37,8 @@ function time = detect_level(vid)
         orangePixelRUp1 = imgO(367,238,R);
         orangePixelGUp1 = imgO(367,238,G);
 
-        [greenPixelUp, dists] = findNearestNeighbors(imgO, greenPixelUp1, 8);
-        [redPixelUp, dists] = findNearestNeighbors(imgO, redPixelUp1, 8);
+        % [greenPixelUp, dists] = findNearestNeighbors(imgO, greenPixelUp1, 8);
+        % [redPixelUp, dists] = findNearestNeighbors(imgO, redPixelUp1, 8);
         
         %detect green
         if(greenPixelUp1 >= green_min && greenPixelUp1 <= green_max)
