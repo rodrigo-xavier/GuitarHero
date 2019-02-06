@@ -35,6 +35,7 @@ class TraceState{
     int pin;
     bool finished;
     bool pressed;
+    bool soltar;
     unsigned long offTime; // offtime entre detectar a nota e o momento de apertar
     unsigned long previousMillis;
 
@@ -45,21 +46,30 @@ class TraceState{
       finished = false;
       pressed = false;
       previousMillis = prev;
+      soltar = false;
       offTime = 1220;
     }
 
     void Update(){
       // Aperta após passado o offtime
       unsigned long currentMillis = millis();
-      if(!pressed && (currentMillis-previousMillis)>= offTime){
+      // Solta
+      if(soltar && !finished && pressed && (currentMillis-previousMillis)>= offTime){
+        Serial.println("SOLTA");
+        digitalWrite(this->pin, LOW);
+        this->pressed = false;
+        finished = true;
+      }
+      // Aperta
+      if(!pressed && !finished && (currentMillis-previousMillis)>= offTime){
         digitalWrite(this->pin, HIGH);
+        Serial.print("APERTA");
         this->pressed = true;
       }
     }
-    void Soltar(){
-      digitalWrite(pin, LOW);
-      this->pressed = false;
-      finished = true;
+    void Soltar(unsigned long prev){
+      this->soltar = true;
+      this->previousMillis = prev;
     }
 };
 
@@ -109,24 +119,24 @@ void loop(){
   if (Serial.available() > 0) {
     incomingByte = Serial.read();
     
-    if(incomingByte == char(100)){
+    if(incomingByte == 'a'){
       ind=get_simpleStates_index();
       simpleStates[ind] = new SimpleState(millis());
       incomingByte = '\0';
     }
     
-    if(incomingByte == char(101)){
+    if(incomingByte == 'b'){
       ind = get_traceStates_index();
       traceStates[ind] = new TraceState(millis());
       traceQueue.push(ind);
       incomingByte = '\0';
     }
 
-    if(incomingByte == char(102) && !traceQueue.isEmpty()){
+    if(incomingByte == 'c' && !traceQueue.isEmpty()){
       first_item = traceQueue.front();
       if(!traceStates[first_item]->finished && traceStates[first_item]->pressed){
         ind = traceQueue.pop();
-        traceStates[ind]->Soltar();
+        traceStates[ind]->Soltar(millis());
         incomingByte = '\0';
       }
     }
