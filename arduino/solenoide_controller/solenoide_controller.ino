@@ -55,7 +55,6 @@ class TraceState{
       unsigned long currentMillis = millis();
       // Solta
       if(soltar && !finished && pressed && (currentMillis-previousMillis)>= offTime){
-        Serial.println("SOLTA");
         digitalWrite(this->pin, LOW);
         this->pressed = false;
         finished = true;
@@ -63,7 +62,6 @@ class TraceState{
       // Aperta
       if(!pressed && !finished && (currentMillis-previousMillis)>= offTime){
         digitalWrite(this->pin, HIGH);
-        Serial.print("APERTA");
         this->pressed = true;
       }
     }
