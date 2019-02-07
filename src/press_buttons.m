@@ -95,7 +95,7 @@ function press_buttons(vid, galileo)
         %detect yellow
         if(yellowPixelR >= yellowR_min && yellowPixelR <= yellowR_max && ...
         yellowPixelG >= yellowG_min && yellowPixelG <= yellowG_max )
-        % do something
+            % do something
         end
 
         %detect blue
