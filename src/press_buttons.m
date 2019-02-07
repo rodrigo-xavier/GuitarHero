@@ -49,6 +49,9 @@ function press_buttons(vid, galileo)
 %         end
 %     end
 
+    % situacao do botao
+    holding_button = false;
+
     while true
         % get image from camera
         imgO = getdata(vid,1,'uint8');
@@ -67,14 +70,17 @@ function press_buttons(vid, galileo)
         orangePixelR = imgO(311,395,R);
         orangePixelG = imgO(311,395,G);
         
+        %Segura botao no rastro
+        %Se nao esta apertando e passa o rastro pela primeira vez
+        holding_button = rastro_detection(galileo, imgO, holding_button);
+        
         %detect green
         if(greenPixel >= green_min && greenPixel <= green_max)
             % do something
         end
 
         %detect red    
-        if(redPixel >= red_min && redPixel <= red_max)
-            galileo_dorme(galileo, tempo_aperta);
+        if(redPixel >= red_min && redPixel <= red_max && holding_button==false)
             fprintf(galileo,'%c', APERTA_E_SOLTA);
             start = tic;
             while(toc(start) < tempo_espera)
@@ -89,7 +95,7 @@ function press_buttons(vid, galileo)
         %detect yellow
         if(yellowPixelR >= yellowR_min && yellowPixelR <= yellowR_max && ...
         yellowPixelG >= yellowG_min && yellowPixelG <= yellowG_max )
-        % do something
+            % do something
         end
 
         %detect blue
@@ -103,7 +109,11 @@ function press_buttons(vid, galileo)
             orangePixelG >= orangeG_min && orangePixelG <= orangeG_max )
             % do something
         end
-        
+
         imagesc(imgO);
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
     end
 end
