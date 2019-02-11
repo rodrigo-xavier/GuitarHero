@@ -1,4 +1,5 @@
 function press_buttons(vid, galileo)
+    debug = false;
     % escolhe o nivel que sera jogado
 
     % opcoes de niveis disponiveis
@@ -48,17 +49,16 @@ function press_buttons(vid, galileo)
 %             end
 %         end
 %     end
-
+    R = 1;
+    G = 2;
+    B = 3;
+    
     % situacao do botao
     holding_button = false;
-
+    preview(vid);
     while true
         % get image from camera
         imgO = getdata(vid,1,'uint8');
-
-        R = 1;
-        G = 2;
-        B = 3;
 
         % Verificar se os pixels estao corretos
         greenPixel = imgO(312,230,G);
@@ -79,7 +79,7 @@ function press_buttons(vid, galileo)
             % do something
         end
 
-        %detect red    
+        %detect red   
         if(redPixel >= red_min && redPixel <= red_max && holding_button==false)
             fprintf(galileo,'%c', APERTA_E_SOLTA);
             start = tic;
@@ -88,8 +88,101 @@ function press_buttons(vid, galileo)
                 % para evitar que seja apertado mais de uma vez para a
                 % mesma nota
                 imgO = getdata(vid,1,'uint8');
-                imagesc(imgO);
+
+                if(debug)
+                    imgO(311,274,R) = 0;
+                    imgO(311,274,G) = 255;
+                    imgO(311,274,B) = 0;
+                    
+                    imgO(293,275,R) = 0;
+                    imgO(293,275,G) = 255;
+                    imgO(293,275,B) = 0;
+                    imgO(292,275,R) = 0;
+                    imgO(292,275,G) = 255;
+                    imgO(292,275,B) = 0;
+                    imgO(291,275,R) = 0;
+                    imgO(291,275,G) = 255;
+                    imgO(291,275,B) = 0;
+                    imgO(290,276,R) = 0;
+                    imgO(290,276,G) = 255;
+                    imgO(290,276,B) = 0;
+                    imgO(289,276,R) = 0;
+                    imgO(289,276,G) = 255;
+                    imgO(289,276,B) = 0;
+                    imgO(288,276,R) = 0;
+                    imgO(288,276,G) = 255;
+                    imgO(288,276,B) = 0;
+                    imgO(287,276,R) = 0;
+                    imgO(287,276,G) = 255;
+                    imgO(287,276,B) = 0;
+                    imgO(286,276,R) = 0;
+                    imgO(286,276,G) = 255;
+                    imgO(286,276,B) = 0;
+                    imgO(285,277,R) = 0;
+                    imgO(285,277,G) = 255;
+                    imgO(285,277,B) = 0;
+                    imgO(284,277,R) = 0;
+                    imgO(284,277,G) = 255;
+                    imgO(284,277,B) = 0;
+                    imgO(283,277,R) = 0;
+                    imgO(283,277,G) = 255;
+                    imgO(283,277,B) = 0;
+                    imgO(282,277,R) = 0;
+                    imgO(282,277,G) = 255;
+                    imgO(282,277,B) = 0;
+                    imgO(281,278,R) = 0;
+                    imgO(281,278,G) = 255;
+                    imgO(281,278,B) = 0;
+                    
+                    imagesc(imgO);
+                end
             end
+        end
+        
+        if(debug)
+            imgO(293,275,R) = 0;
+            imgO(293,275,G) = 255;
+            imgO(293,275,B) = 0;
+            imgO(292,275,R) = 0;
+            imgO(292,275,G) = 255;
+            imgO(292,275,B) = 0;
+            imgO(291,275,R) = 0;
+            imgO(291,275,G) = 255;
+            imgO(291,275,B) = 0;
+            imgO(290,276,R) = 0;
+            imgO(290,276,G) = 255;
+            imgO(290,276,B) = 0;
+            imgO(289,276,R) = 0;
+            imgO(289,276,G) = 255;
+            imgO(289,276,B) = 0;
+            imgO(288,276,R) = 0;
+            imgO(288,276,G) = 255;
+            imgO(288,276,B) = 0;
+            imgO(287,276,R) = 0;
+            imgO(287,276,G) = 255;
+            imgO(287,276,B) = 0;
+            imgO(286,276,R) = 0;
+            imgO(286,276,G) = 255;
+            imgO(286,276,B) = 0;
+            imgO(285,277,R) = 0;
+            imgO(285,277,G) = 255;
+            imgO(285,277,B) = 0;
+            imgO(284,277,R) = 0;
+            imgO(284,277,G) = 255;
+            imgO(284,277,B) = 0;
+            imgO(283,277,R) = 0;
+            imgO(283,277,G) = 255;
+            imgO(283,277,B) = 0;
+            imgO(282,277,R) = 0;
+            imgO(282,277,G) = 255;
+            imgO(282,277,B) = 0;
+            imgO(281,278,R) = 0;
+            imgO(281,278,G) = 255;
+            imgO(281,278,B) = 0;
+            
+            imgO(311,274,R) = 0;
+            imgO(311,274,G) = 255;
+            imgO(311,274,B) = 0;
         end
 
         %detect yellow
@@ -109,8 +202,10 @@ function press_buttons(vid, galileo)
             orangePixelG >= orangeG_min && orangePixelG <= orangeG_max )
             % do something
         end
-
-        imagesc(imgO);
+        
+        if(debug)
+            imagesc(imgO);
+        end
 
     end
 end
