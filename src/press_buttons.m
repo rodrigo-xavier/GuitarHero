@@ -55,6 +55,7 @@ function press_buttons(vid, galileo)
     
     % situacao do botao
     holding_button = false;
+    red_time = tic;
     preview(vid);
     while true
         % get image from camera
@@ -80,63 +81,10 @@ function press_buttons(vid, galileo)
         end
 
         %detect red   
-        if(redPixel >= red_min && redPixel <= red_max && holding_button==false)
+        if(redPixel >= red_min && redPixel <= red_max && holding_button==false ...
+           && toc(red_time) > tempo_espera)
             fprintf(galileo,'%c', APERTA_E_SOLTA);
-            start = tic;
-            while(toc(start) < tempo_espera)
-                % Nao realiza nenhuma acao por um periodo curto de tempo
-                % para evitar que seja apertado mais de uma vez para a
-                % mesma nota
-                imgO = getdata(vid,1,'uint8');
-
-                if(debug)
-                    imgO(311,274,R) = 0;
-                    imgO(311,274,G) = 255;
-                    imgO(311,274,B) = 0;
-                    
-                    imgO(293,275,R) = 0;
-                    imgO(293,275,G) = 255;
-                    imgO(293,275,B) = 0;
-                    imgO(292,275,R) = 0;
-                    imgO(292,275,G) = 255;
-                    imgO(292,275,B) = 0;
-                    imgO(291,275,R) = 0;
-                    imgO(291,275,G) = 255;
-                    imgO(291,275,B) = 0;
-                    imgO(290,276,R) = 0;
-                    imgO(290,276,G) = 255;
-                    imgO(290,276,B) = 0;
-                    imgO(289,276,R) = 0;
-                    imgO(289,276,G) = 255;
-                    imgO(289,276,B) = 0;
-                    imgO(288,276,R) = 0;
-                    imgO(288,276,G) = 255;
-                    imgO(288,276,B) = 0;
-                    imgO(287,276,R) = 0;
-                    imgO(287,276,G) = 255;
-                    imgO(287,276,B) = 0;
-                    imgO(286,276,R) = 0;
-                    imgO(286,276,G) = 255;
-                    imgO(286,276,B) = 0;
-                    imgO(285,277,R) = 0;
-                    imgO(285,277,G) = 255;
-                    imgO(285,277,B) = 0;
-                    imgO(284,277,R) = 0;
-                    imgO(284,277,G) = 255;
-                    imgO(284,277,B) = 0;
-                    imgO(283,277,R) = 0;
-                    imgO(283,277,G) = 255;
-                    imgO(283,277,B) = 0;
-                    imgO(282,277,R) = 0;
-                    imgO(282,277,G) = 255;
-                    imgO(282,277,B) = 0;
-                    imgO(281,278,R) = 0;
-                    imgO(281,278,G) = 255;
-                    imgO(281,278,B) = 0;
-                    
-                    imagesc(imgO);
-                end
-            end
+            red_time = tic;
         end
         
         if(debug)
@@ -187,19 +135,19 @@ function press_buttons(vid, galileo)
 
         %detect yellow
         if(yellowPixelR >= yellowR_min && yellowPixelR <= yellowR_max && ...
-        yellowPixelG >= yellowG_min && yellowPixelG <= yellowG_max )
+           yellowPixelG >= yellowG_min && yellowPixelG <= yellowG_max )
             % do something
         end
 
         %detect blue
         if(bluePixelG >= blueG_min && bluePixelG <= blueG_max && ...
-            bluePixelB >= blueB_min && bluePixelB <= blueB_max )
+           bluePixelB >= blueB_min && bluePixelB <= blueB_max )
             % do something
         end
 
         %detect orange
         if(orangePixelR >= orangeR_min && orangePixelR <= orangeR_max && ...
-            orangePixelG >= orangeG_min && orangePixelG <= orangeG_max )
+           orangePixelG >= orangeG_min && orangePixelG <= orangeG_max )
             % do something
         end
         
