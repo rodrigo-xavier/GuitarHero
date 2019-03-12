@@ -97,18 +97,18 @@ void setup() {
   }
 
   // obtém o tempo do matlab
-//  while(true){
-//    if (Serial.available() > 0) {
-//      incomingByte = Serial.read();
-//      if(incomingByte == 'a'){
-//        String str = Serial.readStringUntil('b');
-//        offtime = str.toInt();
-//        Serial.println(offtime);
-//        incomingByte = '\0';
-//        break;
-//      }
-//    }
-//  }
+  // while(true){
+  //   if (Serial.available() > 0) {
+  //     incomingByte = Serial.read();
+  //     if(incomingByte == 'a'){
+  //       String str = Serial.readStringUntil('b');
+  //       offtime = str.toInt();
+  //       Serial.print(offtime);
+  //       incomingByte = '\0';
+  //       break;
+  //     }
+  //   }
+  // }
 
   delay(5000);
 }
@@ -117,12 +117,15 @@ void loop(){
   if (Serial.available() > 0) {
     incomingByte = Serial.read();
     
+    // Estado simples: aperta e solta automaticamente 
+    // o mais rápido possível
     if(incomingByte == char(100)){
       ind=get_simpleStates_index();
       simpleStates[ind] = new SimpleState(millis());
       incomingByte = '\0';
     }
-    
+
+    // Estado de rastro: Aperta sem soltar
     if(incomingByte == char(101)){
       ind = get_traceStates_index();
       traceStates[ind] = new TraceState(millis());
@@ -130,9 +133,10 @@ void loop(){
       incomingByte = '\0';
     }
 
+    // Estado de rastro: Solta
     if(incomingByte == char(102) && !traceQueue.isEmpty()){
       first_item = traceQueue.front();
-      if(!traceStates[first_item]->finished && traceStates[first_item]->pressed){
+      if(!traceStates[first_item]->finished){
         ind = traceQueue.pop();
         traceStates[ind]->Soltar(millis());
         incomingByte = '\0';

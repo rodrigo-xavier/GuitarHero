@@ -43,7 +43,7 @@ function press_buttons(vid, galileo)
 %         time_to_send = strcat('a', int2str(tempo_aperta), 'b');
 %         fprintf(galileo, "%s", time_to_send);
 %         if (galileo.BytesAvailable > 0)
-%             out = fscanf(galileo,'%c',s.BytesAvailable);
+%             out = fscanf(galileo,'%c',galileo.BytesAvailable);
 %             if(str2num(out)==tempo_aperta)
 %                 break;
 %             end
