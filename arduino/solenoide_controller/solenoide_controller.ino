@@ -38,6 +38,7 @@ class TraceState{
     bool soltar;
     unsigned long offTime; // offtime entre detectar a nota e o momento de apertar
     unsigned long previousMillis;
+    unsigned long previousMillisFree;
 
   public:
     TraceState(unsigned long prev){
@@ -46,6 +47,7 @@ class TraceState{
       finished = false;
       pressed = false;
       previousMillis = prev;
+      previousMillisFree = prev;
       soltar = false;
       offTime = 1250;
     }
@@ -54,7 +56,7 @@ class TraceState{
       // Aperta após passado o offtime
       unsigned long currentMillis = millis();
       // Solta
-      if(soltar && !finished && pressed && (currentMillis-previousMillis)>= offTime){
+      if(soltar && !finished && pressed && (currentMillis-previousMillisFree)>= offTime){
         digitalWrite(this->pin, LOW);
         this->pressed = false;
         finished = true;
@@ -65,9 +67,9 @@ class TraceState{
         this->pressed = true;
       }
     }
-    void Soltar(unsigned long prev){
+    void Soltar(unsigned long prev_free){
       this->soltar = true;
-      this->previousMillis = prev;
+      this->previousMillisFree = prev_free;
     }
 };
 
