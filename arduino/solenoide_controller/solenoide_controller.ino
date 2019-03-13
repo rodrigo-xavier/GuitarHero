@@ -22,12 +22,10 @@ class SimpleState{
     void Update(){
         unsigned long currentMillis = millis();
         if((currentMillis-previousMillis)>= offTime){
-          Serial.print("SIMPLES ");
           digitalWrite(pin, HIGH);
           delay(50);
           digitalWrite(pin, LOW);
           this->finished = true;
-          Serial.println("FIM");
         }
     }
 };
@@ -62,13 +60,11 @@ class TraceState{
         digitalWrite(this->pin, LOW);
         this->pressed = false;
         finished = true;
-        Serial.println("SOLTOU");
       }
       // Aperta
       if(!pressed && !finished && (currentMillis-previousMillis)>= offTime){
         digitalWrite(this->pin, HIGH);
         this->pressed = true;
-        Serial.println("APERTOU");
       }
     }
     void Soltar(unsigned long prev_free){
