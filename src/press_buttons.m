@@ -39,16 +39,16 @@ function press_buttons(vid, galileo)
     % tempo
     [tempo_aperta, tempo_espera] = chose_times(nivel);
     % envia o tempo para o arduino
-%     while true
-%         time_to_send = strcat('a', int2str(tempo_aperta), 'b');
-%         fprintf(galileo, "%s", time_to_send);
-%         if (galileo.BytesAvailable > 0)
-%             out = fscanf(galileo,'%c',galileo.BytesAvailable);
-%             if(str2num(out)==tempo_aperta)
-%                 break;
-%             end
-%         end
-%     end
+    while true
+        time_to_send = strcat('a', num2str(tempo_aperta*1000), 'b');
+        fprintf(galileo, "%s", time_to_send);
+        if (galileo.BytesAvailable > 0)
+            out = fscanf(galileo,'%c',galileo.BytesAvailable);
+            if(str2num(out)==tempo_aperta*1000)
+                break;
+            end
+        end
+    end
     R = 1;
     G = 2;
     B = 3;

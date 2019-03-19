@@ -52,7 +52,7 @@ function holding_button = rastro_detection(galileo, imgO, holding_button)
 
         %segura botao
         holding_button = true;
-
+        
         fprintf(galileo,'%c', APERTA_SEM_SOLTAR);  
     end
 

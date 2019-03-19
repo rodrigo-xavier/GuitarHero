@@ -90,13 +90,15 @@ void setup() {
   // obtém o tempo do matlab
   while(true){
     if (Serial.available() > 0) {
+      if(offtime != 0){
+        break;
+      }
       incomingByte = Serial.read();
       if(incomingByte == 'a'){
         String str = Serial.readStringUntil('b');
         offtime = str.toInt();
         Serial.print(offtime);
         incomingByte = '\0';
-        break;
       }
     }
   }
