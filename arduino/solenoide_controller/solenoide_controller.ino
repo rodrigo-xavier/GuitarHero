@@ -146,6 +146,11 @@ void loop(){
         incomingByte = '\0';
       }
     }
+
+    if(incomingByte == char(110)){
+      Serial.print(offtime);
+    }
+    
   }
 
   checkAllOnStates();

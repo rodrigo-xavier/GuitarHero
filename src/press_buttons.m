@@ -36,10 +36,31 @@ function press_buttons(vid, galileo)
     APERTA_SEM_SOLTAR = char(101);
     SOLTA = char(102);
 
+    CHECA_TIME = char(110);
+
     % tempo
     [tempo_aperta, tempo_espera] = chose_times(nivel);
-    % envia o tempo para o arduino
+    
+    out = 0;
+
+    % checa se o arduino já está rodando o código
+    % com o tempo correto (isso pode ocorrer por ex.
+    % quando damos CTRL + C encerrando o código do matlab,
+    % mas o código e o tempo corretos continuam no arduino)
+    fprintf(galileo,'%c', CHECA_TIME);
+    pause(0.5); % um tempo de espera para a resposta chegar
+    if (galileo.BytesAvailable > 0)
+        out = fscanf(galileo,'%c',galileo.BytesAvailable);
+        out = str2num(out)
+    end
+    
+    % envia o tempo para o arduino se necessário
     while true
+        % se o arduino já tiver o tempo correto, não precisa enviar
+        if(out==tempo_aperta*1000)
+           break; 
+        end
+        % envia o tempo para o arduino 
         time_to_send = strcat('a', num2str(tempo_aperta*1000), 'b');
         fprintf(galileo, "%s", time_to_send);
         if (galileo.BytesAvailable > 0)
@@ -49,6 +70,7 @@ function press_buttons(vid, galileo)
             end
         end
     end
+    
     R = 1;
     G = 2;
     B = 3;
