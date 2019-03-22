@@ -11,10 +11,10 @@ class SimpleState{
     unsigned long previousMillis;
     
   public:
-    SimpleState(unsigned long prev){
+    SimpleState(unsigned long prev, unsigned long off){
       pin=3;
       pinMode(pin, OUTPUT);
-      offTime = 1100;
+      offTime = off;
       finished = false;
       previousMillis = prev;
     }
@@ -41,7 +41,7 @@ class TraceState{
     unsigned long previousMillisFree;
 
   public:
-    TraceState(unsigned long prev){
+    TraceState(unsigned long prev, unsigned long off){
       pin=3;
       pinMode(pin, OUTPUT);
       finished = false;
@@ -49,7 +49,7 @@ class TraceState{
       previousMillis = prev;
       previousMillisFree = prev;
       soltar = false;
-      offTime = 1250;
+      offTime = off;
     }
 
     void Update(){
@@ -74,7 +74,7 @@ class TraceState{
 };
 
 int L1 = 3;
-unsigned long offtime = 1100;
+unsigned long offtime = 0;
 unsigned char incomingByte = '\0';
 
 int freeStates[N_SIMPLE_STATES]={1,1,1,1,1,1,1,1,1,1};
@@ -87,30 +87,32 @@ int ind = 0, first_item;
 void setup() {
   Serial.begin(115200);
   
+  // obtém o tempo do matlab
+  while(true){
+    if (Serial.available() > 0) {
+      if(offtime != 0){
+        break;
+      }
+      incomingByte = Serial.read();
+      if(incomingByte == 'a'){
+        String str = Serial.readStringUntil('b');
+        offtime = str.toInt();
+        Serial.print(offtime);
+        incomingByte = '\0';
+      }
+    }
+  }
+  
   for(int i=0; i<N_SIMPLE_STATES; i++){
     freeStates[i] = 1;
-    simpleStates[i] = new SimpleState(millis());
+    simpleStates[i] = new SimpleState(millis(), offtime);
     simpleStates[i]->finished = true;
   }
 
   for(int i=0; i<N_TRACE_STATES; i++){
-    traceStates[i] = new TraceState(millis());
+    traceStates[i] = new TraceState(millis(), offtime);
     traceStates[i]->finished = true;
   }
-
-  // obtém o tempo do matlab
-  // while(true){
-  //   if (Serial.available() > 0) {
-  //     incomingByte = Serial.read();
-  //     if(incomingByte == 'a'){
-  //       String str = Serial.readStringUntil('b');
-  //       offtime = str.toInt();
-  //       Serial.print(offtime);
-  //       incomingByte = '\0';
-  //       break;
-  //     }
-  //   }
-  // }
 
   delay(5000);
 }
@@ -123,14 +125,14 @@ void loop(){
     // o mais rápido possível
     if(incomingByte == char(100)){
       ind=get_simpleStates_index();
-      simpleStates[ind] = new SimpleState(millis());
+      simpleStates[ind] = new SimpleState(millis(), offtime);
       incomingByte = '\0';
     }
 
     // Estado de rastro: Aperta sem soltar
     if(incomingByte == char(101)){
       ind = get_traceStates_index();
-      traceStates[ind] = new TraceState(millis());
+      traceStates[ind] = new TraceState(millis(), offtime);
       traceQueue.push(ind);
       incomingByte = '\0';
     }
