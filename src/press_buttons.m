@@ -69,6 +69,13 @@ function press_buttons(vid, galileo)
     values = [uint64(0) uint64(0) uint64(0) uint64(0) uint64(0)];
     holding_times = containers.Map(keys, values);
     
+<<<<<<< HEAD
+=======
+    % situacao do botao
+    % TODO: Precisa ser um para cada cor.
+    holding_button = false;
+    
+>>>>>>> Adiciona código para jogar em todas as cores
     green_time = tic;
     red_time = tic;
     yellow_time = tic;
@@ -96,20 +103,30 @@ function press_buttons(vid, galileo)
         
         %detect green
 <<<<<<< HEAD
+<<<<<<< HEAD
         if(greenPixel >= green_min && greenPixel <= green_max &&  ...
             ~holding_buttons('green') && toc(green_time) > tempo_espera)
 =======
         if(greenPixel >= green_min && greenPixel <= green_max && ...
             toc(green_time) > tempo_espera)
 >>>>>>> Jogar em todas as cores
+=======
+        if(greenPixel >= green_min && greenPixel <= green_max && ..
+            toc(green_time) > tempo_espera)
+>>>>>>> Adiciona código para jogar em todas as cores
             fprintf(galileo,'%c', APERTA_E_SOLTA_GREEN);
             green_time = tic;
         end
 
 
         %detect red   
+<<<<<<< HEAD
         if( redPixel >= red_min && redPixel <= red_max && ~holding_buttons('red') ...
             && toc(red_time) > tempo_espera )
+=======
+        if(redPixel >= red_min && redPixel <= red_max && holding_button==false ...
+           && toc(red_time) > tempo_espera)
+>>>>>>> Adiciona código para jogar em todas as cores
             fprintf(galileo,'%c', APERTA_E_SOLTA_RED);
             red_time = tic;
         end
@@ -117,7 +134,11 @@ function press_buttons(vid, galileo)
         %detect yellow
         if(yellowPixelR >= yellowR_min && yellowPixelR <= yellowR_max && ...
            yellowPixelG >= yellowG_min && yellowPixelG <= yellowG_max && ...
+<<<<<<< HEAD
            toc(yellow_time) > tempo_espera &&  ~holding_buttons('yellow'))
+=======
+           toc(yellow_time) > tempo_espera)
+>>>>>>> Adiciona código para jogar em todas as cores
            fprintf(galileo,'%c', APERTA_E_SOLTA_YELLOW);
            yellow_time = tic;
         end
@@ -125,7 +146,11 @@ function press_buttons(vid, galileo)
         %detect blue
         if(bluePixelG >= blueG_min && bluePixelG <= blueG_max && ...
            bluePixelB >= blueB_min && bluePixelB <= blueB_max && ...
+<<<<<<< HEAD
            toc(blue_time) > tempo_espera &&  ~holding_buttons('blue'))
+=======
+           toc(blue_time) > tempo_espera)
+>>>>>>> Adiciona código para jogar em todas as cores
            fprintf(galileo,'%c', APERTA_E_SOLTA_BLUE);
            blue_time = tic;
         end
@@ -133,9 +158,15 @@ function press_buttons(vid, galileo)
         %detect orange
         if(orangePixelR >= orangeR_min && orangePixelR <= orangeR_max && ...
            orangePixelG >= orangeG_min && orangePixelG <= orangeG_max && ...
+<<<<<<< HEAD
            toc(orange_time) > tempo_espera &&  ~holding_buttons('orange'))
            fprintf(galileo,'%c', APERTA_E_SOLTA_ORANGE);
            orange_time = tic;
+=======
+           toc(orange_time) > tempo_espera)
+            fprintf(galileo,'%c', APERTA_E_SOLTA_ORANGE);
+            orange_time = tic;
+>>>>>>> Adiciona código para jogar em todas as cores
         end
         
         if(debug)
@@ -206,6 +237,12 @@ function press_buttons(vid, galileo)
             imgO(281,278,R) = 0;
             imgO(281,278,G) = 255;
             imgO(281,278,B) = 0;
+<<<<<<< HEAD
+=======
+            imgO(311,274,R) = 0;
+            imgO(311,274,G) = 255;
+            imgO(311,274,B) = 0;
+>>>>>>> Adiciona código para jogar em todas as cores
 
             imagesc(imgO);
         end

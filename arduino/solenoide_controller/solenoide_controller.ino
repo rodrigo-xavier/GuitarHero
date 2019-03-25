@@ -49,7 +49,7 @@ class TraceState{
       this->previousMillis = prev;
       this->previousMillisFree = prev;
       this->soltar = false;
-      this->offTime = 1200;
+      this->offTime = off;
     }
 
     void Update(){
@@ -73,7 +73,6 @@ class TraceState{
       this->offTime = off;
     }
 };
-
 
 unsigned long offtime_simple = 0;
 unsigned long offtime_rastro = 0;
@@ -246,7 +245,6 @@ void loop(){
     // ------ //
 
     // Estado de rastro: Solta
-
     // Red (L1_PIN)
     if(incomingByte == char(102) && !redTraceQueue.isEmpty()){
       first_item = redTraceQueue.front();
@@ -262,15 +260,15 @@ void loop(){
       first_item = greenTraceQueue.front();
       if(!greenTraceStates[first_item]->finished){
         ind = greenTraceQueue.pop();
+<<<<<<< HEAD
         greenTraceStates[ind]->Soltar(millis(), offtime_simple);
+=======
+        greenTraceStates[ind]->Soltar(millis());
         incomingByte = '\0';
       }
     }
 
-    // Yellow (R1_PIN)
     if(incomingByte == char(122) && !yellowTraceQueue.isEmpty()){
-      first_item = yellowTraceQueue.front();
-      if(!yellowTraceStates[first_item]->finished){
         ind = yellowTraceQueue.pop();
         yellowTraceStates[ind]->Soltar(millis(), offtime_simple);
         incomingByte = '\0';
@@ -325,6 +323,7 @@ int get_simpleStates_index(char color){
       if(redSimpleStates[i]->finished)
         return i;
     }
+<<<<<<< HEAD
   }
   else if(color == 'G'){
     for(int i=0; i<N_SIMPLE_STATES; i++){
@@ -338,6 +337,21 @@ int get_simpleStates_index(char color){
         return i;
     }
   }
+=======
+  }
+  else if(color == 'G'){
+    for(int i=0; i<N_SIMPLE_STATES; i++){
+      if(greenSimpleStates[i]->finished)
+        return i;
+    }
+  }
+  else if(color == 'Y'){
+    for(int i=0; i<N_SIMPLE_STATES; i++){
+      if(yellowSimpleStates[i]->finished)
+        return i;
+    }
+  }
+>>>>>>> Adiciona código para jogar em todas as cores
   else if(color == 'B'){
     for(int i=0; i<N_SIMPLE_STATES; i++){
       if(blueSimpleStates[i]->finished)
@@ -363,6 +377,7 @@ int get_traceStates_index(char color){
       if(redTraceStates[i]->finished)
         return i;
     }
+<<<<<<< HEAD
   }
   else if(color == 'G'){
     for(int i=0; i<N_TRACE_STATES; i++){
@@ -376,6 +391,21 @@ int get_traceStates_index(char color){
         return i;
     }
   }
+=======
+  }
+  else if(color == 'G'){
+    for(int i=0; i<N_TRACE_STATES; i++){
+      if(greenTraceStates[i]->finished)
+        return i;
+    }
+  }
+  else if(color == 'Y'){
+    for(int i=0; i<N_TRACE_STATES; i++){
+      if(yellowTraceStates[i]->finished)
+        return i;
+    }
+  }
+>>>>>>> Adiciona código para jogar em todas as cores
   else if(color == 'B'){
     for(int i=0; i<N_TRACE_STATES; i++){
       if(blueTraceStates[i]->finished)
