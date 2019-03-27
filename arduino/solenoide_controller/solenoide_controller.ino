@@ -74,7 +74,8 @@ class TraceState{
 };
 
 int L1 = 3;
-unsigned long offtime = 0;
+unsigned long offtime_simple = 0;
+unsigned long offtime_rastro = 1200;
 unsigned char incomingByte = '\0';
 
 int freeStates[N_SIMPLE_STATES]={1,1,1,1,1,1,1,1,1,1};
@@ -90,14 +91,14 @@ void setup() {
   // obtém o tempo do matlab
   while(true){
     if (Serial.available() > 0) {
-      if(offtime != 0){
+      if(offtime_simple != 0){
         break;
       }
       incomingByte = Serial.read();
       if(incomingByte == 'a'){
         String str = Serial.readStringUntil('b');
-        offtime = str.toInt();
-        Serial.print(offtime);
+        offtime_simple = str.toInt();
+        Serial.print(offtime_simple);
         incomingByte = '\0';
       }
     }
@@ -105,12 +106,12 @@ void setup() {
   
   for(int i=0; i<N_SIMPLE_STATES; i++){
     freeStates[i] = 1;
-    simpleStates[i] = new SimpleState(millis(), offtime);
+    simpleStates[i] = new SimpleState(millis(), offtime_simple);
     simpleStates[i]->finished = true;
   }
 
   for(int i=0; i<N_TRACE_STATES; i++){
-    traceStates[i] = new TraceState(millis(), offtime);
+    traceStates[i] = new TraceState(millis(), offtime_rastro);
     traceStates[i]->finished = true;
   }
 
@@ -125,14 +126,14 @@ void loop(){
     // o mais rápido possível
     if(incomingByte == char(100)){
       ind=get_simpleStates_index();
-      simpleStates[ind] = new SimpleState(millis(), offtime);
+      simpleStates[ind] = new SimpleState(millis(), offtime_simple);
       incomingByte = '\0';
     }
 
     // Estado de rastro: Aperta sem soltar
     if(incomingByte == char(101)){
       ind = get_traceStates_index();
-      traceStates[ind] = new TraceState(millis(), offtime);
+      traceStates[ind] = new TraceState(millis(), offtime_rastro);
       traceQueue.push(ind);
       incomingByte = '\0';
     }
@@ -148,7 +149,7 @@ void loop(){
     }
 
     if(incomingByte == char(109)){
-      Serial.print(offtime);
+      Serial.print(offtime_simple);
     }
     
   }
