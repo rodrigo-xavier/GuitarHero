@@ -1,5 +1,5 @@
 function press_buttons(vid, galileo)
-    debug = true;
+    debug = false;
     % escolhe o nivel que sera jogado
 
     % opcoes de niveis disponiveis

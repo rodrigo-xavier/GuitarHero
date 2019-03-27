@@ -13,7 +13,7 @@ class SimpleState{
   public:
     SimpleState(int pin, unsigned long prev, unsigned long off){
       this->pin=pin;
-      pinMode(pin, OUTPUT);
+      pinMode(this->pin, OUTPUT);
       this->offTime = off;
       this->finished = false;
       this->previousMillis = prev;
@@ -21,10 +21,10 @@ class SimpleState{
 
     void Update(){
         unsigned long currentMillis = millis();
-        if((currentMillis-previousMillis)>= offTime){
-          digitalWrite(pin, HIGH);
+        if((currentMillis-this->previousMillis)>= this->offTime){
+          digitalWrite(this->pin, HIGH);
           delay(50);
-          digitalWrite(pin, LOW);
+          digitalWrite(this->pin, LOW);
           this->finished = true;
         }
     }
@@ -43,7 +43,7 @@ class TraceState{
   public:
     TraceState(int pin, unsigned long prev, unsigned long off){
       this->pin=pin;
-      pinMode(pin, OUTPUT);
+      pinMode(this->pin, OUTPUT);
       this->finished = false;
       this->pressed = false;
       this->previousMillis = prev;
@@ -56,13 +56,15 @@ class TraceState{
       // Aperta após passado o offtime
       unsigned long currentMillis = millis();
       // Solta
-      if(soltar && !finished && pressed && (currentMillis-previousMillisFree)>= offTime){
+      if(this->soltar && !(this->finished) && this->pressed && 
+        (currentMillis-this->previousMillisFree)>= this->offTime){
         digitalWrite(this->pin, LOW);
         this->pressed = false;
-        finished = true;
+        this->finished = true;
       }
       // Aperta
-      if(!pressed && !finished && (currentMillis-previousMillis)>= offTime){
+      if(!(this->pressed) && !(this->finished) && 
+        (currentMillis-this->previousMillis)>= this->offTime){
         digitalWrite(this->pin, HIGH);
         this->pressed = true;
       }
@@ -110,6 +112,7 @@ SimpleState *orangeSimpleStates[N_SIMPLE_STATES];
 TraceState *orangeTraceStates[N_TRACE_STATES];
 QueueArray <int> orangeTraceQueue;
 
+// Temporary variables
 int ind=0, first_item=0;
 
 void setup() {
@@ -198,6 +201,7 @@ void loop(){
 
 
     // ----------------------------------------------------- //
+    // Comandos relacionados com o rastro
 
     // Estado de rastro: Aperta sem soltar
     // Red (L1_PIN)
@@ -240,7 +244,6 @@ void loop(){
       orangeTraceQueue.push(ind);
       incomingByte = '\0';
     }
-
 
     // ------ //
 
@@ -295,12 +298,20 @@ void loop(){
       }
     }
 
+<<<<<<< HEAD
 
 
     // Obtem o tempo de offtime de nota simples
     if(incomingByte == char(90)){
       offtime_simple = 0;
       getSimpleTime();
+=======
+    // --------------------------------------- //
+    // Comandos relacionados com o tempo
+
+    if(incomingByte == char(109)){
+      Serial.print(offtime_simple);
+>>>>>>> merge com master
     }
 
     // Obtem o tempo de offtime de nota de rastro
