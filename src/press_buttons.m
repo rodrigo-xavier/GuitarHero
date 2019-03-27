@@ -1,5 +1,5 @@
 function press_buttons(vid, galileo)
-    debug = false;
+    debug = true;
     % escolhe o nivel que sera jogado
 
     % opcoes de niveis disponiveis
@@ -95,8 +95,13 @@ function press_buttons(vid, galileo)
         [holding_buttons, holding_times] = rastro_detection(galileo, imgO, holding_buttons, holding_times);
         
         %detect green
+<<<<<<< HEAD
         if(greenPixel >= green_min && greenPixel <= green_max &&  ...
             ~holding_buttons('green') && toc(green_time) > tempo_espera)
+=======
+        if(greenPixel >= green_min && greenPixel <= green_max && ...
+            toc(green_time) > tempo_espera)
+>>>>>>> Jogar em todas as cores
             fprintf(galileo,'%c', APERTA_E_SOLTA_GREEN);
             green_time = tic;
         end
