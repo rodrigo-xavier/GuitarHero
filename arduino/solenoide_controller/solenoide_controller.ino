@@ -49,7 +49,7 @@ class TraceState{
       this->previousMillis = prev;
       this->previousMillisFree = prev;
       this->soltar = false;
-      this->offTime = off;
+      this->offTime = 1200;
     }
 
     void Update(){
