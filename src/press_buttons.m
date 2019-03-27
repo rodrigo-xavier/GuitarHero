@@ -36,7 +36,7 @@ function press_buttons(vid, galileo)
     APERTA_SEM_SOLTAR = char(101);
     SOLTA = char(102);
 
-    CHECA_TIME = char(110);
+    CHECA_TIME = char(109);
 
     % tempo
     [tempo_aperta, tempo_espera] = chose_times(nivel);

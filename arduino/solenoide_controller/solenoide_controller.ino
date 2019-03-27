@@ -147,7 +147,7 @@ void loop(){
       }
     }
 
-    if(incomingByte == char(110)){
+    if(incomingByte == char(109)){
       Serial.print(offtime);
     }
     
