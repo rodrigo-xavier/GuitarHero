@@ -1,6 +1,5 @@
 function [vid, galileo] = connect_devices()
     counter = 0;
-    success = false;
     
     % Tenta iniciar conexão com galileo nas 20 primeiras portas
     while(counter <= 25)
@@ -9,7 +8,6 @@ function [vid, galileo] = connect_devices()
         try
             galileo = serial(COMX);
             fopen(galileo);
-            success = true;
             break;
         catch ME
             disp("Arduino: Porta " + COMX + " Falhou!");
