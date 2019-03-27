@@ -17,7 +17,7 @@ function press_buttons(vid, galileo)
     red_min = 175;
     red_max = 255;
     green_min = 175;
-    green_max = 175;
+    green_max = 255;
     yellowR_min = 175;
     yellowR_max = 255;
     yellowG_min = 150;
@@ -36,10 +36,31 @@ function press_buttons(vid, galileo)
     APERTA_SEM_SOLTAR = char(101);
     SOLTA = char(102);
 
+    CHECA_TIME = char(109);
+
     % tempo
     [tempo_aperta, tempo_espera] = chose_times(nivel);
-    % envia o tempo para o arduino
+    
+    out = 0;
+
+    % checa se o arduino já está rodando o código
+    % com o tempo correto (isso pode ocorrer por ex.
+    % quando damos CTRL + C encerrando o código do matlab,
+    % mas o código e o tempo corretos continuam no arduino)
+    fprintf(galileo,'%c', CHECA_TIME);
+    pause(0.5); % um tempo de espera para a resposta chegar
+    if (galileo.BytesAvailable > 0)
+        out = fscanf(galileo,'%c',galileo.BytesAvailable);
+        out = str2num(out)
+    end
+    
+    % envia o tempo para o arduino se necessário
     while true
+        % se o arduino já tiver o tempo correto, não precisa enviar
+        if(out==tempo_aperta*1000)
+           break; 
+        end
+        % envia o tempo para o arduino 
         time_to_send = strcat('a', num2str(tempo_aperta*1000), 'b');
         fprintf(galileo, "%s", time_to_send);
         if (galileo.BytesAvailable > 0)
@@ -49,6 +70,7 @@ function press_buttons(vid, galileo)
             end
         end
     end
+    
     R = 1;
     G = 2;
     B = 3;
@@ -86,8 +108,54 @@ function press_buttons(vid, galileo)
             fprintf(galileo,'%c', APERTA_E_SOLTA);
             red_time = tic;
         end
+
+        %detect yellow
+        if(yellowPixelR >= yellowR_min && yellowPixelR <= yellowR_max && ...
+           yellowPixelG >= yellowG_min && yellowPixelG <= yellowG_max )
+            % do something
+        end
+
+        %detect blue
+        if(bluePixelG >= blueG_min && bluePixelG <= blueG_max && ...
+           bluePixelB >= blueB_min && bluePixelB <= blueB_max )
+            % do something
+        end
+
+        %detect orange
+        if(orangePixelR >= orangeR_min && orangePixelR <= orangeR_max && ...
+           orangePixelG >= orangeG_min && orangePixelG <= orangeG_max )
+            % do something
+        end
         
         if(debug)
+            % Colore de verde os pixels que estão sendo utilizados
+
+            % Simple Green
+            imgO(312,230,R) = 0;
+            imgO(312,230,G) = 255;
+            imgO(312,230,B) = 0;
+
+            % Simple Red
+            imgO(311,274,R) = 0;
+            imgO(311,274,G) = 255;
+            imgO(311,274,B) = 0;
+
+            % Simple Yellow
+            imgO(312,311,R) = 0;
+            imgO(312,311,G) = 255;
+            imgO(312,311,B) = 0;
+
+            % Simple Blue
+            imgO(312,354,R) = 0;
+            imgO(312,354,G) = 255;
+            imgO(312,354,B) = 0;
+
+            % Simple Orange
+            imgO(311,395,R) = 0;
+            imgO(311,395,G) = 255;
+            imgO(311,395,B) = 0;
+
+            % Rastro Vermelho
             imgO(293,275,R) = 0;
             imgO(293,275,G) = 255;
             imgO(293,275,B) = 0;
@@ -131,27 +199,7 @@ function press_buttons(vid, galileo)
             imgO(311,274,R) = 0;
             imgO(311,274,G) = 255;
             imgO(311,274,B) = 0;
-        end
 
-        %detect yellow
-        if(yellowPixelR >= yellowR_min && yellowPixelR <= yellowR_max && ...
-           yellowPixelG >= yellowG_min && yellowPixelG <= yellowG_max )
-            % do something
-        end
-
-        %detect blue
-        if(bluePixelG >= blueG_min && bluePixelG <= blueG_max && ...
-           bluePixelB >= blueB_min && bluePixelB <= blueB_max )
-            % do something
-        end
-
-        %detect orange
-        if(orangePixelR >= orangeR_min && orangePixelR <= orangeR_max && ...
-           orangePixelG >= orangeG_min && orangePixelG <= orangeG_max )
-            % do something
-        end
-        
-        if(debug)
             imagesc(imgO);
         end
 
