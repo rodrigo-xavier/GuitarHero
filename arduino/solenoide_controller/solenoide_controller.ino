@@ -8,6 +8,7 @@ class SimpleState{
     int pin;
     unsigned long offTime; // offtime entre detectar a nota e o momento de apertar
     bool finished;
+    bool soltar;
     unsigned long previousMillis;
     
   public:
@@ -17,15 +18,22 @@ class SimpleState{
       this->offTime = off;
       this->finished = false;
       this->previousMillis = prev;
+      this->soltar = false;
     }
 
     void Update(){
         unsigned long currentMillis = millis();
-        if((currentMillis-this->previousMillis)>= this->offTime){
+        if(!(this->soltar) &&  !(this->finished) &&
+            (currentMillis-this->previousMillis)>= this->offTime){
           digitalWrite(this->pin, HIGH);
-          delay(50);
+          this->soltar = true;
+          this->previousMillis = millis();
+        }
+        if(this->soltar && !(this->finished) &&
+          (currentMillis-this->previousMillis)>=45){
           digitalWrite(this->pin, LOW);
           this->finished = true;
+          this->soltar = false;
         }
     }
 };
