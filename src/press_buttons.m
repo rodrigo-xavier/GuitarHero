@@ -48,8 +48,20 @@ function press_buttons(vid, galileo)
     G = 2;
     B = 3;
     
+    % botao de cores
+    green_button = 1;
+    red_button = 2;
+    yellow_button = 3;
+    blue_button = 4;
+    orange_button = 5;
+
     % situacao do botao
-    holding_button = false;
+    holding_button_green = false;
+    holding_button_red = false;
+    holding_button_yellow = false;
+    holding_button_blue = false;
+    holding_button_orange = false;
+
     red_time = tic;
     preview(vid);
     while true
@@ -68,15 +80,19 @@ function press_buttons(vid, galileo)
         
         %Segura botao no rastro
         %Se nao esta apertando e passa o rastro pela primeira vez
-        holding_button = rastro_detection(galileo, imgO, holding_button);
+        holding_button_green = rastro_detection(galileo, imgO, holding_button_green, green_button);
+        holding_button_red = rastro_detection(galileo, imgO, holding_button_red, red_button);
+        holding_button_yellow = rastro_detection(galileo, imgO, holding_button_yellow, yellow_button);
+        holding_button_blue = rastro_detection(galileo, imgO, holding_button_blue, blue_button);
+        holding_button_orange = rastro_detection(galileo, imgO, holding_button_orange, orange_button);
         
         %detect green
-        if(greenPixel >= green_min && greenPixel <= green_max)
+        if(greenPixel >= green_min && greenPixel <= green_max && holding_button_green==false)
             % do something
         end
 
         %detect red   
-        if(redPixel >= red_min && redPixel <= red_max && holding_button==false ...
+        if(redPixel >= red_min && redPixel <= red_max && holding_button_red==false ...
            && toc(red_time) > tempo_espera)
             fprintf(galileo,'%c', APERTA_E_SOLTA);
             red_time = tic;
