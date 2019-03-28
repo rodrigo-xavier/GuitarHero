@@ -98,24 +98,6 @@ function press_buttons(vid, galileo)
             red_time = tic;
         end
 
-        %detect yellow
-        if(yellowPixelR >= yellowR_min && yellowPixelR <= yellowR_max && ...
-           yellowPixelG >= yellowG_min && yellowPixelG <= yellowG_max )
-            % do something
-        end
-
-        %detect blue
-        if(bluePixelG >= blueG_min && bluePixelG <= blueG_max && ...
-           bluePixelB >= blueB_min && bluePixelB <= blueB_max )
-            % do something
-        end
-
-        %detect orange
-        if(orangePixelR >= orangeR_min && orangePixelR <= orangeR_max && ...
-           orangePixelG >= orangeG_min && orangePixelG <= orangeG_max )
-            % do something
-        end
-        
         if(debug)
             % Colore de verde os pixels que estão sendo utilizados
 
