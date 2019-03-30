@@ -168,10 +168,6 @@ function press_buttons(vid, galileo)
             imgO(281,278,G) = 255;
             imgO(281,278,B) = 0;
             
-            imgO(311,274,R) = 0;
-            imgO(311,274,G) = 255;
-            imgO(311,274,B) = 0;
-
             imagesc(imgO);
         end
 
