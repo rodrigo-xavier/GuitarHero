@@ -23,12 +23,15 @@ function [note_time, trail_time] = detect_level(vid) % Colocar variável que diz
 
 
     % Tempo médio das notas
-    while (note != 0)
+    while (note ~= 0)
         imgO = getdata(vid,1,'uint8');
 
         R = 1;
         G = 2;
         B = 3;
+
+        average_note_time = 0;
+        average_trail_time = 0;
 
         greenPixelUp = imgO(260,238,G);
         redPixelUp = imgO(286,237,R);
@@ -114,15 +117,15 @@ function [note_time, trail_time] = detect_level(vid) % Colocar variável que diz
             end
         end
 
-        average_note_time = average(average_note_time, time)
-        note--;
+        average_note_time = average(average_note_time, time);
+        note = note - 1;
     end
 
     note_time = average_note_time;
 
 
     % Tempo médio dos rastros
-    while (trail != 0)
+    while (trail ~= 0)
         imgO = getdata(vid,1,'uint8');
 
         R = 1;
@@ -213,13 +216,13 @@ function [note_time, trail_time] = detect_level(vid) % Colocar variável que diz
             end
         end
 
-        average_trail_time = average(average_trail_time, time)
-        trail--;
+        average_trail_time = average(average_trail_time, time);
+        trail = trail - 1;
     end
 
     trail_time = average_trail_time;
 end
 
 function average_time = average(previous_time, posterior_time)
-    average_time = (previous_time + posterior_time)/2
+    average_time = (previous_time + posterior_time)/2;
 end
