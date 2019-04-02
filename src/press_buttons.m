@@ -99,6 +99,6 @@ function press_buttons(vid, galileo)
             % do something
         end
 
-        debug(true, imgO)
+        debug(1, imgO)
     end
 end
