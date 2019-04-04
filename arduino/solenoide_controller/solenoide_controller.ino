@@ -75,7 +75,7 @@ class TraceState{
 
 int L1 = 3;
 unsigned long offtime_simple = 0;
-unsigned long offtime_rastro = 1200;
+unsigned long offtime_rastro = 0;
 unsigned char incomingByte = '\0';
 
 int freeStates[N_SIMPLE_STATES]={1,1,1,1,1,1,1,1,1,1};
@@ -89,6 +89,7 @@ void setup() {
   Serial.begin(115200);
   
   // obtém o tempo do matlab
+  // tempo simples
   while(true){
     if (Serial.available() > 0) {
       if(offtime_simple != 0){
@@ -99,6 +100,22 @@ void setup() {
         String str = Serial.readStringUntil('b');
         offtime_simple = str.toInt();
         Serial.print(offtime_simple);
+        incomingByte = '\0';
+      }
+    }
+  }
+
+  // tempo rastro
+  while(true){
+    if (Serial.available() > 0) {
+      if(offtime_rastro != 0){
+        break;
+      }
+      incomingByte = Serial.read();
+      if(incomingByte == 'a'){
+        String str = Serial.readStringUntil('b');
+        offtime_rastro = str.toInt();
+        Serial.print(offtime_rastro);
         incomingByte = '\0';
       }
     }
@@ -115,7 +132,7 @@ void setup() {
     traceStates[i]->finished = true;
   }
 
-  delay(5000);
+  delay(1000);
 }
 
 void loop(){
@@ -150,6 +167,10 @@ void loop(){
 
     if(incomingByte == char(109)){
       Serial.print(offtime_simple);
+    }
+
+    if(incomingByte == char(108)){
+      Serial.print(offtime_rastro);
     }
     
   }
