@@ -60,7 +60,7 @@ function holding_buttons = rastro_detection(galileo, imgO, holding_buttons, red_
     %Se esta_apertando e nao ha mais rastro passando
     if( holding_buttons('red') && ...
         ~(imgO(311,274,R) >= red_min && imgO(311,274,R) <= red_max) ...
-        && toc(red_time) > tempo_espera )
+        && toc(red_time) > 0.35 )
 
         holding_buttons('red') = false;
 
