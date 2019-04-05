@@ -1,5 +1,5 @@
 function press_buttons(vid, galileo)
-    debug = false;
+    debug = true;
     % escolhe o nivel que sera jogado
 
     % opcoes de niveis disponiveis
@@ -48,8 +48,8 @@ function press_buttons(vid, galileo)
 
     % situacao de rastro das cores
     keys = {'green', 'red', 'yellow', 'blue', 'orange'};
-    values = [false false false false false]
-    holding_buttons = containers.Map(keys, values)
+    values = [false false false false false];
+    holding_buttons = containers.Map(keys, values);
 
     red_time = tic;
     preview(vid);
@@ -69,7 +69,7 @@ function press_buttons(vid, galileo)
         
         %Segura botao no rastro
         %Se nao esta apertando e passa o rastro pela primeira vez
-        holding_buttons = rastro_detection(galileo, imgO, holding_buttons);
+        holding_buttons = rastro_detection(galileo, imgO, holding_buttons, red_time, tempo_espera);
         
         %detect green
         if( greenPixel >= green_min && greenPixel <= green_max && ...

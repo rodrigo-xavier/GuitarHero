@@ -67,9 +67,10 @@ class TraceState{
         this->pressed = true;
       }
     }
-    void Soltar(unsigned long prev_free){
+    void Soltar(unsigned long prev_free, int off){
       this->soltar = true;
       this->previousMillisFree = prev_free;
+      this->offTime = off;
     }
 };
 
@@ -128,7 +129,7 @@ void loop(){
       first_item = traceQueue.front();
       if(!traceStates[first_item]->finished){
         ind = traceQueue.pop();
-        traceStates[ind]->Soltar(millis());
+        traceStates[ind]->Soltar(millis(),offtime_simple);
         incomingByte = '\0';
       }
     }

@@ -1,4 +1,4 @@
-function holding_button = rastro_detection(galileo, imgO, holding_buttons)
+function holding_buttons = rastro_detection(galileo, imgO, holding_buttons, red_time, tempo_espera)
 
     % ------------------------------------------------------------------------- %
     % Configuracao das variaveis (Eles também existem na funcao press_buttons)
@@ -51,7 +51,7 @@ function holding_button = rastro_detection(galileo, imgO, holding_buttons)
         (imgO(281,278,R) >= red_min && imgO(281,278,R) <= red_max) )
 
         %segura botao
-        holding_button('red') = true;
+        holding_buttons('red') = true;
         
         fprintf(galileo,'%c', APERTA_SEM_SOLTAR_RED);  
     end
@@ -59,7 +59,8 @@ function holding_button = rastro_detection(galileo, imgO, holding_buttons)
     %quando o rastro acaba solta
     %Se esta_apertando e nao ha mais rastro passando
     if( holding_buttons('red') && ...
-        ~(imgO(311,274,R) >= red_min && imgO(311,274,R) <= red_max) )
+        ~(imgO(311,274,R) >= red_min && imgO(311,274,R) <= red_max) ...
+        && toc(red_time) > tempo_espera )
 
         holding_buttons('red') = false;
 
