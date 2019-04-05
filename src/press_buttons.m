@@ -38,7 +38,7 @@ function press_buttons(vid, galileo)
 
     % tempo
     [tempo_simples, tempo_espera] = chose_times(nivel);
-    tempo_rastro = 1200;
+    tempo_rastro = 1.200;
 
     % envia os tempos para o arduino, ou verifica se os tempos
     % estão corretos, caso o arduino já possua o tempo

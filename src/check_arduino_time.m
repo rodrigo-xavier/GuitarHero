@@ -1,74 +1,30 @@
 function check_arduino_time(galileo, tempo_simple, tempo_rastro)
-    % FunÃ§Ã£o que trata do envio de tempos para o arduino
+    % Funcao que trata do envio de tempos para o arduino
+    
+    ENVIA_TIME_SIMPLE = char(90);
+    ENVIA_TIME_RASTRO = char(91);
+    
+    fprintf(galileo,'%c', ENVIA_TIME_SIMPLE);
+    send_time_to_arduino(galileo, tempo_simple);
 
-    CHECA_TIME_SIMPLE = char(109);
-    CHECA_TIME_RASTRO = char(108);
-    
-    out_simple = 0;
+    fprintf(galileo,'%c', ENVIA_TIME_RASTRO);
+    send_time_to_arduino(galileo, tempo_rastro);
 
-    % checa se o arduino já estão rodando o código
-    % com o tempo correto (isso pode ocorrer por ex.
-    % quando damos CTRL + C encerrando o código do matlab,
-    % mas o código e o tempo corretos continuam no arduino)
-    fprintf(galileo,'%c', CHECA_TIME_SIMPLE);
-    pause(0.5); % um tempo de espera para a resposta chegar
-    if (galileo.BytesAvailable > 0)
-        out_simple = fscanf(galileo,'%c',galileo.BytesAvailable);
-        out_simple = str2num(out_simple);
-        disp(out_simple*1000);
-    end
-    
-    out_rastro = 0;
-    fprintf(galileo,'%c', CHECA_TIME_RASTRO);
-    pause(0.5); % um tempo de espera para a resposta chegar
-    if (galileo.BytesAvailable > 0)
-        out_rastro = fscanf(galileo,'%c',galileo.BytesAvailable);
-        out_rastro = str2num(out_rastro);
-        disp(out_rastro*1000);
-    end
-    
-    % envia o tempo para o arduino se necessÃ¡rio
+end
+
+function send_time_to_arduino(galileo, time_to_send)
+    %time to send is in seconds
+
     while true
-        % se o arduino já tiver o tempo correto, não precisa enviar
-        if(out_simple==tempo_simple*1000)
-           break;
-        elseif out_simple~=0
-            texto_erro = ['Arduino já possui um tempo, mas é diferente do ' ...
-                          'tempo do nível atual. Por favor, dê reboot no Arduino.'];
-            error(texto_erro);
-        end
         % envia o tempo para o arduino 
-        time_to_send = strcat('a', num2str(tempo_simple*1000), 'b');
-        fprintf(galileo, "%s", time_to_send);
+        time_format = strcat('a', num2str(time_to_send*1000), 'b');
+        fprintf(galileo, "%s", time_format);
         if (galileo.BytesAvailable > 0)
-            out_simple = fscanf(galileo,'%c',galileo.BytesAvailable);
-            if(str2num(out_simple)==tempo_simple*1000)
-                disp(out_simple*1000);
+            out = fscanf(galileo,'%c',galileo.BytesAvailable);
+            if(str2num(out)==time_to_send*1000)
+                disp("Tempo: " + out);
                 break;
             end
         end
     end
-
-    % envia o tempo para o arduino se necessÃ¡rio
-    while true
-        % se o arduino já tiver o tempo correto, não precisa enviar
-        if(out_rastro==tempo_rastro*1000)
-           break;
-        elseif out_rastro~=0
-            texto_erro = ['Arduino já possui um tempo, mas é diferente do ' ...
-                          'tempo do nível atual. Por favor, dê reset ou reboot no Arduino.'];
-            error(texto_erro);
-        end
-        % envia o tempo para o arduino 
-        time_to_send = strcat('a', num2str(tempo_rastro*1000), 'b');
-        fprintf(galileo, "%s", time_to_send);
-        if (galileo.BytesAvailable > 0)
-            out_rastro = fscanf(galileo,'%c',galileo.BytesAvailable);
-            if(str2num(out_rastro)==tempo_rastro*1000)
-                disp(out_rastro*1000);
-                break;
-            end
-        end
-    end
-
 end
