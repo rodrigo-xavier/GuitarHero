@@ -1,5 +1,5 @@
 function press_buttons(vid, galileo)
-    debug = true;
+    debug = false;
     % escolhe o nivel que sera jogado
 
     % opcoes de niveis disponiveis
@@ -51,13 +51,17 @@ function press_buttons(vid, galileo)
     values = [false false false false false];
     holding_buttons = containers.Map(keys, values);
 
+    keys = {'green', 'red', 'yellow', 'blue', 'orange'};
+    values = [uint64(0) uint64(0) uint64(0) uint64(0) uint64(0)];
+    holding_times = containers.Map(keys, values);
+
     red_time = tic;
     preview(vid);
     while true
         % get image from camera
         imgO = getdata(vid,1,'uint8');
 
-        % Verificar se os pixels estao corretos
+        % TODO: Verificar se os pixels estao corretos
         greenPixel = imgO(312,230,G);
         redPixel = imgO(311,274,R);
         yellowPixelR = imgO(312,311,R);
@@ -69,7 +73,7 @@ function press_buttons(vid, galileo)
         
         %Segura botao no rastro
         %Se nao esta apertando e passa o rastro pela primeira vez
-        holding_buttons = rastro_detection(galileo, imgO, holding_buttons, red_time, tempo_espera);
+        [holding_buttons, holding_times] = rastro_detection(galileo, imgO, holding_buttons, holding_times);
         
         %detect green
         if( greenPixel >= green_min && greenPixel <= green_max && ...
