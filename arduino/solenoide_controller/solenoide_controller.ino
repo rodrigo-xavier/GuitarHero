@@ -75,7 +75,7 @@ class TraceState{
 
 int L1 = 3;
 unsigned long offtime_simple = 0;
-unsigned long offtime_rastro = 1200;
+unsigned long offtime_rastro = 0;
 unsigned char incomingByte = '\0';
 
 int freeStates[N_SIMPLE_STATES]={1,1,1,1,1,1,1,1,1,1};
@@ -88,22 +88,7 @@ int ind = 0, first_item;
 void setup() {
   Serial.begin(115200);
   
-  // obtém o tempo do matlab
-  while(true){
-    if (Serial.available() > 0) {
-      if(offtime_simple != 0){
-        break;
-      }
-      incomingByte = Serial.read();
-      if(incomingByte == 'a'){
-        String str = Serial.readStringUntil('b');
-        offtime_simple = str.toInt();
-        Serial.print(offtime_simple);
-        incomingByte = '\0';
-      }
-    }
-  }
-  
+  // Inicializa os estados
   for(int i=0; i<N_SIMPLE_STATES; i++){
     freeStates[i] = 1;
     simpleStates[i] = new SimpleState(millis(), offtime_simple);
@@ -115,7 +100,7 @@ void setup() {
     traceStates[i]->finished = true;
   }
 
-  delay(5000);
+  delay(1000);
 }
 
 void loop(){
@@ -148,8 +133,16 @@ void loop(){
       }
     }
 
-    if(incomingByte == char(109)){
-      Serial.print(offtime_simple);
+    // Obtem o tempo de offtime de nota simples
+    if(incomingByte == char(90)){
+      offtime_simple = 0;
+      getSimpleTime();
+    }
+
+    // Obtem o tempo de offtime de nota de rastro
+    if(incomingByte == char(91)){
+      offtime_rastro = 0;
+      getRastroTime();
     }
     
   }
@@ -183,6 +176,40 @@ void checkAllOnStates(){
     if(i < N_TRACE_STATES){
       if(!traceStates[i]->finished)
         traceStates[i]->Update();
+    }
+  }
+}
+
+void getSimpleTime(){
+  while(true){
+    if (Serial.available() > 0) {
+      if(offtime_simple != 0){
+        break;
+      }
+      incomingByte = Serial.read();
+      if(incomingByte == 'a'){
+        String str = Serial.readStringUntil('b');
+        offtime_simple = str.toInt();
+        Serial.print(offtime_simple);
+        incomingByte = '\0';
+      }
+    }
+  }
+}
+
+void getRastroTime(){
+  while(true){
+    if (Serial.available() > 0) {
+      if(offtime_rastro != 0){
+        break;
+      }
+      incomingByte = Serial.read();
+      if(incomingByte == 'a'){
+        String str = Serial.readStringUntil('b');
+        offtime_rastro = str.toInt();
+        Serial.print(offtime_rastro);
+        incomingByte = '\0';
+      }
     }
   }
 }
