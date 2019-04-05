@@ -1,11 +1,10 @@
-function holding_button = rastro_detection(galileo, imgO, holding_button)
+function [holding_buttons, holding_times] = rastro_detection(galileo, imgO, holding_buttons, holding_times)
 
     % ------------------------------------------------------------------------- %
     % Configuracao das variaveis (Eles também existem na funcao press_buttons)
     % acoes
-    APERTA_E_SOLTA = char(100);
-    APERTA_SEM_SOLTAR = char(101);
-    SOLTA = char(102);
+    APERTA_SEM_SOLTAR_RED = char(101);
+    SOLTA_RED = char(102);
     
     % cores
     R = 1;
@@ -13,7 +12,7 @@ function holding_button = rastro_detection(galileo, imgO, holding_button)
     B = 3;
 
     % cores
-    % salvar um arquivo em disco com as variaveis
+    % TODO: salvar um arquivo em disco com as variaveis
     % para mudar para apenas load('cores.mat')
     red_min = 175;
     red_max = 255;
@@ -33,10 +32,11 @@ function holding_button = rastro_detection(galileo, imgO, holding_button)
     orangeG_max = 255;
     % ------------------------------------------------------------------------- %
 
+    % Red
     %Segura botao no rastro
     %Se nao esta apertando e passa o rastro pela primeira vez
-    if  ~(holding_button) && ...
-        ((imgO(293,275,R) >= red_min && imgO(293,275,R) <= red_max) && ...
+    if( ~holding_buttons('red') && ...
+        (imgO(293,275,R) >= red_min && imgO(293,275,R) <= red_max) && ...
         (imgO(292,275,R) >= red_min && imgO(292,275,R) <= red_max) && ...
         (imgO(291,275,R) >= red_min && imgO(291,275,R) <= red_max) && ...
         (imgO(290,276,R) >= red_min && imgO(290,276,R) <= red_max) && ...
@@ -48,33 +48,61 @@ function holding_button = rastro_detection(galileo, imgO, holding_button)
         (imgO(284,277,R) >= red_min && imgO(284,277,R) <= red_max) && ...
         (imgO(283,277,R) >= red_min && imgO(283,277,R) <= red_max) && ...
         (imgO(282,277,R) >= red_min && imgO(282,277,R) <= red_max) && ...
-        (imgO(281,278,R) >= red_min && imgO(281,278,R) <= red_max)) 
+        (imgO(281,278,R) >= red_min && imgO(281,278,R) <= red_max) )
 
         %segura botao
-        holding_button = true;
+        holding_buttons('red') = true;
+        holding_times('red') = tic;
         
-        fprintf(galileo,'%c', APERTA_SEM_SOLTAR);  
+        fprintf(galileo,'%c', APERTA_SEM_SOLTAR_RED);  
     end
 
     %quando o rastro acaba solta
     %Se esta_apertando e nao ha mais rastro passando
-    if  ( (holding_button) && ...
-        ~((imgO(293,275,R) >= red_min && imgO(293,275,R) <= red_max) && ...
-        (imgO(292,275,R) >= red_min && imgO(292,275,R) <= red_max) && ...
-        (imgO(291,275,R) >= red_min && imgO(291,275,R) <= red_max) && ...
-        (imgO(290,276,R) >= red_min && imgO(290,276,R) <= red_max) && ...
-        (imgO(289,276,R) >= red_min && imgO(289,276,R) <= red_max) && ...
-        (imgO(288,276,R) >= red_min && imgO(288,276,R) <= red_max) && ...
-        (imgO(287,276,R) >= red_min && imgO(287,276,R) <= red_max) && ...
-        (imgO(286,276,R) >= red_min && imgO(286,276,R) <= red_max) && ...
-        (imgO(285,277,R) >= red_min && imgO(285,277,R) <= red_max) && ...
-        (imgO(284,277,R) >= red_min && imgO(284,277,R) <= red_max) && ...
-        (imgO(283,277,R) >= red_min && imgO(283,277,R) <= red_max) && ...
-        (imgO(282,277,R) >= red_min && imgO(282,277,R) <= red_max) && ...
-        (imgO(281,278,R) >= red_min && imgO(281,278,R) <= red_max)))
+    if( holding_buttons('red') && ...
+        ~(imgO(311,274,R) >= red_min && imgO(311,274,R) <= red_max) && ...
+        toc(holding_times('red')) > 0.35)
 
-        holding_button = false;
+        holding_buttons('red') = false;
 
-        fprintf(galileo,'%c', SOLTA);  
+        fprintf(galileo,'%c', SOLTA_RED);  
 
     end
+
+
+    %Red
+
+    %Faca algo quando tiver que apertar
+    % ...
+
+    %Faca algo quando tiver que soltar
+    % ...
+
+
+    %Yellow
+
+    %Faca algo quando tiver que apertar
+    % ...
+
+    %Faca algo quando tiver que soltar
+    % ...
+
+
+    %Blue
+
+    %Faca algo quando tiver que apertar
+    % ...
+
+    %Faca algo quando tiver que soltar
+    % ...
+
+
+    %Orange
+
+    %Faca algo quando tiver que apertar
+    % ...
+
+    %Faca algo quando tiver que soltar
+    % ...
+
+end

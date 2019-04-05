@@ -1,5 +1,7 @@
 function [vid, galileo] = connect_devices()
     counter = 0;
+    ME2 = [];
+    ME = [];
     
     % Tenta iniciar conexão com galileo nas 20 primeiras portas
     while(counter <= 25)
