@@ -95,15 +95,17 @@ function press_buttons(vid, galileo)
         [holding_buttons, holding_times] = rastro_detection(galileo, imgO, holding_buttons, holding_times);
         
         %detect green
-        if(greenPixel >= green_min && greenPixel <= green_max &&  ...
-            ~holding_buttons('green') && toc(green_time) > tempo_espera)
+        if( greenPixel >= green_min && greenPixel <= green_max &&  ...
+            ~holding_buttons('green') && ...
+            toc(green_time) > tempo_espera )
             fprintf(galileo,'%c', APERTA_E_SOLTA_GREEN);
             green_time = tic;
         end
 
 
         %detect red   
-        if( redPixel >= red_min && redPixel <= red_max && ~holding_buttons('red') ...
+        if( redPixel >= red_min && redPixel <= red_max && ...
+            ~holding_buttons('red') ...
             && toc(red_time) > tempo_espera )
             fprintf(galileo,'%c', APERTA_E_SOLTA_RED);
             red_time = tic;
