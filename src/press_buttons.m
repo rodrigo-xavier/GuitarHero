@@ -1,15 +1,5 @@
 function press_buttons(vid, galileo)
     debug = false;
-    % escolhe o nivel que sera jogado
-
-    % opcoes de niveis disponiveis
-    niveis_easy = ["easy_slowest", "easy_slower", "easy_slow", "easy_full_speed"];
-    niveis_medium = ["medium_slowest", "medium_slower", "medium_slow", "medium_full_speed"];
-    niveis_hard = ["hard_slowest", "hard_slower", "hard_slow", "hard_full_speed"];
-    niveis_expert = ["expert_slowest", "expert_slower", "expert_slow", "expert_full_speed"];
-
-    % nivel escolhido
-    nivel = niveis_easy(1); % easy_slowest
 
     % cores
     % salvar um arquivo em disco com as variaveis
@@ -33,9 +23,14 @@ function press_buttons(vid, galileo)
 
     % acoes
     APERTA_E_SOLTA_RED = char(100);
+    APERTA_E_SOLTA_GREEN = char(110);
+    APERTA_E_SOLTA_YELLOW = char(120);
+    APERTA_E_SOLTA_BLUE = char(130);
+    APERTA_E_SOLTA_ORANGE = char(140);
 
-    % tempo
-    [tempo_simples, tempo_espera] = chose_times(nivel);
+    % tempos
+    tempo_espera = 0.35;
+    tempo_simples = 1.094;
     tempo_rastro = 1.200;
 
     % envia os tempos para o arduino, ou verifica se os tempos
@@ -54,8 +49,13 @@ function press_buttons(vid, galileo)
     keys = {'green', 'red', 'yellow', 'blue', 'orange'};
     values = [uint64(0) uint64(0) uint64(0) uint64(0) uint64(0)];
     holding_times = containers.Map(keys, values);
-
+    
+    green_time = tic;
     red_time = tic;
+    yellow_time = tic;
+    blue_time = tic;
+    orange_time = tic;
+
     preview(vid);
     while true
         % get image from camera
@@ -76,39 +76,46 @@ function press_buttons(vid, galileo)
         [holding_buttons, holding_times] = rastro_detection(galileo, imgO, holding_buttons, holding_times);
         
         %detect green
-        if( greenPixel >= green_min && greenPixel <= green_max && ...
-            ~holding_buttons('green') )
-            % do something
+        if( greenPixel >= green_min && greenPixel <= green_max &&  ...
+            ~holding_buttons('green') && ...
+            toc(green_time) > tempo_espera )
+            fprintf(galileo,'%c', APERTA_E_SOLTA_GREEN);
+            green_time = tic;
         end
 
+
         %detect red   
-        if( redPixel >= red_min && redPixel <= red_max && ~holding_buttons('red') ...
+        if( redPixel >= red_min && redPixel <= red_max && ...
+            ~holding_buttons('red') ...
             && toc(red_time) > tempo_espera )
             fprintf(galileo,'%c', APERTA_E_SOLTA_RED);
             red_time = tic;
         end
 
         %detect yellow
-        if( yellowPixelR >= yellowR_min && yellowPixelR <= yellowR_max && ...
-            yellowPixelG >= yellowG_min && yellowPixelG <= yellowG_max && ...
-            ~holding_buttons('yellow'))
-                % do something
+        if(yellowPixelR >= yellowR_min && yellowPixelR <= yellowR_max && ...
+           yellowPixelG >= yellowG_min && yellowPixelG <= yellowG_max && ...
+           toc(yellow_time) > tempo_espera &&  ~holding_buttons('yellow'))
+           fprintf(galileo,'%c', APERTA_E_SOLTA_YELLOW);
+           yellow_time = tic;
         end
 
         %detect blue
-        if( bluePixelG >= blueG_min && bluePixelG <= blueG_max && ...
-            bluePixelB >= blueB_min && bluePixelB <= blueB_max && ...
-            ~holding_buttons('blue'))
-            % do something
+        if(bluePixelG >= blueG_min && bluePixelG <= blueG_max && ...
+           bluePixelB >= blueB_min && bluePixelB <= blueB_max && ...
+           toc(blue_time) > tempo_espera &&  ~holding_buttons('blue'))
+           fprintf(galileo,'%c', APERTA_E_SOLTA_BLUE);
+           blue_time = tic;
         end
 
         %detect orange
-        if( orangePixelR >= orangeR_min && orangePixelR <= orangeR_max && ...
-            orangePixelG >= orangeG_min && orangePixelG <= orangeG_max && ...
-            ~holding_buttons('orange'))
-            % do something
+        if(orangePixelR >= orangeR_min && orangePixelR <= orangeR_max && ...
+           orangePixelG >= orangeG_min && orangePixelG <= orangeG_max && ...
+           toc(orange_time) > tempo_espera &&  ~holding_buttons('orange'))
+           fprintf(galileo,'%c', APERTA_E_SOLTA_ORANGE);
+           orange_time = tic;
         end
-
+        
         if(debug)
             % Colore de verde os pixels que estão sendo utilizados
 
@@ -177,9 +184,8 @@ function press_buttons(vid, galileo)
             imgO(281,278,R) = 0;
             imgO(281,278,G) = 255;
             imgO(281,278,B) = 0;
-            
+
             imagesc(imgO);
         end
-
     end
 end
