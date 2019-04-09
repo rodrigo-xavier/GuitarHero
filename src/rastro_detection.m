@@ -1,20 +1,18 @@
 function [holding_buttons, holding_times] = rastro_detection(galileo, imgO, holding_buttons, holding_times)
+    %tempo de espera
+    tempo_espera = 0.35;
 
     % ------------------------------------------------------------------------- %
     % Configuracao das variaveis (Eles também existem na funcao press_buttons)
     % acoes
     APERTA_SEM_SOLTAR_RED = char(101);
     SOLTA_RED = char(102);
-    APERTA_E_SOLTA_GREEN = char(110);
     APERTA_SEM_SOLTAR_GREEN = char(111);
     SOLTA_GREEN = char(112);
-    APERTA_E_SOLTA_YELLOW = char(120);
     APERTA_SEM_SOLTAR_YELLOW = char(121);
     SOLTA_YELLOW = char(122);
-    APERTA_E_SOLTA_BLUE = char(130);
     APERTA_SEM_SOLTAR_BLUE = char(131);
     SOLTA_BLUE = char(132);
-    APERTA_E_SOLTA_ORANGE = char(140);
     APERTA_SEM_SOLTAR_ORANGE = char(141);
     SOLTA_ORANGE = char(142);
 
@@ -74,7 +72,7 @@ function [holding_buttons, holding_times] = rastro_detection(galileo, imgO, hold
     %Se esta_apertando e nao ha mais rastro passando
     if( holding_buttons('red') && ...
         ~(imgO(311,274,R) >= red_min && imgO(311,274,R) <= red_max) && ...
-        toc(holding_times('red')) > 0.35)
+        toc(holding_times('red')) > tempo_espera)
 
         holding_buttons('red') = false;
 
@@ -104,7 +102,6 @@ function [holding_buttons, holding_times] = rastro_detection(galileo, imgO, hold
         %segura botao
         holding_buttons('green') = true;
         holding_times('green') = tic;
-        
         fprintf(galileo,'%c', APERTA_SEM_SOLTAR_GREEN);  
     end
 
@@ -112,10 +109,9 @@ function [holding_buttons, holding_times] = rastro_detection(galileo, imgO, hold
     %Se esta_apertando e nao ha mais rastro passando
     if( holding_buttons('green') && ...
         ~(imgO(312,230,G) >= green_min && imgO(312,230,G) <= green_max) && ...
-        toc(holding_times('green')) > 0.35)
+        toc(holding_times('green')) > tempo_espera)
 
         holding_buttons('green') = false;
-
         fprintf(galileo,'%c', SOLTA_GREEN);  
 
     end
@@ -154,7 +150,6 @@ function [holding_buttons, holding_times] = rastro_detection(galileo, imgO, hold
         %segura botao
         holding_buttons('yellow') = true;
         holding_times('yellow') = tic;
-        
         fprintf(galileo,'%c', APERTA_SEM_SOLTAR_YELLOW);  
     end
 
@@ -163,10 +158,9 @@ function [holding_buttons, holding_times] = rastro_detection(galileo, imgO, hold
     if( holding_buttons('yellow') && ...
         ~(imgO(312,311,R) >= yellowR_min && imgO(312,311,R) <= yellowR_max && ...
           imgO(312,311,G) >= yellowG_min && imgO(312,311,G) <= yellowG_max) && ...
-        toc(holding_times('yellow')) > 0.35)
+        toc(holding_times('yellow')) > tempo_espera)
 
         holding_buttons('yellow') = false;
-
         fprintf(galileo,'%c', SOLTA_YELLOW);  
 
     end
@@ -205,7 +199,6 @@ function [holding_buttons, holding_times] = rastro_detection(galileo, imgO, hold
         %segura botao
         holding_buttons('blue') = true;
         holding_times('blue') = tic;
-        
         fprintf(galileo,'%c', APERTA_SEM_SOLTAR_BLUE);  
     end
 
@@ -214,10 +207,9 @@ function [holding_buttons, holding_times] = rastro_detection(galileo, imgO, hold
     if( holding_buttons('blue') && ...
         ~(imgO(312,311,B) >= blueB_min && imgO(312,311,B) <= blueB_max && ...
           imgO(312,311,G) >= blueG_min && imgO(312,311,G) <= blueG_max) && ...
-        toc(holding_times('blue')) > 0.35)
+        toc(holding_times('blue')) > tempo_espera)
 
         holding_buttons('blue') = false;
-
         fprintf(galileo,'%c', SOLTA_BLUE);  
 
     end
@@ -256,7 +248,6 @@ function [holding_buttons, holding_times] = rastro_detection(galileo, imgO, hold
         %segura botao
         holding_buttons('orange') = true;
         holding_times('orange') = tic;
-        
         fprintf(galileo,'%c', APERTA_SEM_SOLTAR_ORANGE);  
     end
 
@@ -265,10 +256,9 @@ function [holding_buttons, holding_times] = rastro_detection(galileo, imgO, hold
     if( holding_buttons('orange') && ...
         ~(imgO(312,311,R) >= orangeR_min && imgO(312,311,R) <= orangeR_max && ...
           imgO(312,311,G) >= orangeG_min && imgO(312,311,G) <= orangeG_max) && ...
-        toc(holding_times('orange')) > 0.35)
+        toc(holding_times('orange')) > tempo_espera)
 
         holding_buttons('orange') = false;
-
         fprintf(galileo,'%c', SOLTA_ORANGE);  
 
     end

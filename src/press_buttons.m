@@ -1,15 +1,5 @@
 function press_buttons(vid, galileo)
     debug = false;
-    % escolhe o nivel que sera jogado
-
-    % opcoes de niveis disponiveis
-    niveis_easy = ["easy_slowest", "easy_slower", "easy_slow", "easy_full_speed"];
-    niveis_medium = ["medium_slowest", "medium_slower", "medium_slow", "medium_full_speed"];
-    niveis_hard = ["hard_slowest", "hard_slower", "hard_slow", "hard_full_speed"];
-    niveis_expert = ["expert_slowest", "expert_slower", "expert_slow", "expert_full_speed"];
-
-    % nivel escolhido
-    nivel = niveis_easy(1); % easy_slowest
 
     % cores
     % salvar um arquivo em disco com as variaveis
@@ -33,23 +23,14 @@ function press_buttons(vid, galileo)
 
     % acoes
     APERTA_E_SOLTA_RED = char(100);
-    APERTA_SEM_SOLTAR_RED = char(101);
-    SOLTA_RED = char(102);
     APERTA_E_SOLTA_GREEN = char(110);
-    APERTA_SEM_SOLTAR_GREEN = char(111);
-    SOLTA_GREEN = char(112);
     APERTA_E_SOLTA_YELLOW = char(120);
-    APERTA_SEM_SOLTAR_YELLOW = char(121);
-    SOLTA_YELLOW = char(122);
     APERTA_E_SOLTA_BLUE = char(130);
-    APERTA_SEM_SOLTAR_BLUE = char(131);
-    SOLTA_BLUE = char(132);
     APERTA_E_SOLTA_ORANGE = char(140);
-    APERTA_SEM_SOLTAR_ORANGE = char(141);
-    SOLTA_ORANGE = char(142);
 
-    % tempo
-    [tempo_simples, tempo_espera] = chose_times(nivel);
+    % tempos
+    tempo_espera = 0.35;
+    tempo_simples = 1.094;
     tempo_rastro = 1.200;
 
     % envia os tempos para o arduino, ou verifica se os tempos
