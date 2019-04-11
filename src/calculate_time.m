@@ -10,7 +10,7 @@ end
 
 [vid, galileo] = connect_devices();
 configure_video(vid);
-from_one_red_note(vid, galileo);
+from_red_rastro(vid, galileo);
 
 function from_one_red_note(vid, galileo)
         
