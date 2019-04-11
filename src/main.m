@@ -10,9 +10,9 @@ end
 
 [vid, galileo] = connect_devices();
 configure_video(vid);
-% preview(vid);
+preview(vid);
 [note_time, trail_time] = detect_level(vid);
-fprintf("%f", note_time)
-fprintf("\n")
-fprintf("%f", trail_time)
+% fprintf("%f", note_time)
+% fprintf("\n")
+% fprintf("%f", trail_time)
 press_buttons(vid, galileo);

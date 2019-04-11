@@ -8,7 +8,7 @@ function [note_time, trail_time] = detect_level(vid) % Colocar variável que diz
     red_min = 175;
     red_max = 255;
     green_min = 175;
-    green_max = 175;
+    green_max = 255;
     yellowR_min = 175;
     yellowR_max = 255;
     yellowG_min = 150;
@@ -29,39 +29,41 @@ function [note_time, trail_time] = detect_level(vid) % Colocar variável que diz
     counter = 5;
 
     % TODO consertar valor dos pixels (Downs principalmente)
-    while (true)
+    while(counter > 0)
         imgO = getdata(vid,1,'uint8');
 
-        trail_greenPixel = imgO(281,243,G);
-        trail_redPixel = imgO(281,278,R);
-        trail_yellowPixelR = imgO(281,312,R);
-        trail_yellowPixelG = imgO(281,312,G);
-        trail_bluePixelG = imgO(279,348,G);
-        trail_bluePixelB = imgO(279,348,B);
-        trail_orangePixelR = imgO(282,382,R);
-        trail_orangePixelG = imgO(282,382,G);
+        trail_greenPixel = imgO(293,238,G);
+        trail_redPixel = imgO(293,275,R);
+        trail_yellowPixelR = imgO(293,312,R);
+        trail_yellowPixelG = imgO(293,312,G);
+        trail_bluePixelG = imgO(293,349,G);
+        trail_bluePixelB = imgO(293,349,B);
+        trail_orangePixelR = imgO(293,387,R);
+        trail_orangePixelG = imgO(293,387,G);
 
         %detect green
         if(trail_greenPixel >= green_min && trail_greenPixel <= green_max)
             tic;
+            fprintf("verde")
 
             while (true)
-                % fprintf("verde")
-
+                
                 imgO = getdata(vid,1,'uint8');
-                note_greenPixel = imgO(443,273,G);
+                note_greenPixel = imgO(312,230,G);
 
                 if(note_greenPixel >= green_min && note_greenPixel <= green_max)
                     time_t = toc;
                     tic
 
                     while (true)
-                        % fprintf("verde baixo")
                         imgO = getdata(vid,1,'uint8');
                         down_greenPixel = imgO(412,185,G);
     
                         if(down_greenPixel >= green_min && down_greenPixel <= green_max)
                             time_n = toc;
+                            fprintf("%f", time_n);
+                            fprintf("%f", time_t);
+                            fprintf("\n")
                             counter = counter - 1;
                             break
                         end
@@ -69,28 +71,30 @@ function [note_time, trail_time] = detect_level(vid) % Colocar variável que diz
                     break
                 end
             end
-            break
 
         %detect red    
         elseif(trail_redPixel >= red_min && trail_redPixel <= red_max)
             tic;
+            fprintf("vermelho")
 
             while (true)
-                % fprintf("vermelho")
+                
                 imgO = getdata(vid,1,'uint8');
-                note_redPixel = imgO(444,336,R);
+                note_redPixel = imgO(311,274,R);
 
                 if(note_redPixel >= red_min && note_redPixel <= red_max)
                     time_t = toc;
                     tic
 
                     while (true)
-                        % fprintf("vermelho baixo")
                         imgO = getdata(vid,1,'uint8');
-                        down_redPixel = imgO(411,250,G);
+                        down_redPixel = imgO(411,250,R);
 
-                        if(down_redPixel >= green_min && down_redPixel <= green_max)
+                        if(down_redPixel >= red_min && down_redPixel <= red_max)
                             time_n = toc;
+                            fprintf("%f", time_n);
+                            fprintf("%f", time_t);
+                            fprintf("\n")
                             counter = counter - 1;
                             break
                         end
@@ -98,19 +102,18 @@ function [note_time, trail_time] = detect_level(vid) % Colocar variável que diz
                     break
                 end
             end
-            break
 
         %detect yellow
         elseif(trail_yellowPixelR >= yellowR_min && trail_yellowPixelR <= yellowR_max && ...
             trail_yellowPixelG >= yellowG_min && trail_yellowPixelG <= yellowG_max )
-            
+            fprintf("amarelo")
             tic;
 
             while (true)
-                % fprintf("amarelo")
+                
                 imgO = getdata(vid,1,'uint8');
-                note_yellowPixelR = imgO(444,399,R);
-                note_yellowPixelG = imgO(444,399,G);
+                note_yellowPixelR = imgO(312,311,R);
+                note_yellowPixelG = imgO(312,311,G);
 
                 if(note_yellowPixelR >= yellowR_min && note_yellowPixelR <= yellowR_max && ...
                 note_yellowPixelG >= yellowG_min && note_yellowPixelG <= yellowG_max )
@@ -118,14 +121,16 @@ function [note_time, trail_time] = detect_level(vid) % Colocar variável que diz
                     tic
 
                     while (true)
-                        % fprintf("amarelo baixo")
                         imgO = getdata(vid,1,'uint8');
-                        down_yellowPixelR = imgO(411,313,G);
+                        down_yellowPixelR = imgO(411,313,R);
                         down_yellowPixelG = imgO(411,313,G);
 
                         if(down_yellowPixelR >= yellowR_min && down_yellowPixelR <= yellowR_max && ...
                         down_yellowPixelG >= yellowG_min && down_yellowPixelG <= yellowG_max )
                             time_n = toc;
+                            fprintf("%f", time_n);
+                            fprintf("%f", time_t);
+                            fprintf("\n")
                             counter = counter - 1;
                             break
                         end
@@ -133,19 +138,18 @@ function [note_time, trail_time] = detect_level(vid) % Colocar variável que diz
                     break
                 end
             end
-            break
 
         %detect blue
         elseif(trail_bluePixelG >= blueG_min && trail_bluePixelG <= blueG_max && ...
             trail_bluePixelB >= blueB_min && trail_bluePixelB <= blueB_max )
-
+            fprintf("azul")
             tic;
 
             while (true)
-                % fprintf("azul")
+                
                 imgO = getdata(vid,1,'uint8');
-                note_bluePixelG = imgO(445,460,G);
-                note_bluePixelB = imgO(445,460,B);
+                note_bluePixelG = imgO(312,354,G);
+                note_bluePixelB = imgO(312,354,B);
 
                 if(note_bluePixelG >= blueG_min && note_bluePixelG <= blueG_max && ...
                 note_bluePixelB >= blueB_min && note_bluePixelB <= blueB_max )
@@ -153,14 +157,16 @@ function [note_time, trail_time] = detect_level(vid) % Colocar variável que diz
                     tic
 
                     while (true)
-                        % fprintf("azul baixo")
                         imgO = getdata(vid,1,'uint8');
-                        down_bluePixelR = imgO(411,376,G);
                         down_bluePixelG = imgO(411,376,G);
+                        down_bluePixelB = imgO(411,376,B);
 
-                        if(down_bluePixelR >= blueR_min && down_bluePixelR <= blueR_max && ...
-                        down_bluePixelG >= blueG_min && down_bluePixelG <= blueG_max )
+                        if(down_bluePixelG >= blueG_min && down_bluePixelG <= blueG_max && ...
+                        down_bluePixelB >= blueB_min && down_bluePixelB <= blueB_max )
                             time_n = toc;
+                            fprintf("%f", time_n);
+                            fprintf("%f", time_t);
+                            fprintf("\n")
                             counter = counter - 1;
                             break
                         end
@@ -168,19 +174,19 @@ function [note_time, trail_time] = detect_level(vid) % Colocar variável que diz
                     break
                 end
             end
-            break
 
         %detect orange
         elseif(trail_orangePixelR >= orangeR_min && trail_orangePixelR <= orangeR_max && ...
             trail_orangePixelG >= orangeG_min && trail_orangePixelG <= orangeG_max )
 
             tic;
+            fprintf("laranja")
 
             while (true)
-                % fprintf("laranja")
+                
                 imgO = getdata(vid,1,'uint8');
-                note_orangePixelR = imgO(445,525,R);
-                note_orangePixelG = imgO(445,525,G);
+                note_orangePixelR = imgO(311,395,R);
+                note_orangePixelG = imgO(311,395,G);
 
                 if(note_orangePixelR >= orangeR_min && note_orangePixelR <= orangeR_max && ...
                     note_orangePixelG >= orangeG_min && note_orangePixelG <= orangeG_max )
@@ -188,14 +194,16 @@ function [note_time, trail_time] = detect_level(vid) % Colocar variável que diz
                     tic
 
                     while (true)
-                        % fprintf("laranja baixo")
                         imgO = getdata(vid,1,'uint8');
-                        down_orangePixelR = imgO(411,440,G);
+                        down_orangePixelR = imgO(411,440,R);
                         down_orangePixelG = imgO(411,440,G);
 
                         if(down_orangePixelR >= orangeR_min && down_orangePixelR <= orangeR_max && ...
                         down_orangePixelG >= orangeG_min && down_orangePixelG <= orangeG_max )
                             time_n = toc;
+                            fprintf("%f", time_n);
+                            fprintf("%f", time_t);
+                            fprintf("\n")
                             counter = counter - 1;
                             break
                         end
@@ -203,10 +211,8 @@ function [note_time, trail_time] = detect_level(vid) % Colocar variável que diz
                     break
                 end
             end
-            break
         end
     end
-    % fprintf("average: %f", average_trail_time)
     trail_time = time_t + time_n;
     note_time = time_n;
 end
