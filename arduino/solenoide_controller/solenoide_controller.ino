@@ -12,14 +12,6 @@ class SimpleState{
     unsigned long previousMillis;
     
   public:
-<<<<<<< HEAD
-    SimpleState(unsigned long prev){
-      pin=3;
-      pinMode(pin, OUTPUT);
-      offTime = 1100;
-      finished = false;
-      previousMillis = prev;
-=======
     SimpleState(int pin, unsigned long prev, unsigned long off){
       this->pin=pin;
       pinMode(this->pin, OUTPUT);
@@ -27,7 +19,6 @@ class SimpleState{
       this->finished = false;
       this->previousMillis = prev;
       this->soltar = false;
->>>>>>> master
     }
 
     void Update(){
@@ -55,18 +46,9 @@ class TraceState{
     bool soltar;
     unsigned long offTime; // offtime entre detectar a nota e o momento de apertar
     unsigned long previousMillis;
+    unsigned long previousMillisFree;
 
   public:
-<<<<<<< HEAD
-    TraceState(unsigned long prev){
-      pin=3;
-      pinMode(pin, OUTPUT);
-      finished = false;
-      pressed = false;
-      previousMillis = prev;
-      soltar = false;
-      offTime = 1250;
-=======
     TraceState(int pin, unsigned long prev, unsigned long off){
       this->pin=pin;
       pinMode(this->pin, OUTPUT);
@@ -76,19 +58,14 @@ class TraceState{
       this->previousMillisFree = prev;
       this->soltar = false;
       this->offTime = 1200;
->>>>>>> master
     }
 
     void Update(){
       // Aperta após passado o offtime
       unsigned long currentMillis = millis();
       // Solta
-<<<<<<< HEAD
-      if(soltar && !finished && pressed && (currentMillis-previousMillis)>= offTime){
-=======
       if(this->soltar && !(this->finished) && this->pressed && 
         (currentMillis-this->previousMillisFree)>= this->offTime){
->>>>>>> master
         digitalWrite(this->pin, LOW);
         this->pressed = false;
         this->finished = true;
@@ -100,16 +77,6 @@ class TraceState{
         this->pressed = true;
       }
     }
-<<<<<<< HEAD
-    void Soltar(unsigned long prev){
-      this->soltar = true;
-      this->previousMillis = prev;
-    }
-};
-
-int L1 = 3;
-unsigned long offtime = 1100;
-=======
     void Soltar(unsigned long prev_free, int off){
       this->soltar = true;
       this->previousMillisFree = prev_free;
@@ -126,7 +93,6 @@ unsigned long offtime_rastro = 0;
 #define R2_PIN 5
 #define X_PIN 6
 
->>>>>>> master
 unsigned char incomingByte = '\0';
 
 // Red States
@@ -160,12 +126,6 @@ int ind=0, first_item=0;
 void setup() {
   Serial.begin(115200);
   
-<<<<<<< HEAD
-  for(int i=0; i<N_SIMPLE_STATES; i++){
-    freeStates[i] = 1;
-    simpleStates[i] = new SimpleState(millis());
-    simpleStates[i]->finished = true;
-=======
   // Inicializa os estados simples
   for(int i=0; i<N_SIMPLE_STATES; i++){
     redSimpleStates[i] = new SimpleState(L1_PIN, millis(), offtime_simple);
@@ -182,32 +142,10 @@ void setup() {
 
     orangeSimpleStates[i] = new SimpleState(X_PIN, millis(), offtime_simple);
     orangeSimpleStates[i]->finished = true;    
->>>>>>> master
   }
 
   // Inicializa os estados de rastros
   for(int i=0; i<N_TRACE_STATES; i++){
-<<<<<<< HEAD
-    traceStates[i] = new TraceState(millis());
-    traceStates[i]->finished = true;
-  }
-
-  // obtém o tempo do matlab
-//  while(true){
-//    if (Serial.available() > 0) {
-//      incomingByte = Serial.read();
-//      if(incomingByte == 'a'){
-//        String str = Serial.readStringUntil('b');
-//        offtime = str.toInt();
-//        Serial.println(offtime);
-//        incomingByte = '\0';
-//        break;
-//      }
-//    }
-//  }
-
-  delay(5000);
-=======
     redTraceStates[i] = new TraceState(L1_PIN, millis(), offtime_rastro);
     redTraceStates[i]->finished = true;
 
@@ -225,36 +163,12 @@ void setup() {
   }
 
   delay(1000);
->>>>>>> master
 }
 
 void loop(){
   if (Serial.available() > 0) {
     incomingByte = Serial.read();
     
-<<<<<<< HEAD
-    if(incomingByte == char(100)){
-      ind=get_simpleStates_index();
-      simpleStates[ind] = new SimpleState(millis());
-      incomingByte = '\0';
-    }
-    
-    if(incomingByte == char(101)){
-      ind = get_traceStates_index();
-      traceStates[ind] = new TraceState(millis());
-      traceQueue.push(ind);
-      incomingByte = '\0';
-    }
-
-    if(incomingByte == char(102) && !traceQueue.isEmpty()){
-      first_item = traceQueue.front();
-      if(!traceStates[first_item]->finished && traceStates[first_item]->pressed){
-        ind = traceQueue.pop();
-        traceStates[ind]->Soltar(millis());
-        incomingByte = '\0';
-      }
-    }
-=======
     // Estado simples: aperta e solta automaticamente 
     // o mais rápido possível
 
@@ -403,7 +317,6 @@ void loop(){
       offtime_rastro = 0;
       getRastroTime();
     }
->>>>>>> master
   }
 
   checkAllOnStates();

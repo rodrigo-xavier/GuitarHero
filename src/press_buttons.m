@@ -1,6 +1,6 @@
 function press_buttons(vid, galileo)
     flag_debug = false;
-    flag_has_time = false;
+    flag_level = false;
 
     % cores
     % salvar um arquivo em disco com as variaveis
@@ -76,12 +76,9 @@ function press_buttons(vid, galileo)
         %Se nao esta apertando e passa o rastro pela primeira vez
         [holding_buttons, holding_times] = rastro_detection(galileo, imgO, holding_buttons, holding_times);
 
-        %calcula tempo e retorna flag
-        if (~flag_has_time)
-            [note_time, trail_time, flag_has_time] = detect_level(vid);
-            % fprintf("%f", note_time)
-            % fprintf("\n")
-            % fprintf("%f", trail_time)
+        % calcula tempo e retorna flag
+        if (~flag_level)
+            [note_time, trail_time, flag_level] = detect_level(vid)
         end
         
         %detect green
