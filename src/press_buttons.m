@@ -1,5 +1,6 @@
 function press_buttons(vid, galileo)
-    debug = false;
+    flag_debug = false;
+    flag_level = false;
 
     % cores
     % salvar um arquivo em disco com as variaveis
@@ -74,6 +75,11 @@ function press_buttons(vid, galileo)
         %Segura botao no rastro
         %Se nao esta apertando e passa o rastro pela primeira vez
         [holding_buttons, holding_times] = rastro_detection(galileo, imgO, holding_buttons, holding_times);
+
+        % calcula tempo e retorna flag
+        if (~flag_level)
+            [note_time, trail_time, flag_level] = detect_level(vid)
+        end
         
         %detect green
         if( greenPixel >= green_min && greenPixel <= green_max &&  ...
@@ -116,7 +122,7 @@ function press_buttons(vid, galileo)
            orange_time = tic;
         end
         
-        if(debug)
+        if(flag_debug)
             % Colore de verde os pixels que estão sendo utilizados
 
             % Simple Green

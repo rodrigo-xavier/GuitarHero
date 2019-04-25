@@ -26,7 +26,7 @@ function send_time_to_arduino(galileo, time_to_send, isRastro)
         if (galileo.BytesAvailable > 0)
             out = fscanf(galileo,'%c',galileo.BytesAvailable);
             if(str2num(out)==time_to_send*1000)
-                disp("Tempo: " + out);
+                % disp("Tempo: " + out);
                 break;
             end
         end

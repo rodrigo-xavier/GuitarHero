@@ -10,4 +10,5 @@ end
 
 [vid, galileo] = connect_devices();
 configure_video(vid);
+preview(vid);
 press_buttons(vid, galileo);

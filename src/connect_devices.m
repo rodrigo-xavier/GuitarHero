@@ -3,7 +3,7 @@ function [vid, galileo] = connect_devices()
     ME2 = [];
     ME = [];
     
-    % Tenta iniciar conexão com galileo nas 20 primeiras portas
+    % Tenta iniciar conexão com galileo nas 25 primeiras portas
     while(counter <= 25)
         COMX = strcat('COM', int2str(counter));
 
