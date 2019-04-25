@@ -84,8 +84,8 @@ class TraceState{
     }
 };
 
-unsigned long offtime_simple = 0;
-unsigned long offtime_rastro = 0;
+volatile unsigned long offtime_simple = 0;
+volatile unsigned long offtime_rastro = 0;
 
 #define L1_PIN 3
 #define L2_PIN 2
@@ -308,13 +308,11 @@ void loop(){
 
     // Obtem o tempo de offtime de nota simples
     if(incomingByte == char(90)){
-      offtime_simple = 0;
       getSimpleTime();
     }
 
     // Obtem o tempo de offtime de nota de rastro
     if(incomingByte == char(91)){
-      offtime_rastro = 0;
       getRastroTime();
     }
   }
@@ -431,6 +429,7 @@ void checkAllOnStates(){
 }
 
 void getSimpleTime(){
+  offtime_simple = 0;
   while(true){
     if (Serial.available() > 0) {
       if(offtime_simple != 0){
@@ -448,6 +447,7 @@ void getSimpleTime(){
 }
 
 void getRastroTime(){
+  offtime_rastro = 0;
   while(true){
     if (Serial.available() > 0) {
       if(offtime_rastro != 0){

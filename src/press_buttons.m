@@ -1,6 +1,5 @@
 function press_buttons(vid, galileo)
-    flag_debug = false;
-    flag_level = false;
+    flag_debug = true;
 
     % cores
     % salvar um arquivo em disco com as variaveis
@@ -30,13 +29,12 @@ function press_buttons(vid, galileo)
     APERTA_E_SOLTA_ORANGE = char(140);
 
     % tempos
-    tempo_espera = 0.35;
-    tempo_simples = 1.094;
-    tempo_rastro = 1.200;
-
+    
     % envia os tempos para o arduino, ou verifica se os tempos
     % estão corretos, caso o arduino já possua o tempo
-    check_arduino_time(galileo, tempo_simples, tempo_rastro);
+    [tempo_simples, tempo_rastro] = detect_times(vid);
+    tempo_espera = tempo_rastro - tempo_simples;
+    configure_arduino_time(galileo, tempo_simples, tempo_rastro);
     
     R = 1;
     G = 2;
@@ -74,12 +72,7 @@ function press_buttons(vid, galileo)
         
         %Segura botao no rastro
         %Se nao esta apertando e passa o rastro pela primeira vez
-        [holding_buttons, holding_times] = rastro_detection(galileo, imgO, holding_buttons, holding_times);
-
-        % calcula tempo e retorna flag
-        if (~flag_level)
-            [note_time, trail_time, flag_level] = detect_level(vid)
-        end
+        [holding_buttons, holding_times] = rastro_play(galileo, imgO, holding_buttons, holding_times);
         
         %detect green
         if( greenPixel >= green_min && greenPixel <= green_max &&  ...

@@ -1,4 +1,4 @@
-function [holding_buttons, holding_times] = rastro_detection(galileo, imgO, holding_buttons, holding_times)
+function [holding_buttons, holding_times] = rastro_play(galileo, imgO, holding_buttons, holding_times)
     %tempo de espera
     tempo_espera = 0.35;
 

@@ -1,4 +1,4 @@
-function check_arduino_time(galileo, tempo_simple, tempo_rastro)
+function configure_arduino_time(galileo, tempo_simple, tempo_rastro)
     % Funcao que trata do envio de tempos para o arduino
     
     % fprintf(galileo,'%c', ENVIA_TIME_SIMPLE);

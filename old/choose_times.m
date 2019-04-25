@@ -1,4 +1,4 @@
-function [tempo_aperta, tempo_espera] = chose_times(nivel)
+function [tempo_aperta, tempo_espera] = choose_times(nivel)
     %Esta função retorna os tempos corretos de acordo com o nível passado.
     % O nível é o que estiver sendo jogado.
     

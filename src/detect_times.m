@@ -1,4 +1,4 @@
-function [note_time, trail_time, flag] = detect_level(vid)
+function [note_time, trail_time] = detect_times(vid)
     red_min         = 175;
     red_max         = 255;
     green_min       = 175;
@@ -185,5 +185,4 @@ function [note_time, trail_time, flag] = detect_level(vid)
     end
     trail_time = time_t + time_n;
     note_time = time_n;
-    flag = true;
 end
