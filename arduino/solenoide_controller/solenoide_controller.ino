@@ -93,7 +93,10 @@ volatile unsigned long offtime_rastro = 0;
 #define R2_PIN 5
 #define X_PIN 6
 
+unsigned char incomingMSByte = '\0';
+unsigned char incomingLSByte = '\0';
 unsigned char incomingByte = '\0';
+uint16_t commands = 0;
 
 // Red States
 SimpleState *redSimpleStates[N_SIMPLE_STATES];
@@ -166,42 +169,44 @@ void setup() {
 }
 
 void loop(){
-  if (Serial.available() > 0) {
-    incomingByte = Serial.read();
+  if (Serial.available() >= 2) {
+    incomingMSByte = Serial.read();
+    incomingLSByte = Serial.read();
+    commands = ( (incomingMSByte << 8) | incomingLSByte);
     
     // Estado simples: aperta e solta automaticamente 
     // o mais rápido possível
 
     // Red (L1_PIN)
-    if(incomingByte == char(100)){
+    if(bitRead(commands, 0)){
       ind=get_simpleStates_index('R');
       redSimpleStates[ind] = new SimpleState(L1_PIN, millis(), offtime_simple);
       incomingByte = '\0';
     }
 
     // Green (L2_PIN)
-    if(incomingByte == char(110)){
+    if(bitRead(commands, 1)){
       ind=get_simpleStates_index('G');
       greenSimpleStates[ind] = new SimpleState(L2_PIN, millis(), offtime_simple);
       incomingByte = '\0';
     }
 
     // Yellow (R1_PIN)
-    if(incomingByte == char(120)){
+    if(bitRead(commands, 2)){
       ind=get_simpleStates_index('Y');
       yellowSimpleStates[ind] = new SimpleState(R1_PIN, millis(), offtime_simple);
       incomingByte = '\0';
     }
 
     // Blue (R1_PIN)
-    if(incomingByte == char(130)){
+    if(bitRead(commands, 3)){
       ind=get_simpleStates_index('B');
       blueSimpleStates[ind] = new SimpleState(R2_PIN, millis(), offtime_simple);
       incomingByte = '\0';
     }
 
     // Orange (X_PIN)
-    if(incomingByte == char(140)){
+    if(bitRead(commands, 4)){
       ind=get_simpleStates_index('O');
       orangeSimpleStates[ind] = new SimpleState(X_PIN, millis(), offtime_simple);
       incomingByte = '\0';
@@ -213,7 +218,7 @@ void loop(){
 
     // Estado de rastro: Aperta sem soltar
     // Red (L1_PIN)
-    if(incomingByte == char(101)){
+    if(bitRead(commands, 5)){
       ind = get_traceStates_index('R');
       redTraceStates[ind] = new TraceState(L1_PIN, millis(), offtime_rastro);
       redTraceQueue.push(ind);
@@ -221,7 +226,7 @@ void loop(){
     }
 
     // Green (L2_PIN)
-    if(incomingByte == char(111)){
+    if(bitRead(commands, 6)){
       ind = get_traceStates_index('G');
       greenTraceStates[ind] = new TraceState(L2_PIN, millis(), offtime_rastro);
       greenTraceQueue.push(ind);
@@ -229,7 +234,7 @@ void loop(){
     }
 
     // Yellow (R1_PIN)
-    if(incomingByte == char(121)){
+    if(bitRead(commands, 7)){
       ind = get_traceStates_index('Y');
       yellowTraceStates[ind] = new TraceState(R1_PIN, millis(), offtime_rastro);
       yellowTraceQueue.push(ind);
@@ -237,7 +242,7 @@ void loop(){
     }
 
     // Blue (R2_PIN)
-    if(incomingByte == char(131)){
+    if(bitRead(commands, 8)){
       ind = get_traceStates_index('B');
       blueTraceStates[ind] = new TraceState(R2_PIN, millis(), offtime_rastro);
       blueTraceQueue.push(ind);
@@ -245,7 +250,7 @@ void loop(){
     }
 
     // Orange (X_PIN)
-    if(incomingByte == char(141)){
+    if(bitRead(commands, 9)){
       ind = get_traceStates_index('O');
       orangeTraceStates[ind] = new TraceState(X_PIN, millis(), offtime_rastro);
       orangeTraceQueue.push(ind);
@@ -256,7 +261,7 @@ void loop(){
 
     // Estado de rastro: Solta
     // Red (L1_PIN)
-    if(incomingByte == char(102) && !redTraceQueue.isEmpty()){
+    if(bitRead(commands, 10) && !redTraceQueue.isEmpty()){
       first_item = redTraceQueue.front();
       if(!redTraceStates[first_item]->finished){
         ind = redTraceQueue.pop();
@@ -266,7 +271,7 @@ void loop(){
     }
     
     // Green (R1_PIN)
-    if(incomingByte == char(112) && !greenTraceQueue.isEmpty()){
+    if(bitRead(commands, 11) && !greenTraceQueue.isEmpty()){
       first_item = greenTraceQueue.front();
       if(!greenTraceStates[first_item]->finished){
         ind = greenTraceQueue.pop();
@@ -275,7 +280,7 @@ void loop(){
       }
     }
 
-    if(incomingByte == char(122) && !yellowTraceQueue.isEmpty()){
+    if(bitRead(commands, 12) && !yellowTraceQueue.isEmpty()){
       first_item = yellowTraceQueue.front();
       if(!yellowTraceStates[first_item]->finished){
         ind = yellowTraceQueue.pop();
@@ -285,7 +290,7 @@ void loop(){
     }
 
     // Blue (R2_PIN)
-    if(incomingByte == char(132) && !blueTraceQueue.isEmpty()){
+    if(bitRead(commands, 13) && !blueTraceQueue.isEmpty()){
       first_item = blueTraceQueue.front();
       if(!blueTraceStates[first_item]->finished){
         ind = blueTraceQueue.pop();
@@ -295,7 +300,7 @@ void loop(){
     }
         
     // Orange (X_PIN)
-    if(incomingByte == char(142) && !orangeTraceQueue.isEmpty()){
+    if(bitRead(commands, 15) && !orangeTraceQueue.isEmpty()){
       first_item = orangeTraceQueue.front();
       if(!orangeTraceStates[first_item]->finished){
         ind = orangeTraceQueue.pop();
@@ -304,17 +309,46 @@ void loop(){
       }
     }
 
-
-
-    // Obtem o tempo de offtime de nota simples
-    if(incomingByte == char(90)){
-      getSimpleTime();
+    // Configuração de tempo
+    if(bitRead(commands, 14)){
+      while(true){
+        // Serial.print("LENDO");
+        if (Serial.available() > 0) {
+          // if(incomingByte != '\0'){
+          //   break;
+          // }
+          incomingByte = Serial.read();
+          Serial.print(incomingByte);
+          incomingByte = '\0';
+          if(incomingByte == char(90)){
+            Serial.print("OK");
+            getSimpleTime();
+            incomingByte = '\0';
+            break;
+          }
+          if(incomingByte == char(91)){
+            Serial.print("OK");
+            getRastroTime();
+            incomingByte == '\0';
+            break;
+          }
+        }
+      }
     }
+      // // Obtem o tempo de offtime de nota simples
+      // if(incomingByte == char(90)){
+      //   getSimpleTime();
+      // }
 
-    // Obtem o tempo de offtime de nota de rastro
-    if(incomingByte == char(91)){
-      getRastroTime();
-    }
+      // // Obtem o tempo de offtime de nota de rastro
+      // if(incomingByte == char(91)){
+      //   getRastroTime();
+      // }
+      // incomingByte == '\0';
+
+    incomingMSByte = 0;
+    incomingLSByte = 0;
+    commands = 0;
   }
 
   checkAllOnStates();

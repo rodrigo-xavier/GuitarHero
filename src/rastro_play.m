@@ -1,4 +1,4 @@
-function [holding_buttons, holding_times] = rastro_play(galileo, imgO, holding_buttons, holding_times)
+function [holding_buttons, holding_times, comandoString] = rastro_play(galileo, imgO, holding_buttons, holding_times, comandoString)
     %tempo de espera
     tempo_espera = 0.35;
 
@@ -43,6 +43,43 @@ function [holding_buttons, holding_times] = rastro_play(galileo, imgO, holding_b
 
     % ------------------------------------------------------------------------- %
 
+    %Green
+    %Segura botao no rastro
+    %Se nao esta apertando e passa o rastro pela primeira vez
+    if( ~holding_buttons('green') && ...
+        (imgO(293,238,G) >= green_min && imgO(293,238,G) <= green_max) && ...
+        (imgO(292,238,G) >= green_min && imgO(292,238,G) <= green_max) && ...
+        (imgO(291,239,G) >= green_min && imgO(291,239,G) <= green_max) && ...
+        (imgO(290,239,G) >= green_min && imgO(290,239,G) <= green_max) && ...
+        (imgO(289,239,G) >= green_min && imgO(289,239,G) <= green_max) && ...
+        (imgO(288,240,G) >= green_min && imgO(288,240,G) <= green_max) && ...
+        (imgO(287,240,G) >= green_min && imgO(287,240,G) <= green_max) && ...
+        (imgO(286,240,G) >= green_min && imgO(286,240,G) <= green_max) && ...
+        (imgO(285,241,G) >= green_min && imgO(285,241,G) <= green_max) && ...
+        (imgO(284,241,G) >= green_min && imgO(284,241,G) <= green_max) && ...
+        (imgO(283,241,G) >= green_min && imgO(283,241,G) <= green_max) && ...
+        (imgO(282,242,G) >= green_min && imgO(282,242,G) <= green_max) && ...
+        (imgO(281,243,G) >= green_min && imgO(281,243,G) <= green_max) )
+
+        %segura botao
+        holding_buttons('green') = true;
+        holding_times('green') = tic;
+        % fprintf(galileo,'%c', APERTA_SEM_SOLTAR_GREEN); 
+        comandoString(5) = '1'; 
+    end
+
+    %quando o rastro acaba solta
+    %Se esta_apertando e nao ha mais rastro passando
+    if( holding_buttons('green') && ...
+        ~(imgO(312,230,G) >= green_min && imgO(312,230,G) <= green_max) && ...
+        toc(holding_times('green')) > tempo_espera)
+
+        holding_buttons('green') = false;
+        % fprintf(galileo,'%c', SOLTA_GREEN);  
+        comandoString(10) = '1';
+    end
+
+
     % Red
     %Segura botao no rastro
     %Se nao esta apertando e passa o rastro pela primeira vez
@@ -65,7 +102,8 @@ function [holding_buttons, holding_times] = rastro_play(galileo, imgO, holding_b
         holding_buttons('red') = true;
         holding_times('red') = tic;
         
-        fprintf(galileo,'%c', APERTA_SEM_SOLTAR_RED);  
+        % fprintf(galileo,'%c', APERTA_SEM_SOLTAR_RED); 
+        comandoString(6) = '1'; 
     end
 
     %quando o rastro acaba solta
@@ -76,45 +114,11 @@ function [holding_buttons, holding_times] = rastro_play(galileo, imgO, holding_b
 
         holding_buttons('red') = false;
 
-        fprintf(galileo,'%c', SOLTA_RED);  
+        % fprintf(galileo,'%c', SOLTA_RED);  
+        comandoString(11) = '1';
 
     end
 
-
-    %Green
-    %Segura botao no rastro
-    %Se nao esta apertando e passa o rastro pela primeira vez
-    if( ~holding_buttons('green') && ...
-        (imgO(293,238,G) >= green_min && imgO(293,238,G) <= green_max) && ...
-        (imgO(292,238,G) >= green_min && imgO(292,238,G) <= green_max) && ...
-        (imgO(291,239,G) >= green_min && imgO(291,239,G) <= green_max) && ...
-        (imgO(290,239,G) >= green_min && imgO(290,239,G) <= green_max) && ...
-        (imgO(289,239,G) >= green_min && imgO(289,239,G) <= green_max) && ...
-        (imgO(288,240,G) >= green_min && imgO(288,240,G) <= green_max) && ...
-        (imgO(287,240,G) >= green_min && imgO(287,240,G) <= green_max) && ...
-        (imgO(286,240,G) >= green_min && imgO(286,240,G) <= green_max) && ...
-        (imgO(285,241,G) >= green_min && imgO(285,241,G) <= green_max) && ...
-        (imgO(284,241,G) >= green_min && imgO(284,241,G) <= green_max) && ...
-        (imgO(283,241,G) >= green_min && imgO(283,241,G) <= green_max) && ...
-        (imgO(282,242,G) >= green_min && imgO(282,242,G) <= green_max) && ...
-        (imgO(281,243,G) >= green_min && imgO(281,243,G) <= green_max) )
-
-        %segura botao
-        holding_buttons('green') = true;
-        holding_times('green') = tic;
-        fprintf(galileo,'%c', APERTA_SEM_SOLTAR_GREEN);  
-    end
-
-    %quando o rastro acaba solta
-    %Se esta_apertando e nao ha mais rastro passando
-    if( holding_buttons('green') && ...
-        ~(imgO(312,230,G) >= green_min && imgO(312,230,G) <= green_max) && ...
-        toc(holding_times('green')) > tempo_espera)
-
-        holding_buttons('green') = false;
-        fprintf(galileo,'%c', SOLTA_GREEN);  
-
-    end
 
     %Yellow
     %Segura botao no rastro
@@ -150,7 +154,8 @@ function [holding_buttons, holding_times] = rastro_play(galileo, imgO, holding_b
         %segura botao
         holding_buttons('yellow') = true;
         holding_times('yellow') = tic;
-        fprintf(galileo,'%c', APERTA_SEM_SOLTAR_YELLOW);  
+        % fprintf(galileo,'%c', APERTA_SEM_SOLTAR_YELLOW);
+        comandoString(7) = '1';  
     end
 
     %quando o rastro acaba solta
@@ -161,9 +166,10 @@ function [holding_buttons, holding_times] = rastro_play(galileo, imgO, holding_b
         toc(holding_times('yellow')) > tempo_espera)
 
         holding_buttons('yellow') = false;
-        fprintf(galileo,'%c', SOLTA_YELLOW);  
-
+        % fprintf(galileo,'%c', SOLTA_YELLOW);  
+        comandoString(12) = '1';
     end
+
 
     %Blue
     %Segura botao no rastro
@@ -199,7 +205,8 @@ function [holding_buttons, holding_times] = rastro_play(galileo, imgO, holding_b
         %segura botao
         holding_buttons('blue') = true;
         holding_times('blue') = tic;
-        fprintf(galileo,'%c', APERTA_SEM_SOLTAR_BLUE);  
+        % fprintf(galileo,'%c', APERTA_SEM_SOLTAR_BLUE); 
+        comandoString(8) = '1'; 
     end
 
     %quando o rastro acaba solta
@@ -210,9 +217,10 @@ function [holding_buttons, holding_times] = rastro_play(galileo, imgO, holding_b
         toc(holding_times('blue')) > tempo_espera)
 
         holding_buttons('blue') = false;
-        fprintf(galileo,'%c', SOLTA_BLUE);  
-
+        % fprintf(galileo,'%c', SOLTA_BLUE);  
+        comandoString(13) = '1';
     end
+
 
     %Orange
     %Segura botao no rastro
@@ -248,7 +256,8 @@ function [holding_buttons, holding_times] = rastro_play(galileo, imgO, holding_b
         %segura botao
         holding_buttons('orange') = true;
         holding_times('orange') = tic;
-        fprintf(galileo,'%c', APERTA_SEM_SOLTAR_ORANGE);  
+        % fprintf(galileo,'%c', APERTA_SEM_SOLTAR_ORANGE);
+        comandoString(9) = '1';  
     end
 
     %quando o rastro acaba solta
@@ -259,8 +268,8 @@ function [holding_buttons, holding_times] = rastro_play(galileo, imgO, holding_b
         toc(holding_times('orange')) > tempo_espera)
 
         holding_buttons('orange') = false;
-        fprintf(galileo,'%c', SOLTA_ORANGE);  
-
+        % fprintf(galileo,'%c', SOLTA_ORANGE);  
+        comandoString(14) = '1';
     end
 
 end

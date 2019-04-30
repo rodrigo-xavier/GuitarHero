@@ -69,16 +69,20 @@ function press_buttons(vid, galileo)
         bluePixelB = imgO(312,354,B);
         orangePixelR = imgO(311,395,R);
         orangePixelG = imgO(311,395,G);
+
+        % Reinicia a string de comandos
+        comandoString = '0000000000000000';
         
         %Segura botao no rastro
         %Se nao esta apertando e passa o rastro pela primeira vez
-        [holding_buttons, holding_times] = rastro_play(galileo, imgO, holding_buttons, holding_times);
+        [holding_buttons, holding_times, comandoString] = rastro_play(galileo, imgO, holding_buttons, holding_times, comandoString);
         
         %detect green
         if( greenPixel >= green_min && greenPixel <= green_max &&  ...
             ~holding_buttons('green') && ...
             toc(green_time) > tempo_espera )
-            fprintf(galileo,'%c', APERTA_E_SOLTA_GREEN);
+            % fprintf(galileo,'%c', APERTA_E_SOLTA_GREEN);
+            comandoString(0) = '1';
             green_time = tic;
         end
 
@@ -87,7 +91,8 @@ function press_buttons(vid, galileo)
         if( redPixel >= red_min && redPixel <= red_max && ...
             ~holding_buttons('red') ...
             && toc(red_time) > tempo_espera )
-            fprintf(galileo,'%c', APERTA_E_SOLTA_RED);
+            % fprintf(galileo,'%c', APERTA_E_SOLTA_RED);
+            comandoString(1) = '1';
             red_time = tic;
         end
 
@@ -95,25 +100,30 @@ function press_buttons(vid, galileo)
         if(yellowPixelR >= yellowR_min && yellowPixelR <= yellowR_max && ...
            yellowPixelG >= yellowG_min && yellowPixelG <= yellowG_max && ...
            toc(yellow_time) > tempo_espera &&  ~holding_buttons('yellow'))
-           fprintf(galileo,'%c', APERTA_E_SOLTA_YELLOW);
-           yellow_time = tic;
+        %    fprintf(galileo,'%c', APERTA_E_SOLTA_YELLOW);
+            comandoString(2) = '1';
+            yellow_time = tic;
         end
 
         %detect blue
         if(bluePixelG >= blueG_min && bluePixelG <= blueG_max && ...
            bluePixelB >= blueB_min && bluePixelB <= blueB_max && ...
            toc(blue_time) > tempo_espera &&  ~holding_buttons('blue'))
-           fprintf(galileo,'%c', APERTA_E_SOLTA_BLUE);
-           blue_time = tic;
+        %    fprintf(galileo,'%c', APERTA_E_SOLTA_BLUE);
+            comandoString(3) = '1';
+            blue_time = tic;
         end
 
         %detect orange
         if(orangePixelR >= orangeR_min && orangePixelR <= orangeR_max && ...
            orangePixelG >= orangeG_min && orangePixelG <= orangeG_max && ...
            toc(orange_time) > tempo_espera &&  ~holding_buttons('orange'))
-           fprintf(galileo,'%c', APERTA_E_SOLTA_ORANGE);
-           orange_time = tic;
+        %    fprintf(galileo,'%c', APERTA_E_SOLTA_ORANGE);
+            comandoString(4) = '1';
+            orange_time = tic;
         end
+
+        envia_comando(galileo, comandoString);
         
         if(flag_debug)
             % Colore de verde os pixels que estão sendo utilizados
