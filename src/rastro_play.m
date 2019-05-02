@@ -27,7 +27,7 @@ function [holding_buttons, holding_times, comandoString] = rastro_play(galileo, 
     red_min = 175;
     red_max = 255;
     green_min = 175;
-    green_max = 175;
+    green_max = 255;
     yellowR_min = 175;
     yellowR_max = 255;
     yellowG_min = 150;
@@ -65,7 +65,7 @@ function [holding_buttons, holding_times, comandoString] = rastro_play(galileo, 
         holding_buttons('green') = true;
         holding_times('green') = tic;
         % fprintf(galileo,'%c', APERTA_SEM_SOLTAR_GREEN); 
-        comandoString(5) = '1'; 
+        comandoString(11) = '1'; 
     end
 
     %quando o rastro acaba solta
@@ -76,7 +76,7 @@ function [holding_buttons, holding_times, comandoString] = rastro_play(galileo, 
 
         holding_buttons('green') = false;
         % fprintf(galileo,'%c', SOLTA_GREEN);  
-        comandoString(10) = '1';
+        comandoString(6) = '1';
     end
 
 
@@ -103,7 +103,7 @@ function [holding_buttons, holding_times, comandoString] = rastro_play(galileo, 
         holding_times('red') = tic;
         
         % fprintf(galileo,'%c', APERTA_SEM_SOLTAR_RED); 
-        comandoString(6) = '1'; 
+        comandoString(10) = '1'; 
     end
 
     %quando o rastro acaba solta
@@ -115,7 +115,7 @@ function [holding_buttons, holding_times, comandoString] = rastro_play(galileo, 
         holding_buttons('red') = false;
 
         % fprintf(galileo,'%c', SOLTA_RED);  
-        comandoString(11) = '1';
+        comandoString(5) = '1';
 
     end
 
@@ -155,7 +155,7 @@ function [holding_buttons, holding_times, comandoString] = rastro_play(galileo, 
         holding_buttons('yellow') = true;
         holding_times('yellow') = tic;
         % fprintf(galileo,'%c', APERTA_SEM_SOLTAR_YELLOW);
-        comandoString(7) = '1';  
+        comandoString(9) = '1';  
     end
 
     %quando o rastro acaba solta
@@ -167,7 +167,7 @@ function [holding_buttons, holding_times, comandoString] = rastro_play(galileo, 
 
         holding_buttons('yellow') = false;
         % fprintf(galileo,'%c', SOLTA_YELLOW);  
-        comandoString(12) = '1';
+        comandoString(4) = '1';
     end
 
 
@@ -218,7 +218,7 @@ function [holding_buttons, holding_times, comandoString] = rastro_play(galileo, 
 
         holding_buttons('blue') = false;
         % fprintf(galileo,'%c', SOLTA_BLUE);  
-        comandoString(13) = '1';
+        comandoString(3) = '1';
     end
 
 
@@ -257,7 +257,7 @@ function [holding_buttons, holding_times, comandoString] = rastro_play(galileo, 
         holding_buttons('orange') = true;
         holding_times('orange') = tic;
         % fprintf(galileo,'%c', APERTA_SEM_SOLTAR_ORANGE);
-        comandoString(9) = '1';  
+        comandoString(7) = '1';  
     end
 
     %quando o rastro acaba solta
@@ -269,7 +269,7 @@ function [holding_buttons, holding_times, comandoString] = rastro_play(galileo, 
 
         holding_buttons('orange') = false;
         % fprintf(galileo,'%c', SOLTA_ORANGE);  
-        comandoString(14) = '1';
+        comandoString(2) = '1';
     end
 
 end

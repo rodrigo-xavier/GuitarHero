@@ -1,5 +1,5 @@
 function press_buttons(vid, galileo)
-    flag_debug = true;
+    flag_debug = false;
 
     % cores
     % salvar um arquivo em disco com as variaveis
@@ -82,7 +82,7 @@ function press_buttons(vid, galileo)
             ~holding_buttons('green') && ...
             toc(green_time) > tempo_espera )
             % fprintf(galileo,'%c', APERTA_E_SOLTA_GREEN);
-            comandoString(0) = '1';
+            comandoString(16) = '1';
             green_time = tic;
         end
 
@@ -92,7 +92,7 @@ function press_buttons(vid, galileo)
             ~holding_buttons('red') ...
             && toc(red_time) > tempo_espera )
             % fprintf(galileo,'%c', APERTA_E_SOLTA_RED);
-            comandoString(1) = '1';
+            comandoString(15) = '1';
             red_time = tic;
         end
 
@@ -101,7 +101,7 @@ function press_buttons(vid, galileo)
            yellowPixelG >= yellowG_min && yellowPixelG <= yellowG_max && ...
            toc(yellow_time) > tempo_espera &&  ~holding_buttons('yellow'))
         %    fprintf(galileo,'%c', APERTA_E_SOLTA_YELLOW);
-            comandoString(2) = '1';
+            comandoString(14) = '1';
             yellow_time = tic;
         end
 
@@ -110,7 +110,7 @@ function press_buttons(vid, galileo)
            bluePixelB >= blueB_min && bluePixelB <= blueB_max && ...
            toc(blue_time) > tempo_espera &&  ~holding_buttons('blue'))
         %    fprintf(galileo,'%c', APERTA_E_SOLTA_BLUE);
-            comandoString(3) = '1';
+            comandoString(13) = '1';
             blue_time = tic;
         end
 
@@ -119,10 +119,10 @@ function press_buttons(vid, galileo)
            orangePixelG >= orangeG_min && orangePixelG <= orangeG_max && ...
            toc(orange_time) > tempo_espera &&  ~holding_buttons('orange'))
         %    fprintf(galileo,'%c', APERTA_E_SOLTA_ORANGE);
-            comandoString(4) = '1';
+            comandoString(12) = '1';
             orange_time = tic;
         end
-
+        
         envia_comando(galileo, comandoString);
         
         if(flag_debug)

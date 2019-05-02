@@ -177,17 +177,17 @@ void loop(){
     // Estado simples: aperta e solta automaticamente 
     // o mais rápido possível
 
-    // Red (L1_PIN)
+    // Green (L2_PIN)
     if(bitRead(commands, 0)){
-      ind=get_simpleStates_index('R');
-      redSimpleStates[ind] = new SimpleState(L1_PIN, millis(), offtime_simple);
+      ind=get_simpleStates_index('G');
+      greenSimpleStates[ind] = new SimpleState(L2_PIN, millis(), offtime_simple);
       incomingByte = '\0';
     }
 
-    // Green (L2_PIN)
+    // Red (L1_PIN)
     if(bitRead(commands, 1)){
-      ind=get_simpleStates_index('G');
-      greenSimpleStates[ind] = new SimpleState(L2_PIN, millis(), offtime_simple);
+      ind=get_simpleStates_index('R');
+      redSimpleStates[ind] = new SimpleState(L1_PIN, millis(), offtime_simple);
       incomingByte = '\0';
     }
 
@@ -217,19 +217,20 @@ void loop(){
     // Comandos relacionados com o rastro
 
     // Estado de rastro: Aperta sem soltar
-    // Red (L1_PIN)
-    if(bitRead(commands, 5)){
-      ind = get_traceStates_index('R');
-      redTraceStates[ind] = new TraceState(L1_PIN, millis(), offtime_rastro);
-      redTraceQueue.push(ind);
-      incomingByte = '\0';
-    }
 
     // Green (L2_PIN)
-    if(bitRead(commands, 6)){
+    if(bitRead(commands, 5)){
       ind = get_traceStates_index('G');
       greenTraceStates[ind] = new TraceState(L2_PIN, millis(), offtime_rastro);
       greenTraceQueue.push(ind);
+      incomingByte = '\0';
+    }
+
+    // Red (L1_PIN)
+    if(bitRead(commands, 6)){
+      ind = get_traceStates_index('R');
+      redTraceStates[ind] = new TraceState(L1_PIN, millis(), offtime_rastro);
+      redTraceQueue.push(ind);
       incomingByte = '\0';
     }
 
@@ -260,22 +261,23 @@ void loop(){
     // ------ //
 
     // Estado de rastro: Solta
-    // Red (L1_PIN)
-    if(bitRead(commands, 10) && !redTraceQueue.isEmpty()){
-      first_item = redTraceQueue.front();
-      if(!redTraceStates[first_item]->finished){
-        ind = redTraceQueue.pop();
-        redTraceStates[ind]->Soltar(millis(), offtime_simple);
-        incomingByte = '\0';
-      }
-    }
     
     // Green (R1_PIN)
-    if(bitRead(commands, 11) && !greenTraceQueue.isEmpty()){
+    if(bitRead(commands, 10) && !greenTraceQueue.isEmpty()){
       first_item = greenTraceQueue.front();
       if(!greenTraceStates[first_item]->finished){
         ind = greenTraceQueue.pop();
         greenTraceStates[ind]->Soltar(millis(), offtime_simple);
+        incomingByte = '\0';
+      }
+    }
+
+    // Red (L1_PIN)
+    if(bitRead(commands, 11) && !redTraceQueue.isEmpty()){
+      first_item = redTraceQueue.front();
+      if(!redTraceStates[first_item]->finished){
+        ind = redTraceQueue.pop();
+        redTraceStates[ind]->Soltar(millis(), offtime_simple);
         incomingByte = '\0';
       }
     }
@@ -312,42 +314,27 @@ void loop(){
     // Configuração de tempo
     if(bitRead(commands, 14)){
       while(true){
-        // Serial.print("LENDO");
         if (Serial.available() > 0) {
-          // if(incomingByte != '\0'){
-          //   break;
-          // }
           incomingByte = Serial.read();
-          Serial.print(incomingByte);
-          incomingByte = '\0';
+          // Obtem o tempo de offtime de nota simples
           if(incomingByte == char(90)){
             Serial.print("OK");
             getSimpleTime();
-            incomingByte = '\0';
             break;
           }
+          // Obtem o tempo de offtime de nota de rastro
           if(incomingByte == char(91)){
             Serial.print("OK");
             getRastroTime();
-            incomingByte == '\0';
             break;
           }
         }
       }
+      incomingByte == '\0';
     }
-      // // Obtem o tempo de offtime de nota simples
-      // if(incomingByte == char(90)){
-      //   getSimpleTime();
-      // }
 
-      // // Obtem o tempo de offtime de nota de rastro
-      // if(incomingByte == char(91)){
-      //   getRastroTime();
-      // }
-      // incomingByte == '\0';
-
-    incomingMSByte = 0;
-    incomingLSByte = 0;
+    incomingMSByte = '\0';
+    incomingLSByte = '\0';
     commands = 0;
   }
 
