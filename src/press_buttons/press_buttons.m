@@ -1,6 +1,4 @@
 function press_buttons(vid, galileo)
-    flag_debug = false;
-
     % cores
     % salvar um arquivo em disco com as variaveis
     % para mudar para apenas load('cores.mat')
@@ -55,12 +53,9 @@ function press_buttons(vid, galileo)
     blue_time = tic;
     orange_time = tic;
 
-    preview(vid);
     while true
-        % get image from camera
         imgO = getdata(vid,1,'uint8');
 
-        % TODO: Verificar se os pixels estao corretos
         greenPixel = imgO(312,230,G);
         redPixel = imgO(311,274,R);
         yellowPixelR = imgO(312,311,R);
@@ -85,7 +80,6 @@ function press_buttons(vid, galileo)
             comandoString(16) = '1';
             green_time = tic;
         end
-
 
         %detect red   
         if( redPixel >= red_min && redPixel <= red_max && ...

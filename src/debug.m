@@ -1,7 +1,17 @@
-function debug(choice, imgO)
-    if (choice == 1)
-        debug_color_screen(imgO)
-    end
+% Global Flags
+global debug_color_screen  = false;
+global debug_green         = false;
+global debug_red           = false;
+global debug_blue          = false;
+global debug_orange        = false;
+global debug_yellow        = false;
+global debug_just_video    = false;
+
+
+function DEBUG(vid, galileo)
+    debug_color_screen(imgO)
+
+    if 
 end
 
 function debug_color_screen(imgO)
