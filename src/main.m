@@ -15,4 +15,4 @@ configure_video(vid);
 
 preview(vid);
 
-DEBUG(vid, galileo);
+depurate(vid, galileo);
