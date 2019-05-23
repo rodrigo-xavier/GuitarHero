@@ -1,3 +1,5 @@
+addpath('press_buttos/') 
+
 % Encerra conexão com galileo se estiver conectado
 if exist('galileo','var') == true
     fclose(galileo);

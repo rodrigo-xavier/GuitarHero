@@ -1,6 +1,6 @@
 % Global Flags
 global debug_color_screen  = false;
-global debug_green         = false;
+global debug_green         = true;
 global debug_red           = false;
 global debug_blue          = false;
 global debug_orange        = false;
@@ -9,12 +9,16 @@ global debug_just_video    = false;
 
 
 function DEBUG(vid, galileo)
-    debug_color_screen(imgO)
 
-    if 
+    % if (debug_color_screen)
+    %     color_screen(imgO);
+    % end
+    if (debug_green)
+        press_buttons_green(vid, galileo);
+    end
 end
 
-function debug_color_screen(imgO)
+function color_screen(imgO)
     R = 1;
     G = 2;
     B = 3;
