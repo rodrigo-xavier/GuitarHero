@@ -1,14 +1,19 @@
-% Global Flags
-global debug_color_screen  = false;
-global debug_green         = true;
-global debug_red           = false;
-global debug_blue          = false;
-global debug_orange        = false;
-global debug_yellow        = false;
-global debug_just_video    = false;
-
-
 function DEBUG(vid, galileo)
+    % Global Flags
+    global debug_color_screen;
+    global debug_green;
+    global debug_red;
+    global debug_blue;
+    global debug_orange;
+    global debug_yellow;
+    global debug_just_video;
+    debug_color_screen = false;
+    debug_green = true;
+    debug_red = false;
+    debug_blue = false;
+    debug_orange = false;
+    debug_yellow = false;
+    debug_just_video = false;
 
     % if (debug_color_screen)
     %     color_screen(imgO);

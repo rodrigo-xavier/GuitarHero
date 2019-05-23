@@ -1,4 +1,4 @@
-addpath('press_buttos/') 
+addpath('press_buttons/') 
 
 % Encerra conexão com galileo se estiver conectado
 if exist('galileo','var') == true
