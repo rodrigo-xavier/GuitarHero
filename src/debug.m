@@ -21,6 +21,18 @@ function DEBUG(vid, galileo)
     if (debug_green)
         press_buttons_green(vid, galileo);
     end
+    if (debug_red)
+        press_buttons_green(vid, galileo);
+    end
+    if (debug_blue)
+        press_buttons_green(vid, galileo);
+    end
+    if (debug_orange)
+        press_buttons_green(vid, galileo);
+    end
+    if (debug_yellow)
+        press_buttons_green(vid, galileo);
+    end
 end
 
 function color_screen(imgO)
