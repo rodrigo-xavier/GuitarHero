@@ -23,6 +23,9 @@ function press_buttons_yellow(vid, galileo, color_range, debug_color_pixels)
         [simple_pixels, pixels_rastro] = get_pixels(imgO);
         yellowPixelR = simple_pixels('yellowPixelR');
         yellowPixelG = simple_pixels('yellowPixelG');
+        
+        % Reinicia a string de comandos
+        comandoString = '0000000000000000';
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% rastro_play %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

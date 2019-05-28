@@ -20,6 +20,9 @@ function press_buttons_red(vid, galileo, color_range, debug_color_pixels)
         [simple_pixels, pixels_rastro] = get_pixels(imgO);
         redPixel = simple_pixels('redPixel');
         
+        % Reinicia a string de comandos
+        comandoString = '0000000000000000';
+        
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% rastro_play %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
         if( ~red_holding_button && ...

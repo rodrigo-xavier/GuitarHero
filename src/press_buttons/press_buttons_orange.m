@@ -28,6 +28,9 @@ function press_buttons_orange(vid, galileo, color_range, debug_color_pixels)
         orangePixelR = simple_pixels('orangePixelR');
         orangePixelG = simple_pixels('orangePixelG');
         
+        % Reinicia a string de comandos
+        comandoString = '0000000000000000';
+        
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% rastro_play %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
         if( ~orange_holding_button && ...

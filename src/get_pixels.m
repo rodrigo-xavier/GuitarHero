@@ -1,4 +1,8 @@
 function [simple_pixels, pixels_rastro] = get_pixels(imgO)
+    
+    R = 1;
+    G = 2;
+    B = 3;
 
     % Pixels do aperto simples
     greenPixel = imgO(312,230,G);

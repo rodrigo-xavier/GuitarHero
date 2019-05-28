@@ -28,6 +28,9 @@ function press_buttons_blue(vid, galileo, color_range, debug_color_pixels)
         bluePixelG = simple_pixels('bluePixelG');
         bluePixelB = simple_pixels('bluePixelB');
         
+        % Reinicia a string de comandos
+        comandoString = '0000000000000000';
+        
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% rastro_play %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         if( ~blue_holding_button && ...

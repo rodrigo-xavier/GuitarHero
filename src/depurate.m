@@ -1,5 +1,5 @@
 function depurate(vid, galileo)
-    debug_color_pixels = true;
+    debug_color_pixels = false;
     debug_color = 'all';
     debug_just_video = false;
     color_range = get_color_range();
