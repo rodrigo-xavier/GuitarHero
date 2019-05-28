@@ -1,21 +1,4 @@
-function [holding_buttons, holding_times, comandoString] = rastro_play(galileo, imgO, holding_buttons, holding_times, comandoString)
-    %tempo de espera
-    tempo_espera = 0.35;
-
-    % ------------------------------------------------------------------------- %
-    % Configuracao das variaveis (Eles também existem na funcao press_buttons)
-    % acoes
-    APERTA_SEM_SOLTAR_RED = char(101);
-    SOLTA_RED = char(102);
-    APERTA_SEM_SOLTAR_GREEN = char(111);
-    SOLTA_GREEN = char(112);
-    APERTA_SEM_SOLTAR_YELLOW = char(121);
-    SOLTA_YELLOW = char(122);
-    APERTA_SEM_SOLTAR_BLUE = char(131);
-    SOLTA_BLUE = char(132);
-    APERTA_SEM_SOLTAR_ORANGE = char(141);
-    SOLTA_ORANGE = char(142);
-
+function [holding_buttons, holding_times, comandoString] = rastro_play(imgO, holding_buttons, holding_times, comandoString, tempo_espera)
     % cores
     R = 1;
     G = 2;

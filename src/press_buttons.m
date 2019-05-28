@@ -21,13 +21,6 @@ function press_buttons(vid, galileo)
     orangeG_min = 95;
     orangeG_max = 255;
 
-    % acoes
-    APERTA_E_SOLTA_RED = char(100);
-    APERTA_E_SOLTA_GREEN = char(110);
-    APERTA_E_SOLTA_YELLOW = char(120);
-    APERTA_E_SOLTA_BLUE = char(130);
-    APERTA_E_SOLTA_ORANGE = char(140);
-
     % tempos
     
     % envia os tempos para o arduino, ou verifica se os tempos
@@ -75,7 +68,7 @@ function press_buttons(vid, galileo)
         
         %Segura botao no rastro
         %Se nao esta apertando e passa o rastro pela primeira vez
-        [holding_buttons, holding_times, comandoString] = rastro_play(galileo, imgO, holding_buttons, holding_times, comandoString);
+        [holding_buttons, holding_times, comandoString] = rastro_play(imgO, holding_buttons, holding_times, comandoString, tempo_espera);
         
         %detect green
         if( greenPixel >= green_min && greenPixel <= green_max &&  ...
