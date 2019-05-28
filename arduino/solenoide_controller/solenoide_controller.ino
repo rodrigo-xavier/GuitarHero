@@ -30,7 +30,7 @@ class SimpleState{
           this->previousMillis = millis();
         }
         if(this->soltar && !(this->finished) &&
-          (currentMillis-this->previousMillis)>=45){
+          (currentMillis-this->previousMillis)>=60){
           digitalWrite(this->pin, LOW);
           this->finished = true;
           this->soltar = false;
