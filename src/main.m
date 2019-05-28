@@ -15,4 +15,6 @@ configure_video(vid);
 
 preview(vid);
 
-depurate(vid, galileo);
+color_range = get_color_range()
+
+depurate(vid, galileo, color_range);

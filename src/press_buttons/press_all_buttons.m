@@ -1,32 +1,22 @@
-function press_buttons_colored_pixels(vid, galileo)
-    flag_debug = true;
+function press_all_buttons(vid, galileo, color_range, debug_color_pixels)
 
     % cores
-    % salvar um arquivo em disco com as variaveis
-    % para mudar para apenas load('cores.mat')
-    red_min = 175;
-    red_max = 255;
-    green_min = 175;
-    green_max = 255;
-    yellowR_min = 175;
-    yellowR_max = 255;
-    yellowG_min = 150;
-    yellowG_max = 255;
-    blueG_min = 125;
-    blueG_max = 255;
-    blueB_min = 175;
-    blueB_max = 255;
-    orangeR_min = 175;
-    orangeR_max = 255;
-    orangeG_min = 95;
-    orangeG_max = 255;
-
-    % acoes
-    APERTA_E_SOLTA_RED = char(100);
-    APERTA_E_SOLTA_GREEN = char(110);
-    APERTA_E_SOLTA_YELLOW = char(120);
-    APERTA_E_SOLTA_BLUE = char(130);
-    APERTA_E_SOLTA_ORANGE = char(140);
+    red_min = color_range('red_min');
+    red_max = color_range('red_max');
+    green_min = color_range('green_min');
+    green_max = color_range('green_max');
+    yellowR_min = color_range('yellowR_min');
+    yellowR_max = color_range('yellowR_max');
+    yellowG_min = color_range('yellowG_min');
+    yellowG_max = color_range('yellowG_max');
+    blueG_min = color_range('blueG_min');
+    blueG_max = color_range('blueG_max');
+    blueB_min = color_range('blueB_min');
+    blueB_max = color_range('blueG_max');
+    orangeR_min = color_range('orangeR_min');
+    orangeR_max = color_range('orangeR_max');
+    orangeG_min = color_range('orangeG_min');
+    orangeG_max = color_range('orangeR_max');
 
     % tempos
     
@@ -59,26 +49,30 @@ function press_buttons_colored_pixels(vid, galileo)
     while true
         % get image from camera
         imgO = getdata(vid,1,'uint8');
+        [simple_pixels, pixels_rastro] = get_pixels(imgO);
+
+        % Reinicia a string de comandos
+        comandoString = '0000000000000000';
 
         % TODO: Verificar se os pixels estao corretos
-        greenPixel = imgO(312,230,G);
-        redPixel = imgO(311,274,R);
-        yellowPixelR = imgO(312,311,R);
-        yellowPixelG = imgO(312,311,G);
-        bluePixelG = imgO(312,354,G);
-        bluePixelB = imgO(312,354,B);
-        orangePixelR = imgO(311,395,R);
-        orangePixelG = imgO(311,395,G);
+        greenPixel = simple_pixels('greenPixel');
+        redPixel = simple_pixels('redPixel');
+        yellowPixelR = simple_pixels('yellowPixelR');
+        yellowPixelG = simple_pixels('yellowPixelG');
+        bluePixelG = simple_pixels('bluePixelG');
+        bluePixelB = simple_pixels('bluePixelB');
+        orangePixelR = simple_pixels('orangePixelR');
+        orangePixelG = simple_pixels('orangePixelG');
         
         %Segura botao no rastro
         %Se nao esta apertando e passa o rastro pela primeira vez
-        [holding_buttons, holding_times] = rastro_play(galileo, imgO, holding_buttons, holding_times);
+        [holding_buttons, holding_times, comandoString] = rastro_play(galileo, pixels_rastro, simple_pixels, color_range, holding_buttons, holding_times, comandoString);
         
         %detect green
         if( greenPixel >= green_min && greenPixel <= green_max &&  ...
             ~holding_buttons('green') && ...
             toc(green_time) > tempo_espera )
-            fprintf(galileo,'%c', APERTA_E_SOLTA_GREEN);
+            comandoString(16) = '1';
             green_time = tic;
         end
 
@@ -87,7 +81,7 @@ function press_buttons_colored_pixels(vid, galileo)
         if( redPixel >= red_min && redPixel <= red_max && ...
             ~holding_buttons('red') ...
             && toc(red_time) > tempo_espera )
-            fprintf(galileo,'%c', APERTA_E_SOLTA_RED);
+            comandoString(15) = '1';
             red_time = tic;
         end
 
@@ -95,7 +89,7 @@ function press_buttons_colored_pixels(vid, galileo)
         if(yellowPixelR >= yellowR_min && yellowPixelR <= yellowR_max && ...
            yellowPixelG >= yellowG_min && yellowPixelG <= yellowG_max && ...
            toc(yellow_time) > tempo_espera &&  ~holding_buttons('yellow'))
-           fprintf(galileo,'%c', APERTA_E_SOLTA_YELLOW);
+           comandoString(14) = '1';
            yellow_time = tic;
         end
 
@@ -103,7 +97,7 @@ function press_buttons_colored_pixels(vid, galileo)
         if(bluePixelG >= blueG_min && bluePixelG <= blueG_max && ...
            bluePixelB >= blueB_min && bluePixelB <= blueB_max && ...
            toc(blue_time) > tempo_espera &&  ~holding_buttons('blue'))
-           fprintf(galileo,'%c', APERTA_E_SOLTA_BLUE);
+           comandoString(13) = '1';
            blue_time = tic;
         end
 
@@ -111,11 +105,11 @@ function press_buttons_colored_pixels(vid, galileo)
         if(orangePixelR >= orangeR_min && orangePixelR <= orangeR_max && ...
            orangePixelG >= orangeG_min && orangePixelG <= orangeG_max && ...
            toc(orange_time) > tempo_espera &&  ~holding_buttons('orange'))
-           fprintf(galileo,'%c', APERTA_E_SOLTA_ORANGE);
+           comandoString(12) = '1';
            orange_time = tic;
         end
         
-        if(flag_debug)
+        if(debug_color_pixels)
             % Colore de verde os pixels que estão sendo utilizados
 
             % Simple Green

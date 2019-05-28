@@ -1,11 +1,6 @@
-function press_buttons_green(vid, galileo)
-    green_min = 175;
-    green_max = 255;
-
-    % acoes
-    APERTA_E_SOLTA_GREEN = char(110);
-    APERTA_SEM_SOLTAR_GREEN = char(111);
-    SOLTA_GREEN = char(112);
+function press_buttons_green(vid, galileo, color_range, debug_color_pixels)
+    green_min = color_range('green_min');
+    green_max = color_range('green_max');
 
     % tempos
     
@@ -15,65 +10,82 @@ function press_buttons_green(vid, galileo)
     tempo_espera = tempo_rastro - tempo_simples;
     configure_arduino_time(galileo, tempo_simples, tempo_rastro);
     
+    R = 1;
     G = 2;
+    B = 3;
 
     % situacao de rastro das cores
-    keys = {'green'};
-    values = [false];
-    holding_buttons = containers.Map(keys, values);
-
-    keys = {'green'};
-    values = [uint64(0)];
-    holding_times = containers.Map(keys, values);
+    green_holding_button = false;
     
     green_time = tic;
+    green_holding_time = uint64(0);
 
     while true
         imgO = getdata(vid,1,'uint8');
-        greenPixel = imgO(312,230,G);
-        
+        [simple_pixels, pixels_rastro] = get_pixels(imgO);
+        greenPixel = simple_pixels('greenPixel');
+
+        % Reinicia a string de comandos
+        comandoString = '0000000000000000';
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% rastro_play %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-        if( ~holding_buttons('green') && ...
-            (imgO(293,238,G) >= green_min && imgO(293,238,G) <= green_max) && ...
-            (imgO(292,238,G) >= green_min && imgO(292,238,G) <= green_max) && ...
-            (imgO(291,239,G) >= green_min && imgO(291,239,G) <= green_max) && ...
-            (imgO(290,239,G) >= green_min && imgO(290,239,G) <= green_max) && ...
-            (imgO(289,239,G) >= green_min && imgO(289,239,G) <= green_max) && ...
-            (imgO(288,240,G) >= green_min && imgO(288,240,G) <= green_max) && ...
-            (imgO(287,240,G) >= green_min && imgO(287,240,G) <= green_max) && ...
-            (imgO(286,240,G) >= green_min && imgO(286,240,G) <= green_max) && ...
-            (imgO(285,241,G) >= green_min && imgO(285,241,G) <= green_max) && ...
-            (imgO(284,241,G) >= green_min && imgO(284,241,G) <= green_max) && ...
-            (imgO(283,241,G) >= green_min && imgO(283,241,G) <= green_max) && ...
-            (imgO(282,242,G) >= green_min && imgO(282,242,G) <= green_max) && ...
-            (imgO(281,243,G) >= green_min && imgO(281,243,G) <= green_max) )
+        if( ~green_holding_button && ...
+            (pixels_rastro('greenPxRastro0') >= green_min && pixels_rastro('greenPxRastro0') <= green_max) && ...
+            (pixels_rastro('greenPxRastro1') >= green_min && pixels_rastro('greenPxRastro1') <= green_max) && ...
+            (pixels_rastro('greenPxRastro2') >= green_min && pixels_rastro('greenPxRastro2') <= green_max) && ...
+            (pixels_rastro('greenPxRastro3') >= green_min && pixels_rastro('greenPxRastro3') <= green_max) && ...
+            (pixels_rastro('greenPxRastro4') >= green_min && pixels_rastro('greenPxRastro4') <= green_max) && ...
+            (pixels_rastro('greenPxRastro5') >= green_min && pixels_rastro('greenPxRastro5') <= green_max) && ...
+            (pixels_rastro('greenPxRastro6') >= green_min && pixels_rastro('greenPxRastro6') <= green_max) && ...
+            (pixels_rastro('greenPxRastro7') >= green_min && pixels_rastro('greenPxRastro7') <= green_max) && ...
+            (pixels_rastro('greenPxRastro8') >= green_min && pixels_rastro('greenPxRastro8') <= green_max) && ...
+            (pixels_rastro('greenPxRastro9') >= green_min && pixels_rastro('greenPxRastro9') <= green_max) && ...
+            (pixels_rastro('greenPxRastro10') >= green_min && pixels_rastro('greenPxRastro10') <= green_max) && ...
+            (pixels_rastro('greenPxRastro11') >= green_min && pixels_rastro('greenPxRastro11') <= green_max) && ...
+            (pixels_rastro('greenPxRastro12') >= green_min && pixels_rastro('greenPxRastro12') <= green_max) )
     
             %segura botao
-            holding_buttons('green') = true;
-            holding_times('green') = tic;
-            fprintf(galileo,'%c', APERTA_SEM_SOLTAR_GREEN);  
+            green_holding_button = true;
+            green_holding_time = tic;
+            comandoString(11) = '1';  % Aperta sem soltar verde
         end
     
         %quando o rastro acaba solta
         %Se esta_apertando e nao ha mais rastro passando
-        if( holding_buttons('green') && ...
-            ~(imgO(312,230,G) >= green_min && imgO(312,230,G) <= green_max) && ...
-            toc(holding_times('green')) > tempo_espera)
+        if( green_holding_button && ...
+            ~(greenPixel >= green_min && ..
+            greenPixel <= green_max) && ...
+            toc(green_holding_time) > tempo_espera)
     
-            holding_buttons('green') = false;
-            fprintf(galileo,'%c', SOLTA_GREEN);  
+            green_holding_button = false;
+            comandoString(6) = '1'; % Solta verde
         end
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% rastro_play %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         
-        if( greenPixel >= green_min && greenPixel <= green_max &&  ...
-            ~holding_buttons('green') && ...
+        if( greenPixel >= green_min && ...
+            greenPixel <= green_max &&  ...
+            ~green_holding_button && ...
             toc(green_time) > tempo_espera )
-            fprintf(galileo,'%c', APERTA_E_SOLTA_GREEN);
+
+            comandoString(16) = '1'; % Aperto simples verde
             green_time = tic;
+        end
+
+        envia_comando(galileo, comandoString);
+
+        if debug_color_pixels
+            % Simple Green
+            imgO(312,230,R) = 0;
+            imgO(312,230,G) = 255;
+            imgO(312,230,B) = 0;
+            
+            % TODO
+            % Rastro Green
+
+            imagesc(imgO);
         end
     end
 end
