@@ -17,9 +17,9 @@ function color_range = get_color_range()
     orangeG_min = 95;
     orangeG_max = 255;
 
-    keys = {'red_min', 'red_max', 'green_min', 'green_max',
-    'yellowR_min', 'yellowR_max', 'yellowG_min', 'yellowG_max',
-    'blueG_min', 'blueG_max', 'blueB_min', 'blueB_max',
+    keys = {'red_min', 'red_max', 'green_min', 'green_max', ...
+    'yellowR_min', 'yellowR_max', 'yellowG_min', 'yellowG_max', ...
+    'blueG_min', 'blueG_max', 'blueB_min', 'blueB_max', ...
     'orangeR_min', 'orangeR_max', 'orangeG_min', 'orangeG_max'};
     values = [red_min red_max green_min green_max yellowR_min yellowR_max yellowG_min yellowG_max blueG_min blueG_max blueB_min blueB_max orangeR_min orangeR_max orangeG_min orangeG_max];
     color_range = containers.Map(keys, values);

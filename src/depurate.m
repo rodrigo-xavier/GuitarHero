@@ -5,17 +5,17 @@ function depurate(vid, galileo)
     color_range = get_color_range();
 
     if(~debug_just_video)
-        if  (debug_color == 'all')
+        if  strcmp(debug_color, 'all')
             press_all_buttons(vid, galileo, color_range, debug_color_pixels);
-        elseif  (debug_color == 'green')
+        elseif  strcmp(debug_color, 'green')
             press_buttons_green(vid, galileo, color_range, debug_color_pixels);
-        elseif  (debug_color == 'red')
+        elseif  strcmp(debug_color, 'red')
             press_buttons_red(vid, galileo, color_range, debug_color_pixels);
-        elseif  (debug_color == 'blue')
+        elseif  strcmp(debug_color, 'blue')
             press_buttons_blue(vid, galileo, color_range, debug_color_pixels);
-        elseif  (debug_color == 'orange')
+        elseif  strcmp(debug_color, 'orange')
             press_buttons_orange(vid, galileo, color_range, debug_color_pixels);
-        elseif  (debug_color == 'yellow')
+        elseif  strcmp(debug_color, 'yellow')
             press_buttons_yellow(vid, galileo, color_range, debug_color_pixels);
         end
     end

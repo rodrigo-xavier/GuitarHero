@@ -109,6 +109,8 @@ function press_all_buttons(vid, galileo, color_range, debug_color_pixels)
            orange_time = tic;
         end
         
+        envia_comando(galileo, comandoString);
+        
         if(debug_color_pixels)
             % Colore de verde os pixels que estão sendo utilizados
 
