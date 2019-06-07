@@ -17,18 +17,17 @@ function send_time_to_arduino(galileo, time_to_send, isRastro)
 
     if ~isRastro
         tmp = char(90);
-        acao = [char(bin2dec('10000000')) char(bin2dec('00000000')) tmp];
         msg = "Tempo Simples: ";
     else
         tmp = char(91);
-        acao = [char(bin2dec('10000000')) char(bin2dec('00000000')) tmp];
         msg = "Tempo Rastro: ";
     end
-
-    fprintf(galileo, "%s", acao);
+    
+    config = uint16(bin2dec('1000000000000000'));
+    fwrite(galileo, config, 'uint16');
     out = '';
     while(true)
-        fprintf(galileo, '%c', tmp);
+        fwrite(galileo, tmp, 'uint8');
         pause(0.5);
         if (galileo.BytesAvailable > 0)
             out = fscanf(galileo,'%c',galileo.BytesAvailable);
