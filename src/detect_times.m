@@ -1,6 +1,9 @@
 function [note_time, trail_time] = detect_times(vid)
     disp("Detectando os tempos.");
 
+    note_max = 10;
+    note = 0;
+
     red_min         = 175;
     red_max         = 255;
     green_min       = 175;
@@ -18,173 +21,141 @@ function [note_time, trail_time] = detect_times(vid)
     orangeG_min     = 95;
     orangeG_max     = 255;
     
-    time_t          = 0;
-    time_n          = 0;
+    t_time          = NaN;
+    n_time          = NaN;
 
     R               = 1;
     G               = 2;
     B               = 3;
 
-    while (true)
-
+    while (note < note_max)
         imgO = getdata(vid,1,'uint8');
 
-        greenPixel        = imgO(293,238,G);
-        redPixel          = imgO(293,275,R);
-        yellowPixelR      = imgO(293,312,R);
-        yellowPixelG      = imgO(293,312,G);
-        bluePixelG        = imgO(293,349,G);
-        bluePixelB        = imgO(293,349,B);
-        orangePixelR      = imgO(293,387,R);
-        orangePixelG      = imgO(293,387,G);
+        greenPixelUp        = imgO(293,238,G);
+        greenPixelMidle     = imgO(312,230,G);
+        greenPixelDown      = imgO(412,185,G);
+
+        redPixelUp          = imgO(293,275,R);
+        redPixelMidle       = imgO(311,274,R);
+        redPixelDown        = imgO(411,250,R);
+
+        yellowPixelRUp      = imgO(293,312,R);
+        yellowPixelGUp      = imgO(293,312,G);
+        yellowPixelRMidle   = imgO(312,311,R);
+        yellowPixelGMidle   = imgO(312,311,G);
+        yellowPixelRDown    = imgO(411,313,R);
+        yellowPixelGDown    = imgO(411,313,G);
+
+        bluePixelGUp        = imgO(293,349,G);
+        bluePixelBUp        = imgO(293,349,B);
+        bluePixelGMidle     = imgO(312,354,G);
+        bluePixelBMidle     = imgO(312,354,B);
+        bluePixelGDown      = imgO(411,376,G);
+        bluePixelBDown      = imgO(411,376,B);
+
+        orangePixelRUp      = imgO(293,387,R);
+        orangePixelGUp      = imgO(293,387,G);
+        orangePixelRMidle   = imgO(311,395,R);
+        orangePixelGMidle   = imgO(311,395,G);
+        orangePixelRDown    = imgO(411,440,R);
+        orangePixelGDown    = imgO(411,440,G);
+
+        % ATENÇÃO: PODE FALHAR NO CASO DE NOTAS DUPLAS %
 
         %detect green
-        if(greenPixel >= green_min && greenPixel <= green_max)
+        if(greenPixelUp >= green_min && greenPixelUp <= green_max)
             tic;
-
-            while (true)
-                imgO = getdata(vid,1,'uint8');
-                greenPixel = imgO(312,230,G);
-
-                if(greenPixel >= green_min && greenPixel <= green_max)
-                    time_t = toc;
-                    tic
-
-                    while (true)
-                        imgO = getdata(vid,1,'uint8');
-                        greenPixel = imgO(412,185,G);
-
-                        if(greenPixel >= green_min && greenPixel <= green_max)
-                            time_n = toc;
-                            break;
-                        end
-                    end
-                    break;
-                end
-            end
-            break;
+        end
+        if(greenPixelMidle >= green_min && greenPixelMidle <= green_max)
+            green_trail = toc;
+            tic;
+        end
+        if(greenPixelDown >= green_min && greenPixelDown <= green_max)
+            green_note = toc;
+            n_time = (n_time, green_note);
+            n_time = mean(n_time, 'omitnan');
+            t_time = ((green_note + green_time), t_time);
+            t_time = mean(t_time, 'omitnan');
+            note = note + 1;
+        end
+                
 
         %detect red    
-        elseif(redPixel >= red_min && redPixel <= red_max)
+        if(redPixelUp >= red_min && redPixelUp <= red_max)
             tic;
+        end
+        if(redPixelMidle >= red_min && redPixelMidle <= red_max)
+            red_trail = toc;
+            tic;
+        end
+        if(redPixelDown >= red_min && redPixelDown <= red_max)
+            n_time = (n_time, red_note);
+            n_time = mean(n_time, 'omitnan');
+            t_time = ((red_note + red_time), t_time);
+            t_time = mean(t_time, 'omitnan');
+            note = note + 1;
+        end
 
-            while (true)
-                imgO = getdata(vid,1,'uint8');
-                redPixel = imgO(311,274,R);
-
-                if(redPixel >= red_min && redPixel <= red_max)
-                    time_t = toc;
-                    tic
-
-                    while (true)
-                        imgO = getdata(vid,1,'uint8');
-                        redPixel = imgO(411,250,R);
-
-                        if(redPixel >= red_min && redPixel <= red_max)
-                            time_n = toc;
-                            break;
-                        end
-                    end
-                    break;
-                end
-            end
-            break;
 
         %detect yellow
-        elseif(yellowPixelR >= yellowR_min && yellowPixelR <= yellowR_max && ...
-            yellowPixelG >= yellowG_min && yellowPixelG <= yellowG_max )
+        if(yellowPixelRUp >= yellowR_min && yellowPixelRUp <= yellowR_max && ...
+            yellowPixelGUp >= yellowG_min && yellowPixelGUp <= yellowG_max)
             tic;
-
-            while (true)
-                imgO = getdata(vid,1,'uint8');
-                yellowPixelR = imgO(312,311,R);
-                yellowPixelG = imgO(312,311,G);
-
-                if(yellowPixelR >= yellowR_min && yellowPixelR <= yellowR_max && ...
-                yellowPixelG >= yellowG_min && yellowPixelG <= yellowG_max )
-                    time_t = toc;
-                    tic
-
-                    while (true)
-                        imgO = getdata(vid,1,'uint8');
-                        yellowPixelR = imgO(411,313,R);
-                        yellowPixelG = imgO(411,313,G);
-
-                        if(yellowPixelR >= yellowR_min && yellowPixelR <= yellowR_max && ...
-                        yellowPixelG >= yellowG_min && yellowPixelG <= yellowG_max )
-                            time_n = toc;
-                            break;
-                        end
-                    end
-                    break;
-                end
-            end
-            break;
-
+        end
+        if(yellowPixelRMidle >= yellowR_min && yellowPixelRMidle <= yellowR_max && ...
+            yellowPixelGMidle >= yellowG_min && yellowPixelGMidle <= yellowG_max)
+            yellow_trail = toc;
+            tic;
+        end
+        if(yellowPixelRDown >= yellowR_min && yellowPixelRDown <= yellowR_max && ...
+            yellowPixelGDown >= yellowG_min && yellowPixelGDown <= yellowG_max)
+            n_time = (n_time, yellow_note);
+            n_time = mean(n_time, 'omitnan');
+            t_time = ((yellow_note + yellow_time), t_time);
+            t_time = mean(t_time, 'omitnan');
+            note = note + 1;
+        end
+                
+                
         %detect blue
-        elseif(bluePixelG >= blueG_min && bluePixelG <= blueG_max && ...
-            bluePixelB >= blueB_min && bluePixelB <= blueB_max )
+        if(bluePixelGUp >= blueG_min && bluePixelGUp <= blueG_max && ...
+            bluePixelBUp >= blueB_min && bluePixelBUp <= blueB_max)
             tic;
+        end
+        if(bluePixelGMidle >= blueG_min && bluePixelGMidle <= blueG_max && ...
+            bluePixelBMidle >= blueB_min && bluePixelBMidle <= blueB_max)
+            blue_trail = toc;
+            tic;
+        end
+        if(bluePixelGDown >= blueG_min && bluePixelGDown <= blueG_max && ...
+            bluePixelBDown >= blueB_min && bluePixelBDown <= blueB_max)
+            n_time = (n_time, blue_note);
+            n_time = mean(n_time, 'omitnan');
+            t_time = ((blue_note + blue_time), t_time);
+            t_time = mean(t_time, 'omitnan');
+            note = note + 1;
+        end
 
-            while (true)
-                imgO = getdata(vid,1,'uint8');
-                bluePixelG = imgO(312,354,G);
-                bluePixelB = imgO(312,354,B);
-
-                if(bluePixelG >= blueG_min && bluePixelG <= blueG_max && ...
-                bluePixelB >= blueB_min && bluePixelB <= blueB_max )
-                    time_t = toc;
-                    tic
-
-                    while (true)
-                        imgO = getdata(vid,1,'uint8');
-                        bluePixelG = imgO(411,376,G);
-                        bluePixelB = imgO(411,376,B);
-
-                        if(bluePixelG >= blueG_min && bluePixelG <= blueG_max && ...
-                        bluePixelB >= blueB_min && bluePixelB <= blueB_max )
-                            time_n = toc;
-                            break;
-                        end
-                    end
-                    break;
-                end
-            end
-            break;
-
+                
         %detect orange
-        elseif(orangePixelR >= orangeR_min && orangePixelR <= orangeR_max && ...
-            orangePixelG >= orangeG_min && orangePixelG <= orangeG_max)
-
+        if(orangePixelRUp >= orangeR_min && orangePixelRUp <= orangeR_max && ...
+            orangePixelGUp >= orangeG_min && orangePixelGUp <= orangeG_max)
             tic;
-
-            while (true)
-                imgO = getdata(vid,1,'uint8');
-                orangePixelR = imgO(311,395,R);
-                orangePixelG = imgO(311,395,G);
-
-                if(orangePixelR >= orangeR_min && orangePixelR <= orangeR_max && ...
-                    orangePixelG >= orangeG_min && orangePixelG <= orangeG_max )
-                    time_t = toc;
-                    tic
-
-                    while (true)
-                        imgO = getdata(vid,1,'uint8');
-                        orangePixelR = imgO(411,440,R);
-                        orangePixelG = imgO(411,440,G);
-
-                        if(orangePixelR >= orangeR_min && orangePixelR <= orangeR_max && ...
-                        orangePixelG >= orangeG_min && orangePixelG <= orangeG_max )
-                            time_n = toc;
-                            break;
-                        end
-                    end
-                    break;
-                end
-            end
-            break;
+        end
+        if(orangePixelRMidle >= orangeR_min && orangePixelRMidle <= orangeR_max && ...
+            orangePixelGMidle >= orangeG_min && orangePixelGMidle <= orangeG_max)
+            tic;
+        end
+        if(orangePixelRDown >= orangeR_min && orangePixelRDown <= orangeR_max && ...
+            orangePixelGDown >= orangeG_min && orangePixelGDown <= orangeG_max)
+            n_time = (n_time, orange_note);
+            n_time = mean(n_time, 'omitnan');
+            t_time = ((orange_note + orange_time), t_time);
+            t_time = mean(t_time, 'omitnan');
+            note = note + 1;
         end
     end
-    trail_time = time_t + time_n;
-    note_time = time_n;
+
+    trail_time = t_time + n_time;
+    note_time = n_time;
 end
