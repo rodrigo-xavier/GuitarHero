@@ -73,10 +73,12 @@ function [note_time, trail_time] = detect_times(vid)
         end
         if(greenPixelDown >= green_min && greenPixelDown <= green_max)
             green_note = toc(tic_g2);
-            n_time = [n_time, green_note];
-            n_time = mean(n_time, 'omitnan');
-            t_time = [(green_note + green_time), t_time];
-            t_time = mean(t_time, 'omitnan');
+            n_time = mean([n_time, green_note], 'omitnan');
+            t_time = mean([(green_note + green_time), t_time], 'omitnan');
+            % n_time = [n_time, green_note];
+            % n_time = mean(n_time, 'omitnan');
+            % t_time = [(green_note + green_time), t_time];
+            % t_time = mean(t_time, 'omitnan');
             note = note + 1;
         end
                 
@@ -91,10 +93,12 @@ function [note_time, trail_time] = detect_times(vid)
         end
         if(redPixelDown >= red_min && redPixelDown <= red_max)
             red_note = toc(tic_r2);
-            n_time = [n_time, red_note];
-            n_time = mean(n_time, 'omitnan');
-            t_time = [(red_note + red_time), t_time];
-            t_time = mean(t_time, 'omitnan');
+            n_time = mean([n_time, red_note], 'omitnan');
+            t_time = mean([(red_note + red_time), t_time], 'omitnan');
+            % n_time = [n_time, red_note];
+            % n_time = mean(n_time, 'omitnan');
+            % t_time = [(red_note + red_time), t_time];
+            % t_time = mean(t_time, 'omitnan');
             note = note + 1;
         end
 
@@ -112,10 +116,12 @@ function [note_time, trail_time] = detect_times(vid)
         if(yellowPixelRDown >= yellowR_min && yellowPixelRDown <= yellowR_max && ...
             yellowPixelGDown >= yellowG_min && yellowPixelGDown <= yellowG_max)
             yellow_note = toc(tic_y2);
-            n_time = [n_time, yellow_note];
-            n_time = mean(n_time, 'omitnan');
-            t_time = [(yellow_note + yellow_time), t_time];
-            t_time = mean(t_time, 'omitnan');
+            n_time = mean([n_time, yellow_note], 'omitnan');
+            t_time = mean([(yellow_note + yellow_time), t_time], 'omitnan');
+            % n_time = [n_time, yellow_note];
+            % n_time = mean(n_time, 'omitnan');
+            % t_time = [(yellow_note + yellow_time), t_time];
+            % t_time = mean(t_time, 'omitnan');
             note = note + 1;
         end
                 
@@ -133,10 +139,8 @@ function [note_time, trail_time] = detect_times(vid)
         if(bluePixelGDown >= blueG_min && bluePixelGDown <= blueG_max && ...
             bluePixelBDown >= blueB_min && bluePixelBDown <= blueB_max)
             blue_note = toc(tic_b2);
-            n_time = [n_time, blue_note];
-            n_time = mean(n_time, 'omitnan');
-            t_time = [(blue_note + blue_time), t_time];
-            t_time = mean(t_time, 'omitnan');
+            n_time = mean([n_time, blue_note], 'omitnan');
+            t_time = mean([(blue_note + blue_time), t_time], 'omitnan');
             note = note + 1;
         end
 
@@ -154,10 +158,8 @@ function [note_time, trail_time] = detect_times(vid)
         if(orangePixelRDown >= orangeR_min && orangePixelRDown <= orangeR_max && ...
             orangePixelGDown >= orangeG_min && orangePixelGDown <= orangeG_max)
             orange_note = toc(tic_o2);
-            n_time = [n_time, orange_note];
-            n_time = mean(n_time, 'omitnan');
-            t_time = [(orange_note + orange_time), t_time];
-            t_time = mean(t_time, 'omitnan');
+            n_time = mean([n_time, orange_note], 'omitnan');
+            t_time = mean([(orange_note + orange_time), t_time], 'omitnan');
             note = note + 1;
         end
     end
