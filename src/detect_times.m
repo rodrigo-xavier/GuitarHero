@@ -64,17 +64,17 @@ function [note_time, trail_time] = detect_times(vid)
 
         %detect green
         if(greenPixelUp >= green_min && greenPixelUp <= green_max)
-            tic;
+            green_time_trail = tic;
         end
         if(greenPixelMidle >= green_min && greenPixelMidle <= green_max)
-            green_trail = toc;
-            tic;
+            green_trail = toc(green_time_trail);
+            green_time_note = tic;
         end
         if(greenPixelDown >= green_min && greenPixelDown <= green_max)
-            green_note = toc;
-            n_time = (n_time, green_note);
+            green_note = toc(green_time_note);
+            n_time = [n_time, green_note];
             n_time = mean(n_time, 'omitnan');
-            t_time = ((green_note + green_time), t_time);
+            t_time = [(green_note + green_time), t_time];
             t_time = mean(t_time, 'omitnan');
             note = note + 1;
         end
@@ -82,16 +82,17 @@ function [note_time, trail_time] = detect_times(vid)
 
         %detect red    
         if(redPixelUp >= red_min && redPixelUp <= red_max)
-            tic;
+            red_time_trail = tic;;
         end
         if(redPixelMidle >= red_min && redPixelMidle <= red_max)
-            red_trail = toc;
-            tic;
+            red_trail = toc(red_time_trail);
+            red_time_note = tic;
         end
         if(redPixelDown >= red_min && redPixelDown <= red_max)
-            n_time = (n_time, red_note);
+            red_note = toc(red_time_note);
+            n_time = [n_time, red_note];
             n_time = mean(n_time, 'omitnan');
-            t_time = ((red_note + red_time), t_time);
+            t_time = [(red_note + red_time), t_time];
             t_time = mean(t_time, 'omitnan');
             note = note + 1;
         end
@@ -100,18 +101,19 @@ function [note_time, trail_time] = detect_times(vid)
         %detect yellow
         if(yellowPixelRUp >= yellowR_min && yellowPixelRUp <= yellowR_max && ...
             yellowPixelGUp >= yellowG_min && yellowPixelGUp <= yellowG_max)
-            tic;
+            yellow_time_trail = tic;;
         end
         if(yellowPixelRMidle >= yellowR_min && yellowPixelRMidle <= yellowR_max && ...
             yellowPixelGMidle >= yellowG_min && yellowPixelGMidle <= yellowG_max)
-            yellow_trail = toc;
-            tic;
+            yellow_trail = toc(yellow_time_trail);
+            yellow_time_note = tic;
         end
         if(yellowPixelRDown >= yellowR_min && yellowPixelRDown <= yellowR_max && ...
             yellowPixelGDown >= yellowG_min && yellowPixelGDown <= yellowG_max)
-            n_time = (n_time, yellow_note);
+            yellow_note = toc(yellow_time_note);
+            n_time = [n_time, yellow_note];
             n_time = mean(n_time, 'omitnan');
-            t_time = ((yellow_note + yellow_time), t_time);
+            t_time = [(yellow_note + yellow_time), t_time];
             t_time = mean(t_time, 'omitnan');
             note = note + 1;
         end
@@ -120,18 +122,19 @@ function [note_time, trail_time] = detect_times(vid)
         %detect blue
         if(bluePixelGUp >= blueG_min && bluePixelGUp <= blueG_max && ...
             bluePixelBUp >= blueB_min && bluePixelBUp <= blueB_max)
-            tic;
+            blue_time_trail = tic;;
         end
         if(bluePixelGMidle >= blueG_min && bluePixelGMidle <= blueG_max && ...
             bluePixelBMidle >= blueB_min && bluePixelBMidle <= blueB_max)
-            blue_trail = toc;
-            tic;
+            blue_trail = toc(blue_time_trail);
+            blue_time_note = tic;
         end
         if(bluePixelGDown >= blueG_min && bluePixelGDown <= blueG_max && ...
             bluePixelBDown >= blueB_min && bluePixelBDown <= blueB_max)
-            n_time = (n_time, blue_note);
+            blue_note = toc(blue_time_note);
+            n_time = [n_time, blue_note];
             n_time = mean(n_time, 'omitnan');
-            t_time = ((blue_note + blue_time), t_time);
+            t_time = [(blue_note + blue_time), t_time];
             t_time = mean(t_time, 'omitnan');
             note = note + 1;
         end
@@ -140,17 +143,19 @@ function [note_time, trail_time] = detect_times(vid)
         %detect orange
         if(orangePixelRUp >= orangeR_min && orangePixelRUp <= orangeR_max && ...
             orangePixelGUp >= orangeG_min && orangePixelGUp <= orangeG_max)
-            tic;
+            orange_time_trail = tic;;
         end
         if(orangePixelRMidle >= orangeR_min && orangePixelRMidle <= orangeR_max && ...
             orangePixelGMidle >= orangeG_min && orangePixelGMidle <= orangeG_max)
-            tic;
+            orange_trail = toc(orange_time_trail);
+            orange_time_note = tic;
         end
         if(orangePixelRDown >= orangeR_min && orangePixelRDown <= orangeR_max && ...
             orangePixelGDown >= orangeG_min && orangePixelGDown <= orangeG_max)
-            n_time = (n_time, orange_note);
+            orange_note = toc(orange_time_note);
+            n_time = [n_time, orange_note];
             n_time = mean(n_time, 'omitnan');
-            t_time = ((orange_note + orange_time), t_time);
+            t_time = [(orange_note + orange_time), t_time];
             t_time = mean(t_time, 'omitnan');
             note = note + 1;
         end
