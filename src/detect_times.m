@@ -80,8 +80,6 @@ function [note_time, trail_time] = detect_times(vid)
         orangePixelRDown    = imgO(411,440,R);
         orangePixelGDown    = imgO(411,440,G);
 
-        % ATENÇÃO: VAI FALHAR NO CASO DE NOTAS MUITO PRÓXIMAS E RASTROS %
-
         %detect green
         if(greenPixelUp >= green_min && greenPixelUp <= green_max)
             tictoc_g1 = tic;
@@ -100,10 +98,6 @@ function [note_time, trail_time] = detect_times(vid)
             t_time = mean([(green_note + green_trail), t_time], 'omitnan');
             disp("green_note");
             disp(green_note);
-            % n_time = [n_time, green_note];
-            % n_time = mean(n_time, 'omitnan');
-            % t_time = [(green_note + green_time), t_time];
-            % t_time = mean(t_time, 'omitnan');
             note = note + 1;
         end
                 
@@ -126,10 +120,6 @@ function [note_time, trail_time] = detect_times(vid)
             t_time = mean([(red_note + red_trail), t_time], 'omitnan');
             disp("red_note");
             disp(red_note);
-            % n_time = [n_time, red_note];
-            % n_time = mean(n_time, 'omitnan');
-            % t_time = [(red_note + red_time), t_time];
-            % t_time = mean(t_time, 'omitnan');
             note = note + 1;
         end
 
@@ -155,10 +145,6 @@ function [note_time, trail_time] = detect_times(vid)
             t_time = mean([(yellow_note + yellow_trail), t_time], 'omitnan');
             disp("yellow_note");
             disp(yellow_note);
-            % n_time = [n_time, yellow_note];
-            % n_time = mean(n_time, 'omitnan');
-            % t_time = [(yellow_note + yellow_time), t_time];
-            % t_time = mean(t_time, 'omitnan');
             note = note + 1;
         end
                 
