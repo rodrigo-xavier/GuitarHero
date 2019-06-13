@@ -12,12 +12,12 @@ class SimpleState{
     unsigned long previousMillis;
     
   public:
-    SimpleState(int pin, unsigned long prev, unsigned long off){
+    SimpleState(int pin, unsigned long off){
       this->pin=pin;
       pinMode(this->pin, OUTPUT);
       this->offTime = off;
       this->finished = false;
-      this->previousMillis = prev;
+      this->previousMillis = millis();
       this->soltar = false;
     }
 
@@ -49,15 +49,15 @@ class TraceState{
     unsigned long previousMillisFree;
 
   public:
-    TraceState(int pin, unsigned long prev, unsigned long off){
+    TraceState(int pin, unsigned long off){
       this->pin=pin;
       pinMode(this->pin, OUTPUT);
       this->finished = false;
       this->pressed = false;
-      this->previousMillis = prev;
-      this->previousMillisFree = prev;
+      this->previousMillis = millis();
+      this->previousMillisFree = millis();
       this->soltar = false;
-      this->offTime = 1200;
+      this->offTime = off;
     }
 
     void Update(){
@@ -77,9 +77,9 @@ class TraceState{
         this->pressed = true;
       }
     }
-    void Soltar(unsigned long prev_free, int off){
+    void Soltar(int off){
       this->soltar = true;
-      this->previousMillisFree = prev_free;
+      this->previousMillisFree = millis();
       this->offTime = off;
     }
 };
@@ -93,8 +93,7 @@ volatile unsigned long offtime_rastro = 0;
 #define R2_PIN 5
 #define X_PIN 6
 
-unsigned char incomingMSByte = '\0';
-unsigned char incomingLSByte = '\0';
+uint8_t incBytes[] = {0, 0};
 unsigned char incomingByte = '\0';
 uint16_t commands = 0;
 
@@ -131,37 +130,37 @@ void setup() {
   
   // Inicializa os estados simples
   for(int i=0; i<N_SIMPLE_STATES; i++){
-    redSimpleStates[i] = new SimpleState(L1_PIN, millis(), offtime_simple);
+    redSimpleStates[i] = new SimpleState(L1_PIN, offtime_simple);
     redSimpleStates[i]->finished = true;
 
-    greenSimpleStates[i] = new SimpleState(L2_PIN, millis(), offtime_simple);
+    greenSimpleStates[i] = new SimpleState(L2_PIN, offtime_simple);
     greenSimpleStates[i]->finished = true;
 
-    yellowSimpleStates[i] = new SimpleState(R1_PIN, millis(), offtime_simple);
+    yellowSimpleStates[i] = new SimpleState(R1_PIN, offtime_simple);
     yellowSimpleStates[i]->finished = true;
 
-    blueSimpleStates[i] = new SimpleState(R2_PIN, millis(), offtime_simple);
+    blueSimpleStates[i] = new SimpleState(R2_PIN, offtime_simple);
     blueSimpleStates[i]->finished = true;
 
-    orangeSimpleStates[i] = new SimpleState(X_PIN, millis(), offtime_simple);
+    orangeSimpleStates[i] = new SimpleState(X_PIN, offtime_simple);
     orangeSimpleStates[i]->finished = true;    
   }
 
   // Inicializa os estados de rastros
   for(int i=0; i<N_TRACE_STATES; i++){
-    redTraceStates[i] = new TraceState(L1_PIN, millis(), offtime_rastro);
+    redTraceStates[i] = new TraceState(L1_PIN, offtime_rastro);
     redTraceStates[i]->finished = true;
 
-    greenTraceStates[i] = new TraceState(L2_PIN, millis(), offtime_rastro);
+    greenTraceStates[i] = new TraceState(L2_PIN, offtime_rastro);
     greenTraceStates[i]->finished = true;
 
-    yellowTraceStates[i] = new TraceState(R1_PIN, millis(), offtime_rastro);
+    yellowTraceStates[i] = new TraceState(R1_PIN, offtime_rastro);
     yellowTraceStates[i]->finished = true;
 
-    blueTraceStates[i] = new TraceState(R2_PIN, millis(), offtime_rastro);
+    blueTraceStates[i] = new TraceState(R2_PIN, offtime_rastro);
     blueTraceStates[i]->finished = true;
 
-    orangeTraceStates[i] = new TraceState(X_PIN, millis(), offtime_rastro);
+    orangeTraceStates[i] = new TraceState(X_PIN, offtime_rastro);
     orangeTraceStates[i]->finished = true;
   }
 
@@ -170,9 +169,9 @@ void setup() {
 
 void loop(){
   if (Serial.available() >= 2) {
-    incomingMSByte = Serial.read();
-    incomingLSByte = Serial.read();
-    commands = ( (incomingMSByte << 8) | incomingLSByte);
+    incBytes[0] = Serial.read();
+    incBytes[1] = Serial.read();
+    commands = ( (incBytes[1] << 8) | incBytes[0]);
     
     // Estado simples: aperta e solta automaticamente 
     // o mais rápido possível
@@ -180,36 +179,31 @@ void loop(){
     // Green (L2_PIN)
     if(bitRead(commands, 0)){
       ind=get_simpleStates_index('G');
-      greenSimpleStates[ind] = new SimpleState(L2_PIN, millis(), offtime_simple);
-      incomingByte = '\0';
+      greenSimpleStates[ind] = new SimpleState(L2_PIN, offtime_simple);
     }
 
     // Red (L1_PIN)
     if(bitRead(commands, 1)){
       ind=get_simpleStates_index('R');
-      redSimpleStates[ind] = new SimpleState(L1_PIN, millis(), offtime_simple);
-      incomingByte = '\0';
+      redSimpleStates[ind] = new SimpleState(L1_PIN, offtime_simple);
     }
 
     // Yellow (R1_PIN)
     if(bitRead(commands, 2)){
       ind=get_simpleStates_index('Y');
-      yellowSimpleStates[ind] = new SimpleState(R1_PIN, millis(), offtime_simple);
-      incomingByte = '\0';
+      yellowSimpleStates[ind] = new SimpleState(R1_PIN, offtime_simple);
     }
 
     // Blue (R1_PIN)
     if(bitRead(commands, 3)){
       ind=get_simpleStates_index('B');
-      blueSimpleStates[ind] = new SimpleState(R2_PIN, millis(), offtime_simple);
-      incomingByte = '\0';
+      blueSimpleStates[ind] = new SimpleState(R2_PIN, offtime_simple);
     }
 
     // Orange (X_PIN)
     if(bitRead(commands, 4)){
       ind=get_simpleStates_index('O');
-      orangeSimpleStates[ind] = new SimpleState(X_PIN, millis(), offtime_simple);
-      incomingByte = '\0';
+      orangeSimpleStates[ind] = new SimpleState(X_PIN, offtime_simple);
     }
 
 
@@ -221,41 +215,36 @@ void loop(){
     // Green (L2_PIN)
     if(bitRead(commands, 5)){
       ind = get_traceStates_index('G');
-      greenTraceStates[ind] = new TraceState(L2_PIN, millis(), offtime_rastro);
+      greenTraceStates[ind] = new TraceState(L2_PIN, offtime_rastro);
       greenTraceQueue.push(ind);
-      incomingByte = '\0';
     }
 
     // Red (L1_PIN)
     if(bitRead(commands, 6)){
       ind = get_traceStates_index('R');
-      redTraceStates[ind] = new TraceState(L1_PIN, millis(), offtime_rastro);
+      redTraceStates[ind] = new TraceState(L1_PIN, offtime_rastro);
       redTraceQueue.push(ind);
-      incomingByte = '\0';
     }
 
     // Yellow (R1_PIN)
     if(bitRead(commands, 7)){
       ind = get_traceStates_index('Y');
-      yellowTraceStates[ind] = new TraceState(R1_PIN, millis(), offtime_rastro);
+      yellowTraceStates[ind] = new TraceState(R1_PIN, offtime_rastro);
       yellowTraceQueue.push(ind);
-      incomingByte = '\0';
     }
 
     // Blue (R2_PIN)
     if(bitRead(commands, 8)){
       ind = get_traceStates_index('B');
-      blueTraceStates[ind] = new TraceState(R2_PIN, millis(), offtime_rastro);
+      blueTraceStates[ind] = new TraceState(R2_PIN, offtime_rastro);
       blueTraceQueue.push(ind);
-      incomingByte = '\0';
     }
 
     // Orange (X_PIN)
     if(bitRead(commands, 9)){
       ind = get_traceStates_index('O');
-      orangeTraceStates[ind] = new TraceState(X_PIN, millis(), offtime_rastro);
+      orangeTraceStates[ind] = new TraceState(X_PIN, offtime_rastro);
       orangeTraceQueue.push(ind);
-      incomingByte = '\0';
     }
 
     // ------ //
@@ -267,8 +256,7 @@ void loop(){
       first_item = greenTraceQueue.front();
       if(!greenTraceStates[first_item]->finished){
         ind = greenTraceQueue.pop();
-        greenTraceStates[ind]->Soltar(millis(), offtime_simple);
-        incomingByte = '\0';
+        greenTraceStates[ind]->Soltar(offtime_simple);
       }
     }
 
@@ -277,8 +265,7 @@ void loop(){
       first_item = redTraceQueue.front();
       if(!redTraceStates[first_item]->finished){
         ind = redTraceQueue.pop();
-        redTraceStates[ind]->Soltar(millis(), offtime_simple);
-        incomingByte = '\0';
+        redTraceStates[ind]->Soltar(offtime_simple);
       }
     }
 
@@ -286,8 +273,7 @@ void loop(){
       first_item = yellowTraceQueue.front();
       if(!yellowTraceStates[first_item]->finished){
         ind = yellowTraceQueue.pop();
-        yellowTraceStates[ind]->Soltar(millis(), offtime_simple);
-        incomingByte = '\0';
+        yellowTraceStates[ind]->Soltar(offtime_simple);
       }
     }
 
@@ -296,23 +282,21 @@ void loop(){
       first_item = blueTraceQueue.front();
       if(!blueTraceStates[first_item]->finished){
         ind = blueTraceQueue.pop();
-        blueTraceStates[ind]->Soltar(millis(), offtime_simple);
-        incomingByte = '\0';
+        blueTraceStates[ind]->Soltar(offtime_simple);
       }
     }
         
     // Orange (X_PIN)
-    if(bitRead(commands, 15) && !orangeTraceQueue.isEmpty()){
+    if(bitRead(commands, 14) && !orangeTraceQueue.isEmpty()){
       first_item = orangeTraceQueue.front();
       if(!orangeTraceStates[first_item]->finished){
         ind = orangeTraceQueue.pop();
-        orangeTraceStates[ind]->Soltar(millis(), offtime_simple);
-        incomingByte = '\0';
+        orangeTraceStates[ind]->Soltar(offtime_simple);
       }
     }
 
     // Configuração de tempo
-    if(bitRead(commands, 14)){
+    if(bitRead(commands, 15)){
       while(true){
         if (Serial.available() > 0) {
           incomingByte = Serial.read();
@@ -333,8 +317,8 @@ void loop(){
       incomingByte == '\0';
     }
 
-    incomingMSByte = '\0';
-    incomingLSByte = '\0';
+    incBytes[0] = 0;
+    incBytes[1] = 0;
     commands = 0;
   }
 

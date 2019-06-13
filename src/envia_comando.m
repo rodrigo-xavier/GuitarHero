@@ -1,4 +1,4 @@
-function envia_comando(arduino, comando)
+function envia_comando(galileo, comando)
     % Recebe comando no formato '0000000000000000' (16 bits)
     %                           MSB             LSB
     %                          (BIT15)          (BIT0)
@@ -18,14 +18,8 @@ function envia_comando(arduino, comando)
     % BIT13 => SOLTA AZUL
     % BIT14 => SOLTA LARANJADO
     % BIT15 => 0 (será utilizado para configurações)
-    MSB = comando(1:8); %Most significant Byte
-    LSB = comando(8:16);
-
-    MSB_decimal = bin2dec(MSB);
-    LSB_decimal = bin2dec(LSB);
-
-    msg = [char(MSB_decimal) char(LSB_decimal)];
-
-    fprintf(arduino, '%c', msg);
+    
+    command = uint16(bin2dec(comando));
+    fwrite(galileo, command, 'uint16');
     
 end
