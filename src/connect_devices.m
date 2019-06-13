@@ -1,5 +1,5 @@
 function [vid, galileo] = connect_devices()
-    counter = 0;
+    counter = 1;
     ME2 = [];
     ME = [];
     
