@@ -28,6 +28,11 @@ function [note_time, trail_time] = detect_times(vid)
     G               = 2;
     B               = 3;
 
+    tictoc_min = 0.1
+    tictoc_max_trail = 0.75
+    tictoc_max_note = 1
+
+
     while (note < note_max)
         imgO = getdata(vid,1,'uint8');
 
@@ -60,19 +65,20 @@ function [note_time, trail_time] = detect_times(vid)
         orangePixelRDown    = imgO(411,440,R);
         orangePixelGDown    = imgO(411,440,G);
 
-        % ATENÇÃO: PODE FALHAR NO CASO DE NOTAS MUITO PRÓXIMAS %
-        % PODE SER ESTIPULADO UM TEMPO MÁXIMO DO TIC, PARA ELIMINAR FALSOS POSITIVOS %
+        % ATENÇÃO: VAI FALHAR NO CASO DE NOTAS MUITO PRÓXIMAS E RASTROS %
 
         %detect green
         if(greenPixelUp >= green_min && greenPixelUp <= green_max)
-            tic_g1 = tic;
+            tictoc_g1 = tic;
         end
-        if(greenPixelMidle >= green_min && greenPixelMidle <= green_max)
-            green_trail = toc(tic_g1);
-            tic_g2 = tic;
+        if(greenPixelMidle >= green_min && greenPixelMidle <= green_max && ...
+            toc(tictoc_g1) > tictoc_min && toc(tictoc_g1) <= tictoc_max_trail) % Condição para eliminar rastros e falsos positivos %
+            green_trail = toc(tictoc_g1);
+            tictoc_g2 = tic;
         end
-        if(greenPixelDown >= green_min && greenPixelDown <= green_max)
-            green_note = toc(tic_g2);
+        if(greenPixelDown >= green_min && greenPixelDown <= green_max && ...
+            toc(tictoc_g2) > tictoc_min && toc(tictoc_g2) <= tictoc_max_note) % Condição para eliminar rastros e falsos positivos %
+            green_note = toc(tictoc_g2);
             n_time = mean([n_time, green_note], 'omitnan');
             t_time = mean([(green_note + green_time), t_time], 'omitnan');
             % n_time = [n_time, green_note];
@@ -85,14 +91,16 @@ function [note_time, trail_time] = detect_times(vid)
 
         %detect red    
         if(redPixelUp >= red_min && redPixelUp <= red_max)
-            tic_r1 = tic;;
+            tictoc_r1 = tic;;
         end
-        if(redPixelMidle >= red_min && redPixelMidle <= red_max)
-            red_trail = toc(tic_r1);
-            tic_r2 = tic;
+        if(redPixelMidle >= red_min && redPixelMidle <= red_max && ...
+            toc(tictoc_r1) > tictoc_min && toc(tictoc_r1) <= tictoc_max_trail) % Condição para eliminar rastros e falsos positivos %
+            red_trail = toc(tictoc_r1);
+            tictoc_r2 = tic;
         end
-        if(redPixelDown >= red_min && redPixelDown <= red_max)
-            red_note = toc(tic_r2);
+        if(redPixelDown >= red_min && redPixelDown <= red_max && ...
+            toc(tictoc_r2) > tictoc_min && toc(tictoc_r2) <= tictoc_max_note) % Condição para eliminar rastros e falsos positivos %
+            red_note = toc(tictoc_r2);
             n_time = mean([n_time, red_note], 'omitnan');
             t_time = mean([(red_note + red_time), t_time], 'omitnan');
             % n_time = [n_time, red_note];
@@ -106,16 +114,18 @@ function [note_time, trail_time] = detect_times(vid)
         %detect yellow
         if(yellowPixelRUp >= yellowR_min && yellowPixelRUp <= yellowR_max && ...
             yellowPixelGUp >= yellowG_min && yellowPixelGUp <= yellowG_max)
-            tic_y1 = tic;;
+            tictoc_y1 = tic;;
         end
         if(yellowPixelRMidle >= yellowR_min && yellowPixelRMidle <= yellowR_max && ...
-            yellowPixelGMidle >= yellowG_min && yellowPixelGMidle <= yellowG_max)
-            yellow_trail = toc(tic_y1);
-            tic_y2 = tic;
+            yellowPixelGMidle >= yellowG_min && yellowPixelGMidle <= yellowG_max && ...
+            toc(tictoc_y1) > tictoc_min && toc(tictoc_y1) <= tictoc_max_trail) % Condição para eliminar rastros e falsos positivos %
+            yellow_trail = toc(tictoc_y1);
+            tictoc_y2 = tic;
         end
         if(yellowPixelRDown >= yellowR_min && yellowPixelRDown <= yellowR_max && ...
-            yellowPixelGDown >= yellowG_min && yellowPixelGDown <= yellowG_max)
-            yellow_note = toc(tic_y2);
+            yellowPixelGDown >= yellowG_min && yellowPixelGDown <= yellowG_max && ...
+            toc(tictoc_y2) > tictoc_min && toc(tictoc_y2) <= tictoc_max_note) % Condição para eliminar rastros e falsos positivos %
+            yellow_note = toc(tictoc_y2);
             n_time = mean([n_time, yellow_note], 'omitnan');
             t_time = mean([(yellow_note + yellow_time), t_time], 'omitnan');
             % n_time = [n_time, yellow_note];
@@ -129,16 +139,18 @@ function [note_time, trail_time] = detect_times(vid)
         %detect blue
         if(bluePixelGUp >= blueG_min && bluePixelGUp <= blueG_max && ...
             bluePixelBUp >= blueB_min && bluePixelBUp <= blueB_max)
-            tic_b1 = tic;;
+            tictoc_b1 = tic;;
         end
         if(bluePixelGMidle >= blueG_min && bluePixelGMidle <= blueG_max && ...
-            bluePixelBMidle >= blueB_min && bluePixelBMidle <= blueB_max)
-            blue_trail = toc(tic_b1);
-            tic_b2 = tic;
+            bluePixelBMidle >= blueB_min && bluePixelBMidle <= blueB_max && ...
+            toc(tictoc_b1) > tictoc_min && toc(tictoc_b1) <= tictoc_max_trail) % Condição para eliminar rastros e falsos positivos %
+            blue_trail = toc(tictoc_b1);
+            tictoc_b2 = tic;
         end
         if(bluePixelGDown >= blueG_min && bluePixelGDown <= blueG_max && ...
-            bluePixelBDown >= blueB_min && bluePixelBDown <= blueB_max)
-            blue_note = toc(tic_b2);
+            bluePixelBDown >= blueB_min && bluePixelBDown <= blueB_max && ...
+            toc(tictoc_b2) > tictoc_min && toc(tictoc_b2) <= tictoc_max_note) % Condição para eliminar rastros e falsos positivos %
+            blue_note = toc(tictoc_b2);
             n_time = mean([n_time, blue_note], 'omitnan');
             t_time = mean([(blue_note + blue_time), t_time], 'omitnan');
             note = note + 1;
@@ -148,16 +160,18 @@ function [note_time, trail_time] = detect_times(vid)
         %detect orange
         if(orangePixelRUp >= orangeR_min && orangePixelRUp <= orangeR_max && ...
             orangePixelGUp >= orangeG_min && orangePixelGUp <= orangeG_max)
-            tic_o1 = tic;;
+            tictoc_o1 = tic;;
         end
         if(orangePixelRMidle >= orangeR_min && orangePixelRMidle <= orangeR_max && ...
-            orangePixelGMidle >= orangeG_min && orangePixelGMidle <= orangeG_max)
-            orange_trail = toc(tic_o1);
-            tic_o2 = tic;
+            orangePixelGMidle >= orangeG_min && orangePixelGMidle <= orangeG_max && ...
+            toc(tictoc_o1) > tictoc_min && toc(tictoc_o1) <= tictoc_max_trail) % Condição para eliminar rastros e falsos positivos %
+            orange_trail = toc(tictoc_o1);
+            tictoc_o2 = tic;
         end
         if(orangePixelRDown >= orangeR_min && orangePixelRDown <= orangeR_max && ...
-            orangePixelGDown >= orangeG_min && orangePixelGDown <= orangeG_max)
-            orange_note = toc(tic_o2);
+            orangePixelGDown >= orangeG_min && orangePixelGDown <= orangeG_max && ...
+            toc(tictoc_o2) > tictoc_min && toc(tictoc_o2) <= tictoc_max_note) % Condição para eliminar rastros e falsos positivos %
+            orange_note = toc(tictoc_o2);
             n_time = mean([n_time, orange_note], 'omitnan');
             t_time = mean([(orange_note + orange_time), t_time], 'omitnan');
             note = note + 1;
