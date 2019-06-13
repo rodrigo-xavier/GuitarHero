@@ -3,7 +3,7 @@ just_video = false;
 
 % Encerra conexão com galileo se estiver conectado
 if exist('galileo','var') == true
-    fclose(galileo);
+    fclose(galileo);    
 end
 
 % Encerra conexão com video se estiver conectado
