@@ -1,18 +1,30 @@
 #include <QueueArray.h>
 
+// Number of states
 #define N_SIMPLE_STATES 10
 #define N_TRACE_STATES 10
 
+// Min time in milli seconds
+#define PRESS_MIN_TIME 50
+
+// Digital Pins
+#define L1_PIN 3
+#define L2_PIN 2
+#define R1_PIN 4
+#define R2_PIN 5
+#define X_PIN 6
+
 class SimpleState{
   public:
-    int pin;
+    int pin;               // pino do botão
     unsigned long offTime; // offtime entre detectar a nota e o momento de apertar
-    bool finished;
-    bool soltar;
-    unsigned long previousMillis;
+    bool finished;         // estado foi finalizado??
+    bool soltar;           // deve soltar?
+    unsigned long previousMillis; // utilizado para contar o tempo
     
   public:
     SimpleState(int pin, unsigned long off){
+      // Inicialização do estado
       this->pin=pin;
       pinMode(this->pin, OUTPUT);
       this->offTime = off;
@@ -22,34 +34,44 @@ class SimpleState{
     }
 
     void Update(){
-        unsigned long currentMillis = millis();
-        if(!(this->soltar) &&  !(this->finished) &&
-            (currentMillis-this->previousMillis)>= this->offTime){
-          digitalWrite(this->pin, HIGH);
-          this->soltar = true;
-          this->previousMillis = millis();
+      unsigned long currentMillis = millis();
+      // Se ainda não terminou
+      if(!(this->finished)){
+        // Se não tem que soltar, então deve apertar
+        // após o tempo de offtime (tempo entre nota passar)
+        // e o momento de apertar
+        if(!(this->soltar) && 
+            (currentMillis-this->previousMillis)>= this->offTime)
+        {
+          digitalWrite(this->pin, HIGH); // aperta
+          this->soltar = true; // agora deve soltar após o tempo mínimo
+          this->previousMillis = millis(); // reinicia deltatime
         }
-        if(this->soltar && !(this->finished) &&
-          (currentMillis-this->previousMillis)>=50){
-          digitalWrite(this->pin, LOW);
-          this->finished = true;
-          this->soltar = false;
+        // Se tiver que soltar, verifica se já se passou o tempo mínimo
+        if(this->soltar &&
+          (currentMillis-this->previousMillis)>=PRESS_MIN_TIME)
+        {
+          digitalWrite(this->pin, LOW); // solta
+          this->finished = true; // estado finalizado
+          this->soltar = false; // não era necessário desabilitar o soltar, mas só por segurança
         }
+      }
     }
 };
 
 class TraceState{
   public:
     int pin;
-    bool finished;
-    bool pressed;
-    bool soltar;
+    bool finished; // estado foi finalizado?
+    bool pressed;  // botão está pressionado?
+    bool soltar;   // botão deve soltar?
     unsigned long offTime; // offtime entre detectar a nota e o momento de apertar
-    unsigned long previousMillis;
-    unsigned long previousMillisFree;
+    unsigned long previousMillis; // utilizado para contar o tempo para o aperto
+    unsigned long previousMillisFree; // utilizado para contar o tempo para soltar
 
   public:
     TraceState(int pin, unsigned long off){
+      // Inicialização do estado
       this->pin=pin;
       pinMode(this->pin, OUTPUT);
       this->finished = false;
@@ -63,35 +85,45 @@ class TraceState{
     void Update(){
       // Aperta após passado o offtime
       unsigned long currentMillis = millis();
-      // Solta
-      if(this->soltar && !(this->finished) && this->pressed && 
-        (currentMillis-this->previousMillisFree)>= this->offTime){
-        digitalWrite(this->pin, LOW);
-        this->pressed = false;
-        this->finished = true;
-      }
-      // Aperta
-      if(!(this->pressed) && !(this->finished) && 
-        (currentMillis-this->previousMillis)>= this->offTime){
-        digitalWrite(this->pin, HIGH);
-        this->pressed = true;
+      // Verifica se já não é um estado finalizado
+      if(!(this->finished)){
+        // Verifica se deve soltar, se está pressionado
+        // (caso contrário não faz sentido soltar, 
+        // mas não é uma checagem obrigatória)
+        // e se se passou o offtime entre momento de 
+        // detecção e ação
+        if(this->soltar && this->pressed && 
+          (currentMillis-this->previousMillisFree)>= this->offTime){
+          digitalWrite(this->pin, LOW);
+          this->pressed = false;
+          this->finished = true;
+        }
+        // Aperta se já não estiver pressionado (não é uma
+        // checagem obrigatória, mas por segurança)
+        // e se o tempo esperado se passou
+        if(!(this->pressed) && 
+          (currentMillis-this->previousMillis)>= this->offTime){
+          digitalWrite(this->pin, HIGH);
+          this->pressed = true;
+        }
       }
     }
     void Soltar(int off){
+      // Seta soltar como true, alterando o offtime
+      // já que o offtime de soltar é diferente do offtime
+      // de segurar, para o rastro
       this->soltar = true;
-      this->previousMillisFree = millis();
+      this->previousMillisFree = millis(); //reinicia o deltatime
       this->offTime = off;
     }
 };
 
+/*
+  Inicialização de Variáveis globais
+ */
+
 volatile unsigned long offtime_simple = 0;
 volatile unsigned long offtime_rastro = 0;
-
-#define L1_PIN 3
-#define L2_PIN 2
-#define R1_PIN 4
-#define R2_PIN 5
-#define X_PIN 6
 
 uint8_t incBytes[] = {0, 0};
 unsigned char incomingByte = '\0';
@@ -168,10 +200,17 @@ void setup() {
 }
 
 void loop(){
+  // São lidos 2 bytes de uma vez, já que através do MATLAB
+  // está sendo enviado um bit para cada ação no formato
+  // indicado no arquivo envia_comando.m
+  // Ler a documentação dessa função para entender melhor
   if (Serial.available() >= 2) {
-    incBytes[0] = Serial.read();
-    incBytes[1] = Serial.read();
-    commands = ( (incBytes[1] << 8) | incBytes[0]);
+    incBytes[0] = Serial.read(); // Least Significant byte
+    incBytes[1] = Serial.read(); // Most significante byte
+    commands = ( (incBytes[1] << 8) | incBytes[0]); // 16 bytes contatenando os 2 bytes acima
+
+    // Os bits que estiverem como 1 indicam ações que 
+    // devem ser realizadas.
     
     // Estado simples: aperta e solta automaticamente 
     // o mais rápido possível
@@ -328,7 +367,9 @@ void loop(){
 
 int get_simpleStates_index(char color){
   // Função que retorna o índice do array
-  // a ser utilizado para alocar o estado 
+  // a ser utilizado para alocar o estado Simple
+  // dando sempre prioridade para o menor índice
+  // (simplesmente por simplicidade de implementação) 
 
   if(color == 'R'){
     for(int i=0; i<N_SIMPLE_STATES; i++){
@@ -366,7 +407,9 @@ int get_simpleStates_index(char color){
 
 int get_traceStates_index(char color){
   // Função que retorna o índice do array
-  // a ser utilizado para alocar o estado 
+  // a ser utilizado para alocar o estado traceState
+  // dando sempre prioridade para o menor índice
+  // (simplesmente por simplicidade de implementação) 
 
   if(color == 'R'){
     for(int i=0; i<N_TRACE_STATES; i++){
@@ -434,6 +477,8 @@ void checkAllOnStates(){
 }
 
 void getSimpleTime(){
+  // Recebe o tempo de offtime do MATLAB
+  // para nota simples
   offtime_simple = 0;
   while(true){
     if (Serial.available() > 0) {
@@ -452,6 +497,8 @@ void getSimpleTime(){
 }
 
 void getRastroTime(){
+  // Recebe o tempo de offtime do MATLAB
+  // para nota de rastro
   offtime_rastro = 0;
   while(true){
     if (Serial.available() > 0) {
