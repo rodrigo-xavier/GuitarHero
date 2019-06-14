@@ -22,7 +22,7 @@ function [note_time, trail_time] = detect_times(vid)
     blueB_max       = 255;
     orangeR_min     = 175;
     orangeR_max     = 255;
-    orangeG_min     = 95;
+    orangeG_min     = 175;
     orangeG_max     = 255;
 
     timer_of_trail = 0;
@@ -225,5 +225,5 @@ function [note_time, trail_time] = detect_times(vid)
 end
 
     trail_time = (timer_of_note + timer_of_trail)/note;
-    note_time = n_time/note;
+    note_time = timer_of_note/note;
 end
