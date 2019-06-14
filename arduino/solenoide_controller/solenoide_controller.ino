@@ -26,7 +26,6 @@ class SimpleState{
     SimpleState(int pin, unsigned long off){
       // Inicialização do estado
       this->pin=pin;
-      pinMode(this->pin, OUTPUT);
       this->offTime = off;
       this->finished = false;
       this->previousMillis = millis();
@@ -73,7 +72,6 @@ class TraceState{
     TraceState(int pin, unsigned long off){
       // Inicialização do estado
       this->pin=pin;
-      pinMode(this->pin, OUTPUT);
       this->finished = false;
       this->pressed = false;
       this->previousMillis = millis();
@@ -101,7 +99,7 @@ class TraceState{
         // Aperta se já não estiver pressionado (não é uma
         // checagem obrigatória, mas por segurança)
         // e se o tempo esperado se passou
-        if(!(this->pressed) && 
+        else if(!(this->pressed) && 
           (currentMillis-this->previousMillis)>= this->offTime){
           digitalWrite(this->pin, HIGH);
           this->pressed = true;
@@ -159,6 +157,13 @@ int ind=0, first_item=0;
 
 void setup() {
   Serial.begin(115200);
+
+  // Inicializa os pinos como saída
+  pinMode(L1_PIN, OUTPUT);
+  pinMode(L2_PIN, OUTPUT);
+  pinMode(R1_PIN, OUTPUT);
+  pinMode(R2_PIN, OUTPUT);
+  pinMode(X_PIN, OUTPUT);
   
   // Inicializa os estados simples
   for(int i=0; i<N_SIMPLE_STATES; i++){
