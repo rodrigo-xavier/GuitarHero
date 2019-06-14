@@ -15,6 +15,11 @@ end
 function send_time_to_arduino(galileo, time_to_send, isRastro)
     %time to send is in seconds
 
+    % Limpa o buffer
+    if (galileo.BytesAvailable > 0)
+        fscanf(galileo,'%c',galileo.BytesAvailable);
+    end
+
     if ~isRastro
         tmp = char(90);
         msg = "Tempo Simples: ";
