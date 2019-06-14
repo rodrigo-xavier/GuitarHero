@@ -21,14 +21,14 @@ function [note_time, trail_time] = detect_times(vid)
     blueB_max       = 255;
     orangeR_min     = 175;
     orangeR_max     = 255;
-    orangeG_min     = 95;
+    orangeG_min     = 175;
     orangeG_max     = 255;
 
     timer_of_trail = 0;
     timer_of_note = 0;
 
-    tictoc_min_trail = 0.06;
-    tictoc_min_note = 0.1;
+    tictoc_min_trail = 0.01;
+    tictoc_min_note = 0.02;
     tictoc_max_trail = 0.75;
     tictoc_max_note = 1.25;
     tictoc_g1 = tic;
