@@ -38,6 +38,11 @@ function press_buttons(vid, galileo)
     values = [false false false false false];
     holding_buttons = containers.Map(keys, values);
 
+    % identifica pra nao apertar a mesma nota seguidamente
+    keys = {'green', 'red', 'yellow', 'blue', 'orange'};
+    values = [false false false false false];
+    same_note = containers.Map(keys, values);
+
     keys = {'green', 'red', 'yellow', 'blue', 'orange'};
     values = [uint64(0) uint64(0) uint64(0) uint64(0) uint64(0)];
     holding_times = containers.Map(keys, values);
