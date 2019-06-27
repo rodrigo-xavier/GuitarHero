@@ -48,7 +48,6 @@ function press_buttons(vid, galileo)
     blue_time = tic;
     orange_time = tic;
 
-    preview(vid);
     while true
         % get image from camera
         imgO = getdata(vid,1,'uint8');
