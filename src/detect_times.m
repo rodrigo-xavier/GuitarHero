@@ -1,6 +1,8 @@
 function [note_time, trail_time] = detect_times(vid)
     disp("Pegando os tempos")
 
+    disp("Detectando os tempos.");
+
     note_max = 10;
     note = 0;
 
@@ -29,7 +31,7 @@ function [note_time, trail_time] = detect_times(vid)
     timer_of_note = 0;
 
     tictoc_min = 0.01;
-    tictoc_max = 1.85;
+    tictoc_max = 2.75;
 
     queue_trail = {};
     queue_note = {};
