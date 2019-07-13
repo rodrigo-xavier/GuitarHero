@@ -33,40 +33,63 @@ function [note_time, trail_time] = detect_times(vid)
 
     queue_trail = {};
     queue_note = {};
-
     temp = {};
 
     while (note < note_max)
         imgO = getdata(vid,1,'uint8');
 
-        greenPixelUp        = imgO(293,238,G);
-        greenPixelMiddle    = imgO(312,230,G);
-        greenPixelDown      = imgO(412,185,G);
+        greenPixelUp1        = imgO(289,238,G);
+        greenPixelUp2        = imgO(293,238,G);
+        greenPixelMiddle1    = imgO(308,230,G);
+        greenPixelMiddle2    = imgO(312,230,G);
+        greenPixelDown1      = imgO(408,185,G);
+        greenPixelDown2      = imgO(412,185,G);
 
-        redPixelUp          = imgO(293,275,R);
-        redPixelMiddle      = imgO(311,274,R);
-        redPixelDown        = imgO(411,250,R);
+        redPixelUp1          = imgO(289,275,R);
+        redPixelUp2          = imgO(293,275,R);
+        redPixelMiddle1      = imgO(307,274,R);
+        redPixelMiddle2      = imgO(311,274,R);
+        redPixelDown1        = imgO(407,250,R);
+        redPixelDown2        = imgO(411,250,R);
 
-        yellowPixelRUp      = imgO(293,312,R);
-        yellowPixelGUp      = imgO(293,312,G);
-        yellowPixelRMiddle  = imgO(312,311,R);
-        yellowPixelGMiddle  = imgO(312,311,G);
-        yellowPixelRDown    = imgO(411,313,R);
-        yellowPixelGDown    = imgO(411,313,G);
+        yellowPixelRUp1      = imgO(289,312,R);
+        yellowPixelRUp2      = imgO(293,312,R);
+        yellowPixelGUp1      = imgO(289,312,G);
+        yellowPixelGUp2      = imgO(293,312,G);
+        yellowPixelRMiddle1  = imgO(308,311,R);
+        yellowPixelRMiddle2  = imgO(312,311,R);
+        yellowPixelGMiddle1  = imgO(308,311,G);
+        yellowPixelGMiddle2  = imgO(312,311,G);
+        yellowPixelRDown1    = imgO(407,313,R);
+        yellowPixelRDown2    = imgO(411,313,R);
+        yellowPixelGDown1    = imgO(407,313,G);
+        yellowPixelGDown2    = imgO(411,313,G);
 
-        bluePixelGUp        = imgO(293,349,G);
-        bluePixelBUp        = imgO(293,349,B);
-        bluePixelGMiddle    = imgO(312,354,G);
-        bluePixelBMiddle    = imgO(312,354,B);
-        bluePixelGDown      = imgO(411,376,G);
-        bluePixelBDown      = imgO(411,376,B);
+        bluePixelGUp1        = imgO(289,349,G);
+        bluePixelGUp2        = imgO(293,349,G);
+        bluePixelBUp1        = imgO(289,349,B);
+        bluePixelBUp2        = imgO(293,349,B);
+        bluePixelGMiddle1    = imgO(308,354,G);
+        bluePixelGMiddle2    = imgO(312,354,G);
+        bluePixelBMiddle1    = imgO(308,354,B);
+        bluePixelBMiddle2    = imgO(312,354,B);
+        bluePixelGDown1      = imgO(407,376,G);
+        bluePixelGDown2      = imgO(411,376,G);
+        bluePixelBDown1      = imgO(407,376,B);
+        bluePixelBDown2      = imgO(411,376,B);
 
-        orangePixelRUp      = imgO(293,387,R);
-        orangePixelGUp      = imgO(293,387,G);
-        orangePixelRMiddle  = imgO(311,395,R);
-        orangePixelGMiddle  = imgO(311,395,G);
-        orangePixelRDown    = imgO(411,440,R);
-        orangePixelGDown    = imgO(411,440,G);
+        orangePixelRUp1      = imgO(293,387,R);
+        orangePixelRUp2      = imgO(293,387,R);
+        orangePixelGUp1      = imgO(293,387,G);
+        orangePixelGUp2      = imgO(293,387,G);
+        orangePixelRMiddle1  = imgO(311,395,R);
+        orangePixelRMiddle2  = imgO(311,395,R);
+        orangePixelGMiddle1  = imgO(311,395,G);
+        orangePixelGMiddle2  = imgO(311,395,G);
+        orangePixelRDown1    = imgO(411,440,R);
+        orangePixelRDown2    = imgO(411,440,R);
+        orangePixelGDown1    = imgO(411,440,G);
+        orangePixelGDown2    = imgO(411,440,G);
 
         if( (imgO(293,238,G) >= green_min && imgO(293,238,G) <= green_max) && ...
             (imgO(292,238,G) >= green_min && imgO(292,238,G) <= green_max) && ...
@@ -175,6 +198,7 @@ function [note_time, trail_time] = detect_times(vid)
 
             queue_trail = {};
             queue_note = {};
+            temp = {};
         end
 
         if(greenPixelUp     >= green_min    && greenPixelUp     <= green_max    || ...
