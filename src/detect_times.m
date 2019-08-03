@@ -37,61 +37,61 @@ function [note_time, trail_time] = detect_times(vid)
     while (note < note_max)
         imgO = getdata(vid,1,'uint8');
 
-        % Detecta pixels 1 e 2 com diferença de 6 pixels 
-        % para garantir que existe uma única nota, e não 6 notas
+        % Detecta pixels 1 e 2 com diferença de 4 pixels 
+        % para garantir que existe uma única nota, e não 4 notas
 
         greenPixelUp1        = imgO(287,238,G);
-        greenPixelUp2        = imgO(293,238,G);
+        greenPixelUp2        = imgO(291,238,G);
         greenPixelMiddle1    = imgO(306,230,G);
-        greenPixelMiddle2    = imgO(312,230,G);
+        greenPixelMiddle2    = imgO(310,230,G);
         greenPixelDown1      = imgO(406,185,G);
-        greenPixelDown2      = imgO(412,185,G);
+        greenPixelDown2      = imgO(410,185,G);
 
         redPixelUp1          = imgO(287,275,R);
-        redPixelUp2          = imgO(293,275,R);
+        redPixelUp2          = imgO(291,275,R);
         redPixelMiddle1      = imgO(305,274,R);
-        redPixelMiddle2      = imgO(311,274,R);
+        redPixelMiddle2      = imgO(309,274,R);
         redPixelDown1        = imgO(405,250,R);
-        redPixelDown2        = imgO(411,250,R);
+        redPixelDown2        = imgO(409,250,R);
 
         yellowPixelRUp1      = imgO(287,312,R);
-        yellowPixelRUp2      = imgO(293,312,R);
+        yellowPixelRUp2      = imgO(291,312,R);
         yellowPixelGUp1      = imgO(287,312,G);
-        yellowPixelGUp2      = imgO(293,312,G);
+        yellowPixelGUp2      = imgO(291,312,G);
         yellowPixelRMiddle1  = imgO(306,311,R);
-        yellowPixelRMiddle2  = imgO(312,311,R);
+        yellowPixelRMiddle2  = imgO(310,311,R);
         yellowPixelGMiddle1  = imgO(306,311,G);
-        yellowPixelGMiddle2  = imgO(312,311,G);
+        yellowPixelGMiddle2  = imgO(310,311,G);
         yellowPixelRDown1    = imgO(405,313,R);
-        yellowPixelRDown2    = imgO(411,313,R);
+        yellowPixelRDown2    = imgO(409,313,R);
         yellowPixelGDown1    = imgO(405,313,G);
-        yellowPixelGDown2    = imgO(411,313,G);
+        yellowPixelGDown2    = imgO(409,313,G);
 
         bluePixelGUp1        = imgO(287,349,G);
-        bluePixelGUp2        = imgO(293,349,G);
+        bluePixelGUp2        = imgO(291,349,G);
         bluePixelBUp1        = imgO(287,349,B);
-        bluePixelBUp2        = imgO(293,349,B);
+        bluePixelBUp2        = imgO(291,349,B);
         bluePixelGMiddle1    = imgO(306,354,G);
-        bluePixelGMiddle2    = imgO(312,354,G);
+        bluePixelGMiddle2    = imgO(310,354,G);
         bluePixelBMiddle1    = imgO(306,354,B);
-        bluePixelBMiddle2    = imgO(312,354,B);
+        bluePixelBMiddle2    = imgO(310,354,B);
         bluePixelGDown1      = imgO(405,376,G);
-        bluePixelGDown2      = imgO(411,376,G);
+        bluePixelGDown2      = imgO(409,376,G);
         bluePixelBDown1      = imgO(405,376,B);
-        bluePixelBDown2      = imgO(411,376,B);
+        bluePixelBDown2      = imgO(409,376,B);
 
         orangePixelRUp1      = imgO(287,387,R);
-        orangePixelRUp2      = imgO(293,387,R);
+        orangePixelRUp2      = imgO(291,387,R);
         orangePixelGUp1      = imgO(287,387,G);
-        orangePixelGUp2      = imgO(293,387,G);
+        orangePixelGUp2      = imgO(291,387,G);
         orangePixelRMiddle1  = imgO(305,395,R);
-        orangePixelRMiddle2  = imgO(311,395,R);
+        orangePixelRMiddle2  = imgO(309,395,R);
         orangePixelGMiddle1  = imgO(305,395,G);
-        orangePixelGMiddle2  = imgO(311,395,G);
+        orangePixelGMiddle2  = imgO(309,395,G);
         orangePixelRDown1    = imgO(405,440,R);
-        orangePixelRDown2    = imgO(411,440,R);
+        orangePixelRDown2    = imgO(409,440,R);
         orangePixelGDown1    = imgO(405,440,G);
-        orangePixelGDown2    = imgO(411,440,G);
+        orangePixelGDown2    = imgO(409,440,G);
 
         % Se passar um rastro em qualquer trilha, então fudeu, apenas inicie do zero
         % Não conteste o ensinamento acima
@@ -228,6 +228,7 @@ function [note_time, trail_time] = detect_times(vid)
                 
                 % Push trail
                 queue_trail{end + 1} = tic;
+                disp("if 1")
 
             end
 
@@ -255,6 +256,8 @@ function [note_time, trail_time] = detect_times(vid)
                 queue_trail = queue_trail(2:end);
                 % Push note
                 queue_note{end + 1} = tic;
+
+                disp("if 2")
             end
 
             % 
@@ -290,7 +293,6 @@ function [note_time, trail_time] = detect_times(vid)
             end
         end
     end
-end
 
     trail_time = (timer_of_note + timer_of_trail)/note;
     note_time = timer_of_note/note;
