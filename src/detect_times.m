@@ -1,8 +1,8 @@
 function [note_time, trail_time] = detect_times(vid)
     disp("Detectando os tempos.");
 
-    % Define number of samples
-    note_max        = 2;
+    % Define o número de notas para calcular o tempo médio
+    note_max        = 5;
 
     % Initialize zero
     queue_trail     = {};
@@ -12,7 +12,7 @@ function [note_time, trail_time] = detect_times(vid)
     timer_of_note   = 0;
     note            = 0;
 
-    % Initialize patterns
+    % Inicializam os parâmetros das cores
     R               = 1;
     G               = 2;
     B               = 3;
@@ -34,7 +34,10 @@ function [note_time, trail_time] = detect_times(vid)
     orangeG_min     = 175;
     orangeG_max     = 255;
 
-    % Flags
+    % Inicializam as flags
+    flag_Up = false;
+    flag_Middle = false;
+    flag_Down = false;
     flag_green_Up = false; 
     flag_red_Up = false;
     flag_yellow_Up = false;
@@ -50,6 +53,7 @@ function [note_time, trail_time] = detect_times(vid)
     flag_yellow_Down = false;
     flag_blue_Down = false;
     flag_orange_Down = false;
+    flag_initial_note = true;
 
     while (note < note_max)
         imgO = getdata(vid,1,'uint8');
@@ -86,9 +90,10 @@ function [note_time, trail_time] = detect_times(vid)
         orangePixelRDown    = imgO(405,440,R);
         orangePixelGDown    = imgO(405,440,G);
 
-        % Se passar um rastro em qualquer trilha, então fudeu, apenas inicie do zero
-        % Não conteste o ensinamento acima
-        % Detect if not a trail then detect if is a note
+        % Rastros acabam com a lógica de detectar os tempos, por isso, o mais
+        % viável é desconsiderar os rastros durante a detecção dos tempos.
+        % O código a seguir detecta rastros em todas as trilhas, e se identificado um rastro
+        % ....
         if(((imgO(293,238,G) >= green_min && imgO(293,238,G) <= green_max) && ...
         (imgO(292,238,G) >= green_min && imgO(292,238,G) <= green_max) && ...
         (imgO(291,239,G) >= green_min && imgO(291,239,G) <= green_max) && ...
@@ -198,14 +203,45 @@ function [note_time, trail_time] = detect_times(vid)
             queue_trail = {};
             queue_note = {};
             temp = {};
+            flag_initial_note = true;
             disp("rastro");
 
+            % Implementar uma alternativa melhor do que pausar a detecção
+            pause(2);
+
         else
+            % Colocar if para que a primeira flag a ser ativada seja Up
+
+            % Flags que retornam os valores lógicos true|false para determinar se foi identificada uma nota
             flag_green_Up = logical(greenPixelUp >= green_min && greenPixelUp <= green_max);
             flag_red_Up = logical(redPixelUp >= red_min && redPixelUp <= red_max);
             flag_yellow_Up = logical(yellowPixelRUp >= yellowR_min && yellowPixelRUp <= yellowR_max && yellowPixelGUp >= yellowG_min && yellowPixelGUp <= yellowG_max);
             flag_blue_Up = logical(bluePixelGUp >= blueG_min && bluePixelGUp <= blueG_max && bluePixelBUp >= blueB_min && bluePixelBUp <= blueB_max);
             flag_orange_Up = logical(orangePixelRUp >= orangeR_min && orangePixelRUp <= orangeR_max && orangePixelGUp >= orangeG_min && orangePixelGUp <= orangeG_max);
+
+            flag_green_middle = logical(greenPixelMiddle >= green_min && greenPixelMiddle <= green_max);
+            flag_red_middle = logical(redPixelMiddle >= red_min && redPixelMiddle <= red_max);
+            flag_yellow_middle = logical(yellowPixelRMiddle >= yellowR_min && yellowPixelRMiddle <= yellowR_max && yellowPixelGMiddle >= yellowG_min && yellowPixelGMiddle <= yellowG_max);
+            flag_blue_middle = logical(bluePixelGMiddle >= blueG_min && bluePixelGMiddle <= blueG_max && bluePixelBMiddle >= blueB_min && bluePixelBMiddle <= blueB_max);
+            flag_orange_middle = logical(orangePixelRMiddle >= orangeR_min && orangePixelRMiddle <= orangeR_max && orangePixelGMiddle >= orangeG_min && orangePixelGMiddle <= orangeG_max);
+
+            flag_green_down = logical(greenPixelDown >= green_min && greenPixelDown <= green_max);
+            flag_red_down = logical(redPixelDown >= red_min && redPixelDown <= red_max);
+            flag_yellow_down = logical(yellowPixelRDown >= yellowR_min && yellowPixelRDown <= yellowR_max && yellowPixelGDown >= yellowG_min && yellowPixelGDown <= yellowG_max);
+            flag_blue_down = logical(bluePixelGDown >= blueG_min && bluePixelGDown <= blueG_max && bluePixelBDown >= blueB_min && bluePixelBDown <= blueB_max);
+            flag_orange_down = logical(orangePixelRDown >= orangeR_min && orangePixelRDown <= orangeR_max && orangePixelGDown >= orangeG_min && orangePixelGDown <= orangeG_max);
+
+            flag_Up = logical(flag_green_Up || flag_red_Up || flag_yellow_Up || flag_blue_Up || flag_orange_Up);
+            flag_Middle = logical(flag_green_Middle || flag_red_Middle || flag_yellow_Middle || flag_blue_Middle || flag_orange_Middle);
+            flag_Down = logical(flag_green_Down || flag_red_Down || flag_yellow_Down || flag_blue_Down || flag_orange_Down);
+
+            if(flag_initial_note && flag_Up && ~flag_Middle && ~flag_Down)
+                queue_trail = {};
+                queue_note = {};
+                temp = {};
+                flag_initial_note = false;
+                disp("initial note");
+            end
 
             if(flag_green_Up && ~(greenPixelUp >= green_min && greenPixelUp <= green_max))
                 queue_trail{end + 1} = tic;
@@ -239,11 +275,6 @@ function [note_time, trail_time] = detect_times(vid)
                 disp("orange_Up");
             end
             
-            flag_green_middle = logical(greenPixelMiddle >= green_min && greenPixelMiddle <= green_max);
-            flag_red_middle = logical(redPixelMiddle >= red_min && redPixelMiddle <= red_max);
-            flag_yellow_middle = logical(yellowPixelRMiddle >= yellowR_min && yellowPixelRMiddle <= yellowR_max && yellowPixelGMiddle >= yellowG_min && yellowPixelGMiddle <= yellowG_max);
-            flag_blue_middle = logical(bluePixelGMiddle >= blueG_min && bluePixelGMiddle <= blueG_max && bluePixelBMiddle >= blueB_min && bluePixelBMiddle <= blueB_max);
-            flag_orange_middle = logical(orangePixelRMiddle >= orangeR_min && orangePixelRMiddle <= orangeR_max && orangePixelGMiddle >= orangeG_min && orangePixelGMiddle <= orangeG_max);
 
             if(flag_green_middle && ~(greenPixelMiddle >= green_min && greenPixelMiddle <= green_max))
                 % Push time trail
@@ -256,66 +287,45 @@ function [note_time, trail_time] = detect_times(vid)
                 flag_green_middle = false;
                 disp("green_middle");
             end
-
             if(flag_red_middle && ~(redPixelMiddle >= red_min && redPixelMiddle <= red_max))
-                % Push time trail
                 temp{end + 1} = toc(queue_trail{1});
-                % Pop trail
                 queue_trail = queue_trail(2:end);
-                % Push note
                 queue_note{end + 1} = tic;
 
                 flag_red_middle = false;
                 disp("red_middle");
             end
-
             if(flag_yellow_middle && ...
             ~(yellowPixelRMiddle >= yellowR_min && yellowPixelRMiddle <= yellowR_max && ...
             yellowPixelGMiddle >= yellowG_min && yellowPixelGMiddle <= yellowG_max))
-                % Push time trail
                 temp{end + 1} = toc(queue_trail{1});
-                % Pop trail
                 queue_trail = queue_trail(2:end);
-                % Push note
                 queue_note{end + 1} = tic;
 
                 flag_yellow_middle = false;
                 disp("yellow_middle");
             end
-
             if(flag_blue_middle && ...
             ~(bluePixelGMiddle >= blueG_min && bluePixelGMiddle <= blueG_max && ...
             bluePixelBMiddle >= blueB_min && bluePixelBMiddle <= blueB_max)) 
-                % Push time trail
                 temp{end + 1} = toc(queue_trail{1});
-                % Pop trail
                 queue_trail = queue_trail(2:end);
-                % Push note
                 queue_note{end + 1} = tic;
 
                 flag_blue_middle = false;
                 disp("blue_middle");
             end
-
             if(flag_orange_middle && ...
             ~(orangePixelRMiddle >= orangeR_min && orangePixelRMiddle <= orangeR_max && ...
             orangePixelGMiddle >= orangeG_min && orangePixelGMiddle <= orangeG_max))
-                % Push time trail
                 temp{end + 1} = toc(queue_trail{1});
-                % Pop trail
                 queue_trail = queue_trail(2:end);
-                % Push note
                 queue_note{end + 1} = tic;
 
                 flag_orange_middle = false;
                 disp("orange_middle");
             end
 
-            flag_green_down = logical(greenPixelDown >= green_min && greenPixelDown <= green_max);
-            flag_red_down = logical(redPixelDown >= red_min && redPixelDown <= red_max);
-            flag_yellow_down = logical(yellowPixelRDown >= yellowR_min && yellowPixelRDown <= yellowR_max && yellowPixelGDown >= yellowG_min && yellowPixelGDown <= yellowG_max);
-            flag_blue_down = logical(bluePixelGDown >= blueG_min && bluePixelGDown <= blueG_max && bluePixelBDown >= blueB_min && bluePixelBDown <= blueB_max);
-            flag_orange_down = logical(orangePixelRDown >= orangeR_min && orangePixelRDown <= orangeR_max && orangePixelGDown >= orangeG_min && orangePixelGDown <= orangeG_max);
 
             if(flag_green_down && ~(greenPixelDown >= green_min && greenPixelDown <= green_max))
                 % Calculate time trail
@@ -332,15 +342,10 @@ function [note_time, trail_time] = detect_times(vid)
                 disp("green_down");
             end
             if(flag_red_down && ~(redPixelDown >= red_min && redPixelDown <= red_max))
-                % Calculate time trail
                 timer_of_trail = temp{1} + timer_of_trail;
-                % Calculate time note
                 timer_of_note = toc(queue_note{1}) + timer_of_note;
-                % Pop time trail
                 temp = temp(2:end);
-                % Pop note
                 queue_note = queue_note(2:end);
-                % Counter while
                 note = note + 1;
                 flag_red_down = false;
                 disp("red_down");
@@ -348,15 +353,10 @@ function [note_time, trail_time] = detect_times(vid)
             if(flag_yellow_down && ...
             ~(yellowPixelRDown >= yellowR_min && yellowPixelRDown <= yellowR_max && ...
             yellowPixelGDown >= yellowG_min && yellowPixelGDown <= yellowG_max))
-                % Calculate time trail
                 timer_of_trail = temp{1} + timer_of_trail;
-                % Calculate time note
                 timer_of_note = toc(queue_note{1}) + timer_of_note;
-                % Pop time trail
                 temp = temp(2:end);
-                % Pop note
                 queue_note = queue_note(2:end);
-                % Counter while
                 note = note + 1;
                 flag_yellow_down = false;
                 disp("yellow_down");
@@ -364,15 +364,10 @@ function [note_time, trail_time] = detect_times(vid)
             if(flag_blue_down && ...
             ~(bluePixelGDown >= blueG_min && bluePixelGDown <= blueG_max && ...
             bluePixelBDown >= blueB_min && bluePixelBDown <= blueB_max)) 
-                % Calculate time trail
                 timer_of_trail = temp{1} + timer_of_trail;
-                % Calculate time note
                 timer_of_note = toc(queue_note{1}) + timer_of_note;
-                % Pop time trail
                 temp = temp(2:end);
-                % Pop note
                 queue_note = queue_note(2:end);
-                % Counter while
                 note = note + 1;
                 flag_blue_down = false;
                 disp("blue_down");
@@ -380,15 +375,10 @@ function [note_time, trail_time] = detect_times(vid)
             if(flag_orange_down && ...
             ~(orangePixelRDown >= orangeR_min && orangePixelRDown <= orangeR_max && ...
             orangePixelGDown >= orangeG_min && orangePixelGDown <= orangeG_max))
-                % Calculate time trail
                 timer_of_trail = temp{1} + timer_of_trail;
-                % Calculate time note
                 timer_of_note = toc(queue_note{1}) + timer_of_note;
-                % Pop time trail
                 temp = temp(2:end);
-                % Pop note
                 queue_note = queue_note(2:end);
-                % Counter while
                 note = note + 1;
                 flag_orange_down = false;
                 disp("orange_down");
