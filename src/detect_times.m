@@ -2,7 +2,7 @@ function [note_time, trail_time] = detect_times(vid)
     disp("Detectando os tempos.");
 
     % Define o número de notas para calcular o tempo médio
-    number_of_notes = 10;
+    number_of_notes = 30;
 
     % Initialize zero
     queue_trail     = {};
