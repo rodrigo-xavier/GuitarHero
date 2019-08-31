@@ -1,1 +1,31 @@
 .vscode/*
+
+Aperta duas vezes quando a segunda nota de uma sequencia vem apos uma nota
+
+notas que repetiram
+ps: estudar elas
+0001000010000000
+0001000010000000
+0001000010000000
+0000100001000000
+0000010000100000
+0001000010000000
+
+Neste teste o tempo foi maior que o esperado
+
+Não está segurando as notas de rastro
+
+O rastro azul não é identificado
+
+*O código do arduino pode estar processando errado
+*Pode ser que na string esteja sendo mandado o de apertar e soltar ao msm tempo
+
+verde simples       
+vermelho simples    
+amarelo simples     
+azul simples        
+laranja simples     
+
+verde segura
+vermelho segura
+amarelo
