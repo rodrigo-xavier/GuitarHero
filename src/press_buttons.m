@@ -23,9 +23,8 @@ function press_buttons(vid, galileo)
     
     % envia os tempos para o arduino, ou verifica se os tempos
     % estão corretos, caso o arduino já possua o tempo
-    [tempo_simples, tempo_rastro] = detect_times(vid);
-    tempo_espera = tempo_rastro - tempo_simples;
-    configure_arduino_time(galileo, tempo_simples, tempo_rastro);
+    [time] = detect_time(vid);
+    configure_arduino_time(galileo, time);
     
     R = 1;
     G = 2;

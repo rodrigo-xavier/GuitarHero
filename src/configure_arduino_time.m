@@ -1,30 +1,13 @@
-function configure_arduino_time(galileo, tempo_simple, tempo_rastro)
-    % Funcao que trata do envio de tempos para o arduino
-
-    disp("Enviando tempos ao arduino.")
-    
-    send_time_to_arduino(galileo, tempo_simple, false);
-
-    send_time_to_arduino(galileo, tempo_rastro, true);
-    
-    disp("Tempos enviados com sucesso ao arduino!");
-end
-
-function send_time_to_arduino(galileo, time_to_send, isRastro)
-    %time to send is in seconds
+function configure_arduino_time(galileo, time)
+    % Tempo deve ser enviado em segundos
 
     % Limpa o buffer
     if (galileo.BytesAvailable > 0)
         fscanf(galileo,'%c',galileo.BytesAvailable);
     end
 
-    if ~isRastro
-        tmp = char(90);
-        msg = "Tempo Simples: ";
-    else
-        tmp = char(91);
-        msg = "Tempo Rastro: ";
-    end
+    tmp = char(90);
+    msg = "Tempo Simples: ";
     
     config = uint16(bin2dec('1000000000000000'));
     fwrite(galileo, config, 'uint16');
