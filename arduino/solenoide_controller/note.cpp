@@ -4,24 +4,20 @@
 Note::Note(int pin, unsigned long offtime)
 {
     this->pin = pin;
-    this->open = false;
-    this->pressed = false;
+    this->open = true;
+    this->hold = false;
     this->drop = false;
+    this->trail = false;
+    this->wait_offtime = false;
     this->offtime = offtime;
     this->previous_time = micro();
-    // this->current_time = micro();
 }
 
-// Método destrutor
-// Note::~Note()
-// {
-// }
-
-void Note::press(void)
+void Note::update(void)
 {
     this->current_time = micro();
 
-    if (!(this->open))
+    if (this->open)
     {
         // Se não tem que soltar, então deve apertar
         // após o tempo de offtime (tempo entre nota passar)
@@ -32,29 +28,32 @@ void Note::press(void)
             this->drop = true;             // agora deve soltar após o tempo mínimo
             this->previous_time = micro(); // reinicia deltatime
         }
+
         // Se tiver que soltar, verifica se já se passou o tempo mínimo
         else if (this->drop && (this->current_time - this->previous_time) >= PRESS_MIN_TIME)
         {
             digitalWrite(this->pin, LOW); // solta
-            this->open = true;            // estado finalizado
-            this->drop = false;           // não era necessário desabilitar o soltar, mas só por segurança
+            this->open = false;           // estado finalizado
         }
-    }
-}
 
-void Note::press_and_hold()
-{
-    this->current_time = micro();
-
-    if (!(this->open))
-    {
+        // Verifica se é um rastro e
         // Aperta se já não estiver pressionado (não é uma
         // checagem obrigatória, mas por segurança)
         // e se o tempo esperado se passou
-        if (!(this->pressed) && (this->current_time - this->previous_time) >= this->offtime)
+        else if (this->trail && !(this->hold) && (this->current_time - this->previous_time) >= this->offtime)
         {
             digitalWrite(this->pin, HIGH);
-            this->pressed = true;
+            this->hold = true;
+        }
+
+        // Reinicia o deltatime para soltar o rastro
+        // depois de passado o tempo do offtime
+        // É necessário para o arduíno não soltar o rastro
+        // antes do final do rastro
+        else if (this->trail && this->hold && this->drop && !(this->wait_offtime))
+        {
+            this->previous_time = micro(); // reinicia deltatime
+            this->wait_offtime = true;
         }
 
         // Verifica se deve soltar, se está pressionado
@@ -62,20 +61,13 @@ void Note::press_and_hold()
         // mas não é uma checagem obrigatória)
         // e se se passou o offtime entre momento de
         // detecção e ação
-        else if (this->drop && this->pressed && (this->current_time - this->previous_time) >= this->offtime)
+        else if (this->trail && this->wait_offtime && (this->current_time - this->previous_time) >= this->offtime)
         {
             digitalWrite(this->pin, LOW);
-            this->pressed = false;
-            this->open = true;
+            this->hold = false;
+            this->open = false;
         }
     }
-}
-
-void Note::drop(int offtime)
-{
-    // Seta soltar como true, e reinicia o deltatime
-    this->drop = true;
-    this->previous_time = micro();
 }
 
 // Recebe o tempo de offtime do MATLAB

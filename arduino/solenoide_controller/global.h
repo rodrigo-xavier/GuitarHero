@@ -51,7 +51,20 @@ uint16_t command = 0;
 unsigned char incomingByte = '\0';
 
 // Temporary variables
-int ind = 0, first_item = 0;
+int first_item = 0;
+
+// Define Contadores de indíce
+short index_note_green = 0;
+short index_note_red = 0;
+short index_note_yellow = 0;
+short index_note_blue = 0;
+short index_note_orange = 0;
+
+short index_trail_green = 0;
+short index_trail_red = 0;
+short index_trail_yellow = 0;
+short index_trail_blue = 0;
+short index_trail_orange = 0;
 
 Note *red[N_STATES];
 Note *green[N_STATES];

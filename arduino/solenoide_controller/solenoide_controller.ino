@@ -16,30 +16,34 @@ void setup()
   // Inicializa os estados das Notas
   for (int i = 0; i < N_STATES; i++)
   {
-    red[i] = new SimpleState(L1_PIN, offtime);
-    red[i]->open = true;
-
-    green[i] = new SimpleState(L2_PIN, offtime);
-    green[i]->open = true;
-
-    yellow[i] = new SimpleState(R1_PIN, offtime);
-    yellow[i]->open = true;
-
-    blue[i] = new SimpleState(R2_PIN, offtime);
-    blue[i]->open = true;
-
-    orange[i] = new SimpleState(X_PIN, offtime);
-    orange[i]->open = true;
+    green[i] = new Note(L2_PIN, offtime);
+    red[i] = new Note(L1_PIN, offtime);
+    yellow[i] = new Note(R1_PIN, offtime);
+    blue[i] = new Note(R2_PIN, offtime);
+    orange[i] = new Note(X_PIN, offtime);
   }
 
-  delay(1000);
+  // Define counters
+  short index_note_green = 0;
+  short index_note_red = 0;
+  short index_note_yellow = 0;
+  short index_note_blue = 0;
+  short index_note_orange = 0;
+
+  short index_trail_green = 0;
+  short index_trail_red = 0;
+  short index_trail_yellow = 0;
+  short index_trail_blue = 0;
+  short index_trail_orange = 0;
+
+  // delay(1000);
 }
 
 void loop()
 {
   // São lidos 1 byte por vez, já que através do MATLAB
   // está sendo enviado um bit para cada ação no formato
-  // indicado no arquivo envia_comando.m
+  // indexicado no arquivo envia_comando.m
   // Ler a documentação dessa função para entender melhor
   if (Serial.available() > 0)
   {
@@ -47,7 +51,7 @@ void loop()
     input_byte[1] = Serial.read();                    // Most significante byte
     command = ((input_byte[1] << 8) | input_byte[0]); // 16 bytes contatenando os 2 bytes acima
 
-    // Os bits que estiverem como 1 indicam ações que
+    // Os bits que estiverem como 1 indexicam ações que
     // devem ser realizadas.
 
     // Estado simples: aperta e solta automaticamente
@@ -78,36 +82,36 @@ void loop()
     // Green (L2_PIN)
     if (bitRead(command, 0))
     {
-      ind = get_new_states('G');
-      green[ind] = new Note(L2_PIN, offtime);
+      green[index_note_green] = new Note(L2_PIN, offtime);
+      index_note_green++;
     }
 
     // Red (L1_PIN)
     if (bitRead(command, 1))
     {
-      ind = get_new_states('R');
-      red[ind] = new Note(L1_PIN, offtime);
+      red[index_note_red] = new Note(L1_PIN, offtime);
+      index_note_red++;
     }
 
     // Yellow (R1_PIN)
     if (bitRead(command, 2))
     {
-      ind = get_new_states('Y');
-      yellow[ind] = new Note(R1_PIN, offtime);
+      yellow[index_note_yellow] = new Note(R1_PIN, offtime);
+      index_note_yellow++;
     }
 
     // Blue (R1_PIN)
     if (bitRead(command, 3))
     {
-      ind = get_new_states('B');
-      blue[ind] = new Note(R2_PIN, offtime);
+      blue[index_note_blue] = new Note(R2_PIN, offtime);
+      index_note_blue++;
     }
 
     // Orange (X_PIN)
     if (bitRead(command, 4))
     {
-      ind = get_new_states('O');
-      orange[ind] = new Note(X_PIN, offtime);
+      orange[index_note_orange] = new Note(X_PIN, offtime);
+      index_note_orange++;
     }
 
     // ----------------------------------------------------- //
@@ -118,41 +122,46 @@ void loop()
     // Green (L2_PIN)
     if (bitRead(command, 5))
     {
-      ind = get_traceStates_index('G');
-      greenTraceStates[ind] = new Note(L2_PIN, offtime);
-      greenTraceQueue.push(ind);
+      index = get_traceStates_indexex('G');
+      green[index] = new Note(L2_PIN, offtime);
+      green[index]->trail = true;
+      greenTraceQueue.push(index);
     }
 
     // Red (L1_PIN)
     if (bitRead(command, 6))
     {
-      ind = get_traceStates_index('R');
-      redTraceStates[ind] = new Note(L1_PIN, offtime);
-      redTraceQueue.push(ind);
+      index = get_traceStates_indexex('R');
+      red[index] = new Note(L1_PIN, offtime);
+      red[index]->trail = true;
+      redTraceQueue.push(index);
     }
 
     // Yellow (R1_PIN)
     if (bitRead(command, 7))
     {
-      ind = get_traceStates_index('Y');
-      yellowTraceStates[ind] = new Note(R1_PIN, offtime);
-      yellowTraceQueue.push(ind);
+      index = get_traceStates_indexex('Y');
+      yellow[index] = new Note(R1_PIN, offtime);
+      yellow[index]->trail = true;
+      yellowTraceQueue.push(index);
     }
 
     // Blue (R2_PIN)
     if (bitRead(command, 8))
     {
-      ind = get_traceStates_index('B');
-      blueTraceStates[ind] = new Note(R2_PIN, offtime);
-      blueTraceQueue.push(ind);
+      index = get_traceStates_indexex('B');
+      blue[index] = new Note(R2_PIN, offtime);
+      blue[index]->trail = true;
+      blueTraceQueue.push(index);
     }
 
     // Orange (X_PIN)
     if (bitRead(command, 9))
     {
-      ind = get_traceStates_index('O');
-      orangeTraceStates[ind] = new Note(X_PIN, offtime);
-      orangeTraceQueue.push(ind);
+      index = get_traceStates_indexex('O');
+      orange[index] = new Note(X_PIN, offtime);
+      orange[index]->trail = true;
+      orangeTraceQueue.push(index);
     }
 
     // ----------------------------------------------------- //
@@ -163,10 +172,10 @@ void loop()
     if (bitRead(command, 10))
     {
       first_item = greenTraceQueue.front();
-      if (!greenTraceStates[first_item]->open)
+      if (!green[first_item]->open)
       {
-        ind = greenTraceQueue.pop();
-        greenTraceStates[ind]->Soltar(offtime);
+        index = greenTraceQueue.pop();
+        green[index]->Soltar(offtime);
       }
     }
 
@@ -174,20 +183,20 @@ void loop()
     if (bitRead(command, 11))
     {
       first_item = redTraceQueue.front();
-      if (!redTraceStates[first_item]->open)
+      if (!red[first_item]->open)
       {
-        ind = redTraceQueue.pop();
-        redTraceStates[ind]->Soltar(offtime);
+        index = redTraceQueue.pop();
+        red[index]->Soltar(offtime);
       }
     }
 
     if (bitRead(command, 12))
     {
       first_item = yellowTraceQueue.front();
-      if (!yellowTraceStates[first_item]->open)
+      if (!yellow[first_item]->open)
       {
-        ind = yellowTraceQueue.pop();
-        yellowTraceStates[ind]->Soltar(offtime);
+        index = yellowTraceQueue.pop();
+        yellow[index]->Soltar(offtime);
       }
     }
 
@@ -195,10 +204,11 @@ void loop()
     if (bitRead(command, 13))
     {
       first_item = blueTraceQueue.front();
-      if (!blueTraceStates[first_item]->open)
+      if (!blue[first_item]->open)
       {
-        ind = blueTraceQueue.pop();
-        blueTraceStates[ind]->Soltar(offtime);
+        index = blueTraceQueue.pop();
+        blue[index]->drop = true;
+        blue[index]->previous_time = micro();
       }
     }
 
@@ -206,10 +216,10 @@ void loop()
     if (bitRead(command, 14))
     {
       first_item = orangeTraceQueue.front();
-      if (!orangeTraceStates[first_item]->open)
+      if (!orange[first_item]->open)
       {
-        ind = orangeTraceQueue.pop();
-        orangeTraceStates[ind]->Soltar(offtime);
+        index = orangeTraceQueue.pop();
+        orange[index]->Soltar(offtime);
       }
     }
 
@@ -238,38 +248,46 @@ void loop()
     command = 0;
   }
 
-  checkAllOnStates();
+  update_states();
 }
 
-void checkAllOnStates()
+void update_states(void)
 {
-  // Verifica todos os estados que estão ativos
+  // Atualiza todos os estados que estão ativos
+  // E decrementa o índice se o estado for encerrado
+  // durante a atualização
 
   for (int i = 0; i < N_STATES; i++)
   {
-    if (!red[i]->open) // se não foi finalizada ainda
-      red[i]->press();
-    if (!green[i]->open)
-      green[i]->press();
-    if (!yellow[i]->open)
-      yellow[i]->press();
-    if (!blue[i]->open)
-      blue[i]->press();
-    if (!orange[i]->open)
-      orange[i]->press();
-
-    if (i < N_STATES)
+    if (green[i]->open)
     {
-      if (!redTraceStates[i]->open)
-        redTraceStates[i]->press_and_hold();
-      if (!greenTraceStates[i]->open)
-        greenTraceStates[i]->press_and_hold();
-      if (!yellowTraceStates[i]->open)
-        yellowTraceStates[i]->press_and_hold();
-      if (!blueTraceStates[i]->open)
-        blueTraceStates[i]->press_and_hold();
-      if (!orangeTraceStates[i]->open)
-        orangeTraceStates[i]->press_and_hold();
+      green[i]->update();
+      if (!green[i]->open)
+        index_note_green--;
+    }
+    if (red[i]->open)
+    {
+      red[i]->update();
+      if (!red[i]->open)
+        index_note_red--;
+    }
+    if (yellow[i]->open)
+    {
+      yellow[i]->update();
+      if (!yellow[i]->open)
+        index_note_yellow--;
+    }
+    if (blue[i]->open)
+    {
+      blue[i]->update();
+      if (!blue[i]->open)
+        index_note_blue--;
+    }
+    if (!orange[i]->open)
+    {
+      orange[i]->update();
+      if (!orange[i]->open)
+        index_note_orange--;
     }
   }
 }
