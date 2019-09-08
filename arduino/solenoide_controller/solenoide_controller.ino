@@ -3,6 +3,7 @@
 
 void setup()
 {
+  // Configura quantidade de bits por segundo que o arduino deve receber
   Serial.begin(115200);
 
   // Inicializa os pinos como saída
@@ -12,23 +13,23 @@ void setup()
   pinMode(R2_PIN, OUTPUT);
   pinMode(X_PIN, OUTPUT);
 
-  // Inicializa os estados simples
-  for (int i = 0; i < N_SIMPLE_STATES; i++)
+  // Inicializa os estados das Notas
+  for (int i = 0; i < N_STATES; i++)
   {
-    redSimpleStates[i] = new SimpleState(L1_PIN, offtime_simple);
-    redSimpleStates[i]->finished = true;
+    red[i] = new SimpleState(L1_PIN, offtime);
+    red[i]->open = true;
 
-    greenSimpleStates[i] = new SimpleState(L2_PIN, offtime_simple);
-    greenSimpleStates[i]->finished = true;
+    green[i] = new SimpleState(L2_PIN, offtime);
+    green[i]->open = true;
 
-    yellowSimpleStates[i] = new SimpleState(R1_PIN, offtime_simple);
-    yellowSimpleStates[i]->finished = true;
+    yellow[i] = new SimpleState(R1_PIN, offtime);
+    yellow[i]->open = true;
 
-    blueSimpleStates[i] = new SimpleState(R2_PIN, offtime_simple);
-    blueSimpleStates[i]->finished = true;
+    blue[i] = new SimpleState(R2_PIN, offtime);
+    blue[i]->open = true;
 
-    orangeSimpleStates[i] = new SimpleState(X_PIN, offtime_simple);
-    orangeSimpleStates[i]->finished = true;
+    orange[i] = new SimpleState(X_PIN, offtime);
+    orange[i]->open = true;
   }
 
   delay(1000);
@@ -36,15 +37,15 @@ void setup()
 
 void loop()
 {
-  // São lidos 2 bytes de uma vez, já que através do MATLAB
+  // São lidos 1 byte por vez, já que através do MATLAB
   // está sendo enviado um bit para cada ação no formato
   // indicado no arquivo envia_comando.m
   // Ler a documentação dessa função para entender melhor
-  if (Serial.available() >= 2)
+  if (Serial.available() > 0)
   {
-    incBytes[0] = Serial.read();                   // Least Significant byte
-    incBytes[1] = Serial.read();                   // Most significante byte
-    commands = ((incBytes[1] << 8) | incBytes[0]); // 16 bytes contatenando os 2 bytes acima
+    input_byte[0] = Serial.read();                    // Least Significant byte
+    input_byte[1] = Serial.read();                    // Most significante byte
+    command = ((input_byte[1] << 8) | input_byte[0]); // 16 bytes contatenando os 2 bytes acima
 
     // Os bits que estiverem como 1 indicam ações que
     // devem ser realizadas.
@@ -52,39 +53,61 @@ void loop()
     // Estado simples: aperta e solta automaticamente
     // o mais rápido possível
 
+    // ----------------------------------------------------- //
+
+    // B0 - APERTO SIMPLES VERDE
+    // B1 - APERTO SIMPLES VERMELHO
+    // B2 - APERTO SIMPLES AMARELO
+    // B3 - APERTO SIMPLES AZUL
+    // B4 - APERTO SIMPLES LARANJADO
+    // B5 - APERTO SEM SOLTAR VERDE
+    // B6 - APERTO SEM SOLTAR VERMELHO
+    // B7 - APERTO SEM SOLTAR AMARELO
+    // B8 - APERTO SEM SOLTAR AZUL
+    // B9 - APERTO SEM SOLTAR LARANJADO
+    // B10 - SOLTA VERDE
+    // B11 - SOLTA VERMELHO
+    // B12 - SOLTA AMARELO
+    // B13 - SOLTA AZUL
+    // B14 - SOLTA LARANJADO
+    // B15 - 0 (será utilizado para configurações)
+
+    // ----------------------------------------------------- //
+    // Comandos relacionados com aperto simples das notas
+
     // Green (L2_PIN)
-    if (bitRead(commands, 0))
+    if (bitRead(command, 0))
     {
-      ind = get_simpleStates_index('G');
-      greenSimpleStates[ind] = new SimpleState(L2_PIN, offtime_simple);
+      ind = get_new_states('G');
+      green[ind] = new Note(L2_PIN, offtime);
     }
 
     // Red (L1_PIN)
-    if (bitRead(commands, 1))
+    if (bitRead(command, 1))
     {
-      ind = get_simpleStates_index('R');
-      redSimpleStates[ind] = new SimpleState(L1_PIN, offtime_simple);
+      ind = get_new_states('R');
+      red[ind] = new Note(L1_PIN, offtime);
     }
 
     // Yellow (R1_PIN)
-    if (bitRead(commands, 2))
+    if (bitRead(command, 2))
     {
-      ind = get_simpleStates_index('Y');
-      yellowSimpleStates[ind] = new SimpleState(R1_PIN, offtime_simple);
+      ind = get_new_states('Y');
+      yellow[ind] = new Note(R1_PIN, offtime);
     }
 
     // Blue (R1_PIN)
-    if (bitRead(commands, 3))
+    if (bitRead(command, 3))
     {
-      ind = get_simpleStates_index('B');
-      blueSimpleStates[ind] = new SimpleState(R2_PIN, offtime_simple);
+      ind = get_new_states('B');
+      blue[ind] = new Note(R2_PIN, offtime);
     }
 
     // Orange (X_PIN)
-    if (bitRead(commands, 4))
+    if (bitRead(command, 4))
     {
-      ind = get_simpleStates_index('O');
-      orangeSimpleStates[ind] = new SimpleState(X_PIN, offtime_simple);
+      ind = get_new_states('O');
+      orange[ind] = new Note(X_PIN, offtime);
     }
 
     // ----------------------------------------------------- //
@@ -93,105 +116,105 @@ void loop()
     // Estado de rastro: Aperta sem soltar
 
     // Green (L2_PIN)
-    if (bitRead(commands, 5))
+    if (bitRead(command, 5))
     {
       ind = get_traceStates_index('G');
-      greenTraceStates[ind] = new TraceState(L2_PIN, offtime_rastro);
+      greenTraceStates[ind] = new Note(L2_PIN, offtime);
       greenTraceQueue.push(ind);
     }
 
     // Red (L1_PIN)
-    if (bitRead(commands, 6))
+    if (bitRead(command, 6))
     {
       ind = get_traceStates_index('R');
-      redTraceStates[ind] = new TraceState(L1_PIN, offtime_rastro);
+      redTraceStates[ind] = new Note(L1_PIN, offtime);
       redTraceQueue.push(ind);
     }
 
     // Yellow (R1_PIN)
-    if (bitRead(commands, 7))
+    if (bitRead(command, 7))
     {
       ind = get_traceStates_index('Y');
-      yellowTraceStates[ind] = new TraceState(R1_PIN, offtime_rastro);
+      yellowTraceStates[ind] = new Note(R1_PIN, offtime);
       yellowTraceQueue.push(ind);
     }
 
     // Blue (R2_PIN)
-    if (bitRead(commands, 8))
+    if (bitRead(command, 8))
     {
       ind = get_traceStates_index('B');
-      blueTraceStates[ind] = new TraceState(R2_PIN, offtime_rastro);
+      blueTraceStates[ind] = new Note(R2_PIN, offtime);
       blueTraceQueue.push(ind);
     }
 
     // Orange (X_PIN)
-    if (bitRead(commands, 9))
+    if (bitRead(command, 9))
     {
       ind = get_traceStates_index('O');
-      orangeTraceStates[ind] = new TraceState(X_PIN, offtime_rastro);
+      orangeTraceStates[ind] = new Note(X_PIN, offtime);
       orangeTraceQueue.push(ind);
     }
 
-    // ------ //
+    // ----------------------------------------------------- //
 
     // Estado de rastro: Solta
 
     // Green (R1_PIN)
-    if (bitRead(commands, 10) && !greenTraceQueue.isEmpty())
+    if (bitRead(command, 10))
     {
       first_item = greenTraceQueue.front();
-      if (!greenTraceStates[first_item]->finished)
+      if (!greenTraceStates[first_item]->open)
       {
         ind = greenTraceQueue.pop();
-        greenTraceStates[ind]->Soltar(offtime_simple);
+        greenTraceStates[ind]->Soltar(offtime);
       }
     }
 
     // Red (L1_PIN)
-    if (bitRead(commands, 11) && !redTraceQueue.isEmpty())
+    if (bitRead(command, 11))
     {
       first_item = redTraceQueue.front();
-      if (!redTraceStates[first_item]->finished)
+      if (!redTraceStates[first_item]->open)
       {
         ind = redTraceQueue.pop();
-        redTraceStates[ind]->Soltar(offtime_simple);
+        redTraceStates[ind]->Soltar(offtime);
       }
     }
 
-    if (bitRead(commands, 12) && !yellowTraceQueue.isEmpty())
+    if (bitRead(command, 12))
     {
       first_item = yellowTraceQueue.front();
-      if (!yellowTraceStates[first_item]->finished)
+      if (!yellowTraceStates[first_item]->open)
       {
         ind = yellowTraceQueue.pop();
-        yellowTraceStates[ind]->Soltar(offtime_simple);
+        yellowTraceStates[ind]->Soltar(offtime);
       }
     }
 
     // Blue (R2_PIN)
-    if (bitRead(commands, 13) && !blueTraceQueue.isEmpty())
+    if (bitRead(command, 13))
     {
       first_item = blueTraceQueue.front();
-      if (!blueTraceStates[first_item]->finished)
+      if (!blueTraceStates[first_item]->open)
       {
         ind = blueTraceQueue.pop();
-        blueTraceStates[ind]->Soltar(offtime_simple);
+        blueTraceStates[ind]->Soltar(offtime);
       }
     }
 
     // Orange (X_PIN)
-    if (bitRead(commands, 14) && !orangeTraceQueue.isEmpty())
+    if (bitRead(command, 14))
     {
       first_item = orangeTraceQueue.front();
-      if (!orangeTraceStates[first_item]->finished)
+      if (!orangeTraceStates[first_item]->open)
       {
         ind = orangeTraceQueue.pop();
-        orangeTraceStates[ind]->Soltar(offtime_simple);
+        orangeTraceStates[ind]->Soltar(offtime);
       }
     }
 
-    // Configuração de tempo
-    if (bitRead(commands, 15))
+    // Configuração de tempo (DEVE SEMPRE SER A ÚLTIMA CONDIÇÃO, por questão de eficiência)
+    if (bitRead(command, 15))
     {
       while (true)
       {
@@ -210,170 +233,43 @@ void loop()
       incomingByte == '\0';
     }
 
-    incBytes[0] = 0;
-    incBytes[1] = 0;
-    commands = 0;
+    input_byte[0] = 0;
+    input_byte[1] = 0;
+    command = 0;
   }
 
   checkAllOnStates();
-}
-
-int get_simpleStates_index(char color)
-{
-  // Função que retorna o índice do array
-  // a ser utilizado para alocar o estado Simple
-  // dando sempre prioridade para o menor índice
-  // (simplesmente por simplicidade de implementação)
-
-  if (color == 'R')
-  {
-    for (int i = 0; i < N_SIMPLE_STATES; i++)
-    {
-      if (redSimpleStates[i]->finished)
-        return i;
-    }
-  }
-  else if (color == 'G')
-  {
-    for (int i = 0; i < N_SIMPLE_STATES; i++)
-    {
-      if (greenSimpleStates[i]->finished)
-        return i;
-    }
-  }
-  else if (color == 'Y')
-  {
-    for (int i = 0; i < N_SIMPLE_STATES; i++)
-    {
-      if (yellowSimpleStates[i]->finished)
-        return i;
-    }
-  }
-  else if (color == 'B')
-  {
-    for (int i = 0; i < N_SIMPLE_STATES; i++)
-    {
-      if (blueSimpleStates[i]->finished)
-        return i;
-    }
-  }
-  else if (color == 'O')
-  {
-    for (int i = 0; i < N_SIMPLE_STATES; i++)
-    {
-      if (orangeSimpleStates[i]->finished)
-        return i;
-    }
-  }
-
-  return -1;
-}
-
-int get_traceStates_index(char color)
-{
-  // Função que retorna o índice do array
-  // a ser utilizado para alocar o estado traceState
-  // dando sempre prioridade para o menor índice
-  // (simplesmente por simplicidade de implementação)
-
-  if (color == 'R')
-  {
-    for (int i = 0; i < N_TRACE_STATES; i++)
-    {
-      if (redTraceStates[i]->finished)
-        return i;
-    }
-  }
-  else if (color == 'G')
-  {
-    for (int i = 0; i < N_TRACE_STATES; i++)
-    {
-      if (greenTraceStates[i]->finished)
-        return i;
-    }
-  }
-  else if (color == 'Y')
-  {
-    for (int i = 0; i < N_TRACE_STATES; i++)
-    {
-      if (yellowTraceStates[i]->finished)
-        return i;
-    }
-  }
-  else if (color == 'B')
-  {
-    for (int i = 0; i < N_TRACE_STATES; i++)
-    {
-      if (blueTraceStates[i]->finished)
-        return i;
-    }
-  }
-  else if (color == 'O')
-  {
-    for (int i = 0; i < N_TRACE_STATES; i++)
-    {
-      if (orangeTraceStates[i]->finished)
-        return i;
-    }
-  }
-
-  return -1;
 }
 
 void checkAllOnStates()
 {
   // Verifica todos os estados que estão ativos
 
-  for (int i = 0; i < N_SIMPLE_STATES; i++)
+  for (int i = 0; i < N_STATES; i++)
   {
-    if (!redSimpleStates[i]->finished) // se não foi finalizada ainda
-      redSimpleStates[i]->Update();
-    if (!greenSimpleStates[i]->finished)
-      greenSimpleStates[i]->Update();
-    if (!yellowSimpleStates[i]->finished)
-      yellowSimpleStates[i]->Update();
-    if (!blueSimpleStates[i]->finished)
-      blueSimpleStates[i]->Update();
-    if (!orangeSimpleStates[i]->finished)
-      orangeSimpleStates[i]->Update();
+    if (!red[i]->open) // se não foi finalizada ainda
+      red[i]->press();
+    if (!green[i]->open)
+      green[i]->press();
+    if (!yellow[i]->open)
+      yellow[i]->press();
+    if (!blue[i]->open)
+      blue[i]->press();
+    if (!orange[i]->open)
+      orange[i]->press();
 
-    if (i < N_TRACE_STATES)
+    if (i < N_STATES)
     {
-      if (!redTraceStates[i]->finished)
-        redTraceStates[i]->Update();
-      if (!greenTraceStates[i]->finished)
-        greenTraceStates[i]->Update();
-      if (!yellowTraceStates[i]->finished)
-        yellowTraceStates[i]->Update();
-      if (!blueTraceStates[i]->finished)
-        blueTraceStates[i]->Update();
-      if (!orangeTraceStates[i]->finished)
-        orangeTraceStates[i]->Update();
-    }
-  }
-}
-
-void getSimpleTime()
-{
-  // Recebe o tempo de offtime do MATLAB
-  // para nota simples
-  offtime_simple = 0;
-  while (true)
-  {
-    if (Serial.available() > 0)
-    {
-      if (offtime_simple != 0)
-      {
-        break;
-      }
-      incomingByte = Serial.read();
-      if (incomingByte == 'a')
-      {
-        String str = Serial.readStringUntil('b');
-        offtime_simple = str.toInt();
-        Serial.print(offtime_simple);
-        incomingByte = '\0';
-      }
+      if (!redTraceStates[i]->open)
+        redTraceStates[i]->press_and_hold();
+      if (!greenTraceStates[i]->open)
+        greenTraceStates[i]->press_and_hold();
+      if (!yellowTraceStates[i]->open)
+        yellowTraceStates[i]->press_and_hold();
+      if (!blueTraceStates[i]->open)
+        blueTraceStates[i]->press_and_hold();
+      if (!orangeTraceStates[i]->open)
+        orangeTraceStates[i]->press_and_hold();
     }
   }
 }
