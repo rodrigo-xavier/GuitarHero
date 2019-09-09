@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include "global.h"
 #include "note.h"
 #include "queue.h"
@@ -14,13 +15,12 @@ void setup()
   pinMode(R2_PIN, OUTPUT);
   pinMode(X_PIN, OUTPUT);
 
-  int i;
-
   // delay(1000);
 }
 
 void loop()
 {
+  int i;
   // São lidos 1 byte por vez, já que através do MATLAB
   // está sendo enviado um bit para cada ação no formato
   // indexicado no arquivo envia_comando.m
@@ -42,23 +42,23 @@ void loop()
 
     // Green (L2_PIN)
     if (bitRead(command, 0))
-      note_green.push(new Note(L2_PIN, false));
+      note_green.push(Note(L2_PIN, false));
 
     // Red (L1_PIN)
     if (bitRead(command, 1))
-      note_red.push(new Note(L1_PIN, false));
+      note_red.push(Note(L1_PIN, false));
 
     // Yellow (R1_PIN)
     if (bitRead(command, 2))
-      note_yellow.push(new Note(R1_PIN, false));
+      note_yellow.push(Note(R1_PIN, false));
 
     // Blue (R1_PIN)
     if (bitRead(command, 3))
-      note_blue.push(new Note(R2_PIN, false));
+      note_blue.push(Note(R2_PIN, false));
 
     // Orange (X_PIN)
     if (bitRead(command, 4))
-      note_orange.push(new Note(X_PIN, false));
+      note_orange.push(Note(X_PIN, false));
 
     // ----------------------------------------------------- //
     // Comandos relacionados com o rastro
@@ -67,23 +67,23 @@ void loop()
 
     // Green (L2_PIN)
     if (bitRead(command, 5))
-      trail_green.push(new Note(L2_PIN, true));
+      trail_green.push(Note(L2_PIN, true));
 
     // Red (L1_PIN)
     if (bitRead(command, 6))
-      trail_red.push(new Note(L1_PIN, true));
+      trail_red.push(Note(L1_PIN, true));
 
     // Yellow (R1_PIN)
     if (bitRead(command, 7))
-      trail_yellow.push(new Note(R1_PIN, true));
+      trail_yellow.push(Note(R1_PIN, true));
 
     // Blue (R2_PIN)
     if (bitRead(command, 8))
-      trail_blue.push(new Note(R2_PIN, true));
+      trail_blue.push(Note(R2_PIN, true));
 
     // Orange (X_PIN)
     if (bitRead(command, 9))
-      trail_orange.push(new Note(X_PIN, true));
+      trail_orange.push(Note(X_PIN, true));
 
     // ----------------------------------------------------- //
     // Estado de rastro: Solta
@@ -166,64 +166,64 @@ void update_states(void)
     if (note_green[i]->open)
     {
       note_green[i]->update();
-      if (!note_green[i]->open && !(note_green[i]->trail))
+      if (!note_green[i]->open)
         note_green.pop();
     }
     if (note_red[i]->open)
     {
       note_red[i]->update();
-      if (!note_red[i]->open && !(note_red[i]->trail))
+      if (!note_red[i]->open)
         note_red.pop();
     }
     if (note_yellow[i]->open)
     {
       note_yellow[i]->update();
-      if (!note_yellow[i]->open && !(note_yellow[i]->trail))
+      if (!note_yellow[i]->open)
         note_yellow.pop();
     }
     if (note_blue[i]->open)
     {
       note_blue[i]->update();
-      if (!note_blue[i]->open && !(note_blue[i]->trail))
+      if (!note_blue[i]->open)
         note_blue.pop();
     }
     if (note_orange[i]->open)
     {
       note_orange[i]->update();
-      if (!note_orange[i]->open && !(note_orange[i]->trail))
+      if (!note_orange[i]->open)
         note_orange.pop();
     }
 
+    // Trails
     if (trail_green[i]->open)
     {
       trail_green[i]->update();
-      if (!trail_green[i]->open && !(trail_green[i]->trail))
+      if (!trail_green[i]->open)
         trail_green.pop();
     }
     if (trail_red[i]->open)
     {
       trail_red[i]->update();
-      if (!trail_red[i]->open && !(trail_red[i]->trail))
+      if (!trail_red[i]->open)
         trail_red.pop();
     }
     if (trail_yellow[i]->open)
     {
       trail_yellow[i]->update();
-      if (!trail_yellow[i]->open && !(trail_yellow[i]->trail))
+      if (!trail_yellow[i]->open)
         trail_yellow.pop();
     }
     if (trail_blue[i]->open)
     {
       trail_blue[i]->update();
-      if (!trail_blue[i]->open && !(trail_blue[i]->trail))
+      if (!trail_blue[i]->open)
         trail_blue.pop();
     }
     if (trail_orange[i]->open)
     {
       trail_orange[i]->update();
-      if (!trail_orange[i]->open && !(trail_orange[i]->trail))
+      if (!trail_orange[i]->open)
         trail_orange.pop();
     }
   }
-
 }

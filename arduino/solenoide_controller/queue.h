@@ -1,6 +1,9 @@
 #ifndef QUEUE_H
 #define QUEUE_H
 
+#include <Arduino.h>
+// exit() utiliza biblioteca Arduino
+
 template <class T>
 class Queue
 {
@@ -10,22 +13,25 @@ private:
   int top;
 
 public:
-  Queue();
-  ~Queue();
   void push(const T &object);
+  T &operator[](unsigned int index);
   T pop();
-}
+  Queue(int _max_size);
+  ~Queue();
+};
 
-Queue::Queue(int _max_size)
+template <class T>
+Queue<T>::Queue(int _max_size)
 {
   top = 0;
   max_size = _max_size;
   queue = new T[_max_size + 1];
-  if (queue != NULL)
+  if (queue != 0)
     exit("MEMORY ERROR");
 }
 
-Queue::~Queue()
+template <class T>
+Queue<T>::~Queue()
 {
   delete[] queue;
 }
@@ -52,9 +58,9 @@ T Queue<T>::pop()
 
 // TODO validar se funciona corretamente, pode dar erro
 template <class T>
-T Queue<T>::operator[](unsigned int index)
+T &Queue<T>::operator[](unsigned int index)
 {
-  return queue[index];
+  return this->queue[index];
 }
 
 #endif

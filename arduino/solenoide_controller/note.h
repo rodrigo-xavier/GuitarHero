@@ -1,10 +1,11 @@
 #ifndef note_h
 #define note_h
 
+#include <Arduino.h>
 #include "global.h"
 
-// Min time in micro seconds
-#define PRESS_MIN_TIME 50000
+// Min time in milli seconds
+#define PRESS_MIN_TIME 50
 
 class Note
 {
@@ -19,8 +20,10 @@ private:
     unsigned long current_time;  // utilizado para contar o tempo para soltar
 
 public:
-    Note(int pin, unsigned long offtime);
     void update(void);
+
+    // Método construtor de objeto
+    Note(int pin, bool is_trace);
 };
 
 #endif

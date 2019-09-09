@@ -1,6 +1,6 @@
+#include <Arduino.h>
 #include "note.h"
 
-// Método construtor de objeto
 Note::Note(int pin, bool is_trace)
 {
     this->pin = pin;
@@ -9,12 +9,12 @@ Note::Note(int pin, bool is_trace)
     this->drop = false;
     this->trail = is_trace;
     this->wait_offtime = false;
-    this->previous_time = micro();
+    this->previous_time = millis();
 }
 
 void Note::update(void)
 {
-    this->current_time = micro();
+    this->current_time = millis();
 
     if (this->open)
     {
@@ -23,9 +23,9 @@ void Note::update(void)
         // e o momento de apertar
         if (!(this->trail) && !(this->drop) && (this->current_time - this->previous_time) >= OFFTIME)
         {
-            digitalWrite(this->pin, HIGH); // aperta
-            this->drop = true;             // agora deve soltar após o tempo mínimo
-            this->previous_time = micro(); // reinicia deltatime
+            digitalWrite(this->pin, HIGH);  // aperta
+            this->drop = true;              // agora deve soltar após o tempo mínimo
+            this->previous_time = millis(); // reinicia deltatime
         }
 
         // Se tiver que soltar, verifica se já se passou o tempo mínimo
@@ -49,7 +49,7 @@ void Note::update(void)
         // antes do final do rastro
         else if (this->trail && this->hold && this->drop && !(this->wait_offtime))
         {
-            this->previous_time = micro(); // reinicia deltatime
+            this->previous_time = millis(); // reinicia deltatime
             this->wait_offtime = true;
         }
 
