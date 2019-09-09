@@ -1,18 +1,15 @@
 #ifndef global_h
 #define global_h
 
+#include "queue.h"
 #include "note.h"
-
 /****************************************/
 /*
   DEFINES
 */
 
 // Number of states
-#define N_STATES 10
-
-// Min time in micro seconds
-#define PRESS_MIN_TIME 50000
+#define N_STATES 5
 
 // Digital Pins
 #define L1_PIN 3
@@ -22,6 +19,24 @@
 #define X_PIN 6
 
 // Commands
+
+// B0 - APERTO SIMPLES VERDE
+// B1 - APERTO SIMPLES VERMELHO
+// B2 - APERTO SIMPLES AMARELO
+// B3 - APERTO SIMPLES AZUL
+// B4 - APERTO SIMPLES LARANJADO
+// B5 - APERTO SEM SOLTAR VERDE
+// B6 - APERTO SEM SOLTAR VERMELHO
+// B7 - APERTO SEM SOLTAR AMARELO
+// B8 - APERTO SEM SOLTAR AZUL
+// B9 - APERTO SEM SOLTAR LARANJADO
+// B10 - SOLTA VERDE
+// B11 - SOLTA VERMELHO
+// B12 - SOLTA AMARELO
+// B13 - SOLTA AZUL
+// B14 - SOLTA LARANJADO
+// B15 - 0 (será utilizado para configurações)
+
 // #define B0 00000000
 // #define B1 00000001
 // #define B2 00000010
@@ -44,32 +59,22 @@
   VARIÁVEIS GLOBAIS
 */
 
-volatile unsigned long offtime = 0;
+volatile unsigned long OFFTIME = 0;
 
 uint8_t input_byte = {0, 0};
 uint16_t command = 0;
-unsigned char incomingByte = '\0';
 
-// Temporary variables
-int first_item = 0;
+// Inicializa a fila de estados das Notas
+Queue<Note> note_green = new Queue<Note>(N_STATES);
+Queue<Note> note_red = new Queue<Note>(N_STATES);
+Queue<Note> note_yellow = new Queue<Note>(N_STATES);
+Queue<Note> note_blue = new Queue<Note>(N_STATES);
+Queue<Note> note_orange = new Queue<Note>(N_STATES);
 
-// Define Contadores de indíce
-short index_note_green = 0;
-short index_note_red = 0;
-short index_note_yellow = 0;
-short index_note_blue = 0;
-short index_note_orange = 0;
-
-short index_trail_green = 0;
-short index_trail_red = 0;
-short index_trail_yellow = 0;
-short index_trail_blue = 0;
-short index_trail_orange = 0;
-
-Note *red[N_STATES];
-Note *green[N_STATES];
-Note *yellow[N_STATES];
-Note *blue[N_STATES];
-Note *orange[N_STATES];
+Queue<Note> trail_green = new Queue<Note>(N_STATES);
+Queue<Note> trail_red = new Queue<Note>(N_STATES);
+Queue<Note> trail_yellow = new Queue<Note>(N_STATES);
+Queue<Note> trail_blue = new Queue<Note>(N_STATES);
+Queue<Note> trail_orange = new Queue<Note>(N_STATES);
 
 #endif
