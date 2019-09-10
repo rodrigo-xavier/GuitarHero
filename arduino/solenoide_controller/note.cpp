@@ -18,9 +18,11 @@ void Note::update(void)
 
     if (this->open)
     {
-        // Se não tem que soltar, então deve apertar
-        // após o tempo de OFFTIME (tempo entre nota passar)
-        // e o momento de apertar
+        /*
+        Se não tem que soltar, então deve apertar
+        após o tempo de OFFTIME (tempo entre nota passar)
+        e o momento de apertar
+        */
         if (!(this->trail) && !(this->drop) && (this->current_time - this->previous_time) >= OFFTIME)
         {
             digitalWrite(this->pin, HIGH);  // aperta
@@ -28,36 +30,44 @@ void Note::update(void)
             this->previous_time = millis(); // reinicia deltatime
         }
 
-        // Se tiver que soltar, verifica se já se passou o tempo mínimo
+        /*
+        Se tiver que soltar, verifica se já se passou o tempo mínimo
+        */
         else if (!(this->trail) && this->drop && (this->current_time - this->previous_time) >= PRESS_MIN_TIME)
         {
             digitalWrite(this->pin, LOW); // solta
             this->open = false;           // estado finalizado
         }
 
-        // Verifica se é um rastro e
-        // e se o tempo esperado se passou
+        /*
+        Verifica se é um rastro e
+        e se o tempo esperado se passou
+        */
         else if (this->trail && !(this->hold) && (this->current_time - this->previous_time) >= OFFTIME)
         {
             digitalWrite(this->pin, HIGH);
             this->hold = true;
         }
 
-        // Reinicia o deltatime para soltar o rastro
-        // depois de passado o tempo do OFFTIME
-        // É necessário para o arduíno não soltar o rastro
-        // antes do final do rastro
+        /*
+        Reinicia o deltatime para soltar o rastro
+        depois de passado o tempo do OFFTIME
+        É necessário para o arduíno não soltar o rastro
+        antes do final do rastro
+        */
         else if (this->trail && this->hold && this->drop && !(this->wait_offtime))
         {
             this->previous_time = millis(); // reinicia deltatime
             this->wait_offtime = true;
         }
 
-        // Verifica se deve soltar, se está pressionado
-        // (caso contrário não faz sentido soltar,
-        // mas não é uma checagem obrigatória)
-        // e se se passou o OFFTIME entre momento de
-        // detecção e ação
+        /*
+        Verifica se deve soltar, se está pressionado
+        (caso contrário não faz sentido soltar,
+        mas não é uma checagem obrigatória)
+        e se se passou o OFFTIME entre momento de
+        detecção e ação
+        */
         else if (this->trail && this->wait_offtime && (this->current_time - this->previous_time) >= OFFTIME)
         {
             digitalWrite(this->pin, LOW);

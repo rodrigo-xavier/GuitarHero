@@ -161,7 +161,7 @@ void loop()
 // é nota ou rastro para decrementar o índice corretamente
 void update_states(void)
 {
-  for (int i = 0; i < N_STATES; i++)
+  for (int i = 0; i < NOTE_STATES; i++)
   {
     if (note_green[i]->open)
     {
@@ -193,8 +193,12 @@ void update_states(void)
       if (!note_orange[i]->open)
         note_orange.pop();
     }
+  }
 
-    // Trails
+  // Trails
+
+  for (int i = 0; i < TRACE_STATES; i++)
+  {
     if (trail_green[i]->open)
     {
       trail_green[i]->update();

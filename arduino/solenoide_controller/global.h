@@ -1,5 +1,5 @@
-#ifndef global_h
-#define global_h
+#ifndef GLOBAL_H
+#define GLOBAL_H
 
 /****************************************/
 /*INCLUDES*/
@@ -12,7 +12,8 @@
 /*DEFINES*/
 
 // Number of states
-#define N_STATES 5
+#define TRACE_STATES 3
+#define NOTE_STATES 5
 
 // Digital Pins
 #define L1_PIN 3
@@ -54,16 +55,16 @@ class Note;
 // class Queue;
 
 // Inicializa a fila de estados das Notas
-Queue<Note> note_green = Queue<Note>(N_STATES);
-Queue<Note> note_red = Queue<Note>(N_STATES);
-Queue<Note> note_yellow = Queue<Note>(N_STATES);
-Queue<Note> note_blue = Queue<Note>(N_STATES);
-Queue<Note> note_orange = Queue<Note>(N_STATES);
+Queue<Note> note_green = Queue<Note>(NOTE_STATES);
+Queue<Note> note_red = Queue<Note>(NOTE_STATES);
+Queue<Note> note_yellow = Queue<Note>(NOTE_STATES);
+Queue<Note> note_blue = Queue<Note>(NOTE_STATES);
+Queue<Note> note_orange = Queue<Note>(NOTE_STATES);
 
-Queue<Note> trail_green = Queue<Note>(N_STATES);
-Queue<Note> trail_red = Queue<Note>(N_STATES);
-Queue<Note> trail_yellow = Queue<Note>(N_STATES);
-Queue<Note> trail_blue = Queue<Note>(N_STATES);
-Queue<Note> trail_orange = Queue<Note>(N_STATES);
+Queue<Note> trail_green = Queue<Note>(TRACE_STATES);
+Queue<Note> trail_red = Queue<Note>(TRACE_STATES);
+Queue<Note> trail_yellow = Queue<Note>(TRACE_STATES);
+Queue<Note> trail_blue = Queue<Note>(TRACE_STATES);
+Queue<Note> trail_orange = Queue<Note>(TRACE_STATES);
 
 #endif

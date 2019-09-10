@@ -13,13 +13,20 @@ private:
   int top;
 
 public:
+  Queue(int _max_size);
+  ~Queue();
+
   void push(const T &object);
   T &operator[](unsigned int index);
   T pop();
-  Queue(int _max_size);
-  ~Queue();
 };
 
+/*
+  Método construtor de fila, recebe um valor que define o tamanho máximo para a fila
+  aloca o espaço correspondente e define o valor de topo da fila.
+  Se não é possível alocar espaço, então é retornado um erro.
+  O espaço alocado é do tipo T (tipo inserido na chamada da função)
+*/
 template <class T>
 Queue<T>::Queue(int _max_size)
 {
@@ -30,16 +37,22 @@ Queue<T>::Queue(int _max_size)
     exit("MEMORY ERROR");
 }
 
+/*
+  Método destrutor de fila, destrói o espaço de memória alocado para a fila.
+*/
 template <class T>
 Queue<T>::~Queue()
 {
   delete[] queue;
 }
 
+/*
+  Método push, insere 
+*/
 template <class T>
 void Queue<T>::push(const T &object)
 {
-  if (top < max_size)
+  if (top <= max_size)
     queue[top++] = object;
   else
     exit("INDEX EXCEEDED");

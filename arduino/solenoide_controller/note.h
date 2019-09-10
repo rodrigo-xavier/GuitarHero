@@ -1,5 +1,5 @@
-#ifndef note_h
-#define note_h
+#ifndef NOTE_H
+#define NOTE_H
 
 #include <Arduino.h>
 #include "global.h"
@@ -20,10 +20,8 @@ private:
     unsigned long current_time;  // utilizado para contar o tempo para soltar
 
 public:
-    void update(void);
-
-    // Método construtor de objeto
     Note(int pin, bool is_trace);
+    void update(void);
 };
 
 #endif
