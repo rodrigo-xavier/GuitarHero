@@ -1,39 +1,59 @@
-// #include <iostream>
-// #include "global.h"
-// #include "queue.h"
-// #include "note.h"
+#include <iostream>
+#include <assert.h>
+#include "queue.h"
+#include "note.h"
 
-// using namespace std;
+using namespace std;
 
-// int main()
-// {
-//     // Write yours asserts here
+int main()
+{
 
-//     Queue<int> test = Queue<int>(5);
+    Queue<int> test = Queue<int>(5);
 
-//     test.push(1);
-//     test.push(2);
-//     test.push(3);
-//     test.push(4);
-//     test.push(5);
+    for (int i = 0; i < 5; i++)
+    {
+        test.push(i);
+        cout << "Test i: " << test[i];
+        assert(test[i] == i);
+        printf("\n");
+    }
+    cout << "OK1";
 
-//     assert(test[0] == 1);
-//     assert(test[1] == 2);
-//     assert(test[2] == 3);
-//     assert(test[3] == 4);
-//     assert(test[4] == 5);
+    printf("\n\n");
 
-//     test.pop();
-//     test.pop();
-//     test.pop();
-//     test.pop();
-//     test.pop();
+    for (int i = 0; i < 5; i++)
+    {
+        test.pop();
+        for (int j = 0; j < 5; j++)
+            cout << "test i: " << test[j] << "\n";
+        printf("\n");
+    }
+    cout << "OK2";
 
-//     assert(test[0] == 0);
-//     assert(test[1] == 0);
-//     assert(test[2] == 0);
-//     assert(test[3] == 0);
-//     assert(test[4] == 0);
+    /*************************************************************************************/
 
-//     return 0;
-// }
+    // Note const note(1);
+
+    Queue<Note> test_note = Queue<Note>(5);
+
+    for (int i = 0; i < 5; i++)
+    {
+        test_note.push(Note());
+        cout << "Test i: " << test_note[i].open;
+        printf("\n");
+    }
+    cout << "OK3";
+
+    printf("\n\n");
+
+    for (int i = 0; i < 5; i++)
+    {
+        test_note.pop();
+        for (int j = 0; j < 5; j++)
+            cout << "test_note i: " << test_note[j].open << "\n";
+        printf("\n");
+    }
+    cout << "OK4";
+
+    return 0;
+}

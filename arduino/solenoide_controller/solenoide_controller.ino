@@ -34,6 +34,8 @@ Queue<Note> trail_yellow = Queue<Note>(TRACE_STATES);
 Queue<Note> trail_blue = Queue<Note>(TRACE_STATES);
 Queue<Note> trail_orange = Queue<Note>(TRACE_STATES);
 
+Note note;
+
 /**************************************************************************/
 // COMMANDS
 
@@ -95,23 +97,38 @@ void loop()
 
     // Green (L2_PIN)
     if (bitRead(command, 0))
-      note_green.push(Note(L2_PIN));
+    {
+      note.pin = L2_PIN;
+      note_green.push(note);
+    }
 
     // Red (L1_PIN)
     else if (bitRead(command, 1))
-      note_red.push(Note(L1_PIN));
+    {
+      note.pin = L1_PIN;
+      note_red.push(note);
+    }
 
     // Yellow (R1_PIN)
     else if (bitRead(command, 2))
-      note_yellow.push(Note(R1_PIN));
+    {
+      note.pin = R1_PIN;
+      note_yellow.push(note);
+    }
 
-    // Blue (R1_PIN)
+    // Blue (R2_PIN)
     else if (bitRead(command, 3))
-      note_blue.push(Note(R2_PIN));
+    {
+      note.pin = R2_PIN;
+      note_blue.push(note);
+    }
 
     // Orange (X_PIN)
     else if (bitRead(command, 4))
-      note_orange.push(Note(X_PIN));
+    {
+      note.pin = X_PIN;
+      note_orange.push(note);
+    }
 
     // ----------------------------------------------------- //
     // Comandos relacionados com o rastro
@@ -120,23 +137,38 @@ void loop()
 
     // Green (L2_PIN)
     else if (bitRead(command, 5))
-      trail_green.push(Note(L2_PIN));
+    {
+      note.pin = L2_PIN;
+      trail_green.push(note);
+    }
 
     // Red (L1_PIN)
     else if (bitRead(command, 6))
-      trail_red.push(Note(L1_PIN));
+    {
+      note.pin = L1_PIN;
+      trail_red.push(note);
+    }
 
     // Yellow (R1_PIN)
     else if (bitRead(command, 7))
-      trail_yellow.push(Note(R1_PIN));
+    {
+      note.pin = R1_PIN;
+      trail_yellow.push(note);
+    }
 
     // Blue (R2_PIN)
     else if (bitRead(command, 8))
-      trail_blue.push(Note(R2_PIN));
+    {
+      note.pin = R2_PIN;
+      trail_blue.push(note);
+    }
 
     // Orange (X_PIN)
     else if (bitRead(command, 9))
-      trail_orange.push(Note(X_PIN));
+    {
+      note.pin = X_PIN;
+      trail_orange.push(note);
+    }
 
     // ----------------------------------------------------- //
     // Estado de rastro: Solta
@@ -218,31 +250,31 @@ void update_states(void)
   {
     if (note_green[i].open)
     {
-      note_green[i].update_note();
+      note_green[i].update_note(
       if (!note_green[i].open)
         note_green.pop();
     }
     if (note_red[i].open)
     {
-      note_red[i].update_note();
+      note_red[i].update_note(
       if (!note_red[i].open)
         note_red.pop();
     }
     if (note_yellow[i].open)
     {
-      note_yellow[i].update_note();
+      note_yellow[i].update_note(
       if (!note_yellow[i].open)
         note_yellow.pop();
     }
     if (note_blue[i].open)
     {
-      note_blue[i].update_note();
+      note_blue[i].update_note(
       if (!note_blue[i].open)
         note_blue.pop();
     }
     if (note_orange[i].open)
     {
-      note_orange[i].update_note();
+      note_orange[i].update_note(
       if (!note_orange[i].open)
         note_orange.pop();
     }

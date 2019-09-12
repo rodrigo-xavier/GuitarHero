@@ -1,7 +1,11 @@
 #ifndef QUEUE_H
 #define QUEUE_H
 
-#include <Arduino.h>
+#include <iostream>
+
+using namespace std;
+
+// #include <Arduino.h>
 // exit() utiliza biblioteca Arduino
 
 template <class T>
@@ -16,7 +20,7 @@ public:
   Queue(int);
   ~Queue();
 
-  void push(T);
+  void push(const T &);
   void pop(void);
   T &operator[](unsigned int);
 };
@@ -33,8 +37,8 @@ Queue<T>::Queue(int _max_size)
   top = 0;
   max_size = _max_size;
   queue = new T[_max_size];
-  if (queue != 0)
-    exit("MEMORY ERROR");
+  if (!queue)
+    printf("MEMORY ERROR");
 }
 
 /*
@@ -47,25 +51,26 @@ Queue<T>::~Queue()
 }
 
 /*
-  Método push, insere 
+  Método push, insere
 */
 template <class T>
-void Queue<T>::push(T object)
+void Queue<T>::push(const T &object)
 {
   if (top <= max_size)
     queue[top++] = object;
   else
-    exit("INDEX EXCEEDED");
+    printf("INDEX EXCEEDED");
 }
 
 template <class T>
 void Queue<T>::pop()
 {
   if (top <= 0)
-    exit("MISSING OBJECTS");
+    printf("MISSING OBJECTS");
   else
     for (int i = 0; i < top - 1; i++) // O topo sempre aponta para a próxima posição vazia da fila
       queue[i] = queue[i + 1];
+  queue[top - 1] = NULL;
   --top;
 }
 

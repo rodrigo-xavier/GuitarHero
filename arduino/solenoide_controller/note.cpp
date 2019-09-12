@@ -1,8 +1,8 @@
 #include "note.h"
 
-Note::Note(int pin)
+Note::Note()
 {
-    this->pin = pin;
+    this->pin = 0;
     this->open = true;
     this->hold = false;
     this->drop = false;
