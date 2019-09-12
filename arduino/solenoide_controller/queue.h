@@ -1,10 +1,10 @@
 #ifndef QUEUE_H
 #define QUEUE_H
 
-// #include <iostream>
-// using namespace std;
+#include <iostream>
+using namespace std;
 
-#include <Arduino.h>
+// #include <Arduino.h>
 // exit() utiliza biblioteca Arduino
 
 template <class T>

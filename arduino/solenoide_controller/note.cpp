@@ -8,19 +8,12 @@ const static unsigned int PRESS_MIN_TIME = 50; // Min time to press note in mill
 
 /**************************************************************************/
 
-Note::Note()
-{
-    this->pin = 0;
-    this->open = true;
-    this->hold = false;
-    this->drop = false;
-    this->wait_offtime = false;
-    this->previous_time = millis();
-}
+using namespace std;
+
 
 void Note::update_note(void)
 {
-    this->current_time = millis();
+    // this->current_time = millis();
 
     /*
         Se não tem que soltar, então deve apertar
@@ -46,7 +39,7 @@ void Note::update_note(void)
 
 void Note::update_trail(void)
 {
-    this->current_time = millis();
+    // this->current_time = millis();
 
     /*
         Verifica se é um rastro e
@@ -66,7 +59,7 @@ void Note::update_trail(void)
         */
     else if (this->hold && this->drop && !(this->wait_offtime))
     {
-        this->previous_time = millis(); // reinicia deltatime
+        // this->previous_time = millis(); // reinicia deltatime
         this->wait_offtime = true;
     }
 
