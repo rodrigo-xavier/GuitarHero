@@ -62,6 +62,12 @@ void Queue<T>::push(const T &object)
     printf("INDEX EXCEEDED");
 }
 
+/*
+  Método pop, remove o primeiro elemento da fila.
+  Importante notar, que o primeiro elemento é apenas sobrescrito pelos próximos elementos da fila,
+  E que o elemento do topo (último elemento da fila) não é alterado. 
+  Apenas é setado um novo valor para o topo.
+*/
 template <class T>
 void Queue<T>::pop()
 {
@@ -70,7 +76,6 @@ void Queue<T>::pop()
   else
     for (int i = 0; i < top - 1; i++) // O topo sempre aponta para a próxima posição vazia da fila
       queue[i] = queue[i + 1];
-  queue[top - 1] = NULL;
   --top;
 }
 

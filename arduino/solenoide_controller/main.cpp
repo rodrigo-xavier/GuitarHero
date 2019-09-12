@@ -39,10 +39,30 @@ int main()
     for (int i = 0; i < 5; i++)
     {
         test_note.push(Note());
-        cout << "Test i: " << test_note[i].open;
+        cout << "Test open: " << test_note[i].open;
         printf("\n");
     }
     cout << "OK3";
+
+    printf("\n\n");
+
+    for (int i = 0; i < 5; i++)
+    {
+        test_note[i].pin = i;
+        cout << "Test pin: " << test_note[i].open;
+        printf("\n");
+    }
+    cout << "OK4";
+
+    printf("\n\n");
+
+    for (int i = 0; i < 5; i++)
+    {
+        test_note[i].drop = true;
+        cout << "Test drop: " << test_note[i].open;
+        printf("\n");
+    }
+    cout << "OK5";
 
     printf("\n\n");
 
@@ -53,7 +73,7 @@ int main()
             cout << "test_note i: " << test_note[j].open << "\n";
         printf("\n");
     }
-    cout << "OK4";
+    cout << "OK6";
 
     return 0;
 }
