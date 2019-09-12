@@ -1,5 +1,13 @@
 #include "note.h"
 
+/**************************************************************************/
+/*VARIÁVEIS GLOBAIS*/
+
+volatile unsigned long OFFTIME = 9999999999;   // Definir um valor grande até que o valor verdadeiro seja setado
+const static unsigned int PRESS_MIN_TIME = 50; // Min time to press note in milli seconds
+
+/**************************************************************************/
+
 Note::Note()
 {
     this->pin = 0;

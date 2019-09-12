@@ -226,7 +226,7 @@ void loop()
       {
         if (Serial.available() > 0)
         {
-          OFFTIME = Serial.read();
+          // OFFTIME = Serial.read();
           break;
         }
       }
@@ -250,31 +250,31 @@ void update_states(void)
   {
     if (note_green[i].open)
     {
-      note_green[i].update_note(
+      note_green[i].update_note();
       if (!note_green[i].open)
         note_green.pop();
     }
     if (note_red[i].open)
     {
-      note_red[i].update_note(
+      note_red[i].update_note();
       if (!note_red[i].open)
         note_red.pop();
     }
     if (note_yellow[i].open)
     {
-      note_yellow[i].update_note(
+      note_yellow[i].update_note();
       if (!note_yellow[i].open)
         note_yellow.pop();
     }
     if (note_blue[i].open)
     {
-      note_blue[i].update_note(
+      note_blue[i].update_note();
       if (!note_blue[i].open)
         note_blue.pop();
     }
     if (note_orange[i].open)
     {
-      note_orange[i].update_note(
+      note_orange[i].update_note();
       if (!note_orange[i].open)
         note_orange.pop();
     }

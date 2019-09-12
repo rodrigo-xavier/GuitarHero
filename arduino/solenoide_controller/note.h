@@ -1,16 +1,8 @@
 #ifndef NOTE_H
 #define NOTE_H
 
-// #include <Arduino.h>
-using namespace std;
-
-/**************************************************************************/
-/*VARIÁVEIS GLOBAIS*/
-
-volatile unsigned long OFFTIME = 9999999999;   // Definir um valor grande até que o valor verdadeiro seja setado
-const static unsigned int PRESS_MIN_TIME = 50; // Min time to press note in milli seconds
-
-/**************************************************************************/
+#include <Arduino.h>
+// using namespace std;
 
 class Note
 {
