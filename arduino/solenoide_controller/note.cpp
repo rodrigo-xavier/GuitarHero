@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include "note.h"
 
 /**************************************************************************/
@@ -7,9 +8,6 @@ volatile unsigned long OFFTIME = 9999999999;   // Definir um valor grande até q
 const static unsigned int PRESS_MIN_TIME = 50; // Min time to press note in milli seconds
 
 /**************************************************************************/
-
-using namespace std;
-
 
 void Note::update_note(void)
 {

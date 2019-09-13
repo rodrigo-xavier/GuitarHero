@@ -1,8 +1,6 @@
 #ifndef NOTE_H
 #define NOTE_H
 
-// #include <Arduino.h>
-
 class Note
 {
 private:
@@ -17,14 +15,13 @@ public:
     bool open; // estado foi finalizado?
 
     Note()
-{
-    this->pin = 0;
-    this->open = true;
-    this->hold = false;
-    this->drop = false;
-    this->wait_offtime = false;
-    
-}
+    {
+        this->pin = 0;
+        this->open = true;
+        this->hold = false;
+        this->drop = false;
+        this->wait_offtime = false;
+    }
     void update_note(void);
     void update_trail(void);
 };
