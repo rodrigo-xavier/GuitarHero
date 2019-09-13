@@ -20,6 +20,8 @@
 
 uint8_t input_byte[] = {0, 0};
 uint16_t command = 0;
+volatile unsigned long OFFTIME = 9999999999;   // Definir um valor grande até que o valor verdadeiro seja setado
+const static unsigned int PRESS_MIN_TIME = 50; // Min time to press note in milli seconds
 
 // Inicializa a fila de estados das Notas
 Queue<Note> note_green = Queue<Note>(NOTE_STATES);
@@ -28,12 +30,14 @@ Queue<Note> note_yellow = Queue<Note>(NOTE_STATES);
 Queue<Note> note_blue = Queue<Note>(NOTE_STATES);
 Queue<Note> note_orange = Queue<Note>(NOTE_STATES);
 
+// Inicializa a fila de estados dos Rastros
 Queue<Note> trail_green = Queue<Note>(TRACE_STATES);
 Queue<Note> trail_red = Queue<Note>(TRACE_STATES);
 Queue<Note> trail_yellow = Queue<Note>(TRACE_STATES);
 Queue<Note> trail_blue = Queue<Note>(TRACE_STATES);
 Queue<Note> trail_orange = Queue<Note>(TRACE_STATES);
 
+// Gambiarra para inicializar nota
 Note note;
 
 /**************************************************************************/
@@ -219,14 +223,16 @@ void loop()
     }
 
     // Configuração de tempo
-    // TODO REVER CONFIGURAÇÃO DO TEMPO, CONDIÇÕES ADICIONAIS DEVEM SER APLICADAS
     else if (bitRead(command, 15))
     {
       while (true)
       {
         if (Serial.available() > 0)
         {
-          // OFFTIME = Serial.read();
+          String str = Serial.readStringUntil('b');
+          OFFTIME = str.toInt();
+          Serial.print(OFFTIME);
+          incomingByte = '\0';
           break;
         }
       }
@@ -250,31 +256,31 @@ void update_states(void)
   {
     if (note_green[i].open)
     {
-      note_green[i].update_note();
+      note_green[i].update_note(OFFTIME, PRESS_MIN_TIME);
       if (!note_green[i].open)
         note_green.pop();
     }
     if (note_red[i].open)
     {
-      note_red[i].update_note();
+      note_red[i].update_note(OFFTIME, PRESS_MIN_TIME);
       if (!note_red[i].open)
         note_red.pop();
     }
     if (note_yellow[i].open)
     {
-      note_yellow[i].update_note();
+      note_yellow[i].update_note(OFFTIME, PRESS_MIN_TIME);
       if (!note_yellow[i].open)
         note_yellow.pop();
     }
     if (note_blue[i].open)
     {
-      note_blue[i].update_note();
+      note_blue[i].update_note(OFFTIME, PRESS_MIN_TIME);
       if (!note_blue[i].open)
         note_blue.pop();
     }
     if (note_orange[i].open)
     {
-      note_orange[i].update_note();
+      note_orange[i].update_note(OFFTIME, PRESS_MIN_TIME);
       if (!note_orange[i].open)
         note_orange.pop();
     }
@@ -286,31 +292,31 @@ void update_states(void)
   {
     if (trail_green[i].open)
     {
-      trail_green[i].update_trail();
+      trail_green[i].update_trail(OFFTIME);
       if (!trail_green[i].open)
         trail_green.pop();
     }
     if (trail_red[i].open)
     {
-      trail_red[i].update_trail();
+      trail_red[i].update_trail(OFFTIME);
       if (!trail_red[i].open)
         trail_red.pop();
     }
     if (trail_yellow[i].open)
     {
-      trail_yellow[i].update_trail();
+      trail_yellow[i].update_trail(OFFTIME);
       if (!trail_yellow[i].open)
         trail_yellow.pop();
     }
     if (trail_blue[i].open)
     {
-      trail_blue[i].update_trail();
+      trail_blue[i].update_trail(OFFTIME);
       if (!trail_blue[i].open)
         trail_blue.pop();
     }
     if (trail_orange[i].open)
     {
-      trail_orange[i].update_trail();
+      trail_orange[i].update_trail(OFFTIME);
       if (!trail_orange[i].open)
         trail_orange.pop();
     }

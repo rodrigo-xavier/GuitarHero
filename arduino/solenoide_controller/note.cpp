@@ -1,24 +1,16 @@
 #include <Arduino.h>
 #include "note.h"
 
-/**************************************************************************/
-/*VARIÁVEIS GLOBAIS*/
-
-volatile unsigned long OFFTIME = 9999999999;   // Definir um valor grande até que o valor verdadeiro seja setado
-const static unsigned int PRESS_MIN_TIME = 50; // Min time to press note in milli seconds
-
-/**************************************************************************/
-
-void Note::update_note(void)
+void Note::update_note(unsigned long offtime, unsigned int press_min_time)
 {
     // this->current_time = millis();
 
     /*
         Se não tem que soltar, então deve apertar
-        após o tempo de OFFTIME (tempo entre nota passar)
+        após o tempo de offtime (tempo entre nota passar)
         e o momento de apertar
         */
-    if (!(this->drop) && (this->current_time - this->previous_time) >= OFFTIME)
+    if (!(this->drop) && (this->current_time - this->previous_time) >= offtime)
     {
         digitalWrite(this->pin, HIGH);  // aperta
         this->drop = true;              // agora deve soltar após o tempo mínimo
@@ -28,14 +20,14 @@ void Note::update_note(void)
     /*
         Se tiver que soltar, verifica se já se passou o tempo mínimo
         */
-    else if (this->drop && (this->current_time - this->previous_time) >= PRESS_MIN_TIME)
+    else if (this->drop && (this->current_time - this->previous_time) >= press_min_time)
     {
         digitalWrite(this->pin, LOW); // solta
         this->open = false;           // estado finalizado
     }
 }
 
-void Note::update_trail(void)
+void Note::update_trail(unsigned long offtime)
 {
     // this->current_time = millis();
 
@@ -43,7 +35,7 @@ void Note::update_trail(void)
         Verifica se é um rastro e
         e se o tempo esperado se passou
         */
-    if (!(this->hold) && (this->current_time - this->previous_time) >= OFFTIME)
+    if (!(this->hold) && (this->current_time - this->previous_time) >= offtime)
     {
         digitalWrite(this->pin, HIGH);
         this->hold = true;
@@ -51,7 +43,7 @@ void Note::update_trail(void)
 
     /*
         Reinicia o deltatime para soltar o rastro
-        depois de passado o tempo do OFFTIME
+        depois de passado o tempo do offtime
         É necessário para o arduíno não soltar o rastro
         antes do final do rastro
         */
@@ -65,10 +57,10 @@ void Note::update_trail(void)
         Verifica se deve soltar, se está pressionado
         (caso contrário não faz sentido soltar,
         mas não é uma checagem obrigatória)
-        e se se passou o OFFTIME entre momento de
+        e se se passou o offtime entre momento de
         detecção e ação
         */
-    else if (this->wait_offtime && (this->current_time - this->previous_time) >= OFFTIME)
+    else if (this->wait_offtime && (this->current_time - this->previous_time) >= offtime)
     {
         digitalWrite(this->pin, LOW);
         this->hold = false;

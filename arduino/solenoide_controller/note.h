@@ -22,8 +22,8 @@ public:
         this->drop = false;
         this->wait_offtime = false;
     }
-    void update_note(void);
-    void update_trail(void);
+    void update_note(unsigned long, unsigned int);
+    void update_trail(unsigned long);
 };
 
 #endif
