@@ -15,6 +15,14 @@
 #define R2_PIN 5
 #define X_PIN 6
 
+// Note colors
+#define GREEN 0
+#define RED 1
+#define YELLOW 2
+#define BLUE 3
+#define ORANGE 4
+#define N_COLORS 5 // Define a quantidade de notas (verde, vermelho, amarelo, azul e laranja == 5)
+
 /**************************************************************************/
 /*VARIÁVEIS GLOBAIS*/
 
@@ -23,22 +31,12 @@ uint16_t command = 0;
 volatile unsigned long OFFTIME = 9999999999;   // Definir um valor grande até que o valor verdadeiro seja setado
 const static unsigned int PRESS_MIN_TIME = 50; // Min time to press note in milli seconds
 
-// Inicializa a fila de estados das Notas
-Queue<Note> note_green = Queue<Note>(NOTE_STATES);
-Queue<Note> note_red = Queue<Note>(NOTE_STATES);
-Queue<Note> note_yellow = Queue<Note>(NOTE_STATES);
-Queue<Note> note_blue = Queue<Note>(NOTE_STATES);
-Queue<Note> note_orange = Queue<Note>(NOTE_STATES);
-
-// Inicializa a fila de estados dos Rastros
-Queue<Note> trail_green = Queue<Note>(TRACE_STATES);
-Queue<Note> trail_red = Queue<Note>(TRACE_STATES);
-Queue<Note> trail_yellow = Queue<Note>(TRACE_STATES);
-Queue<Note> trail_blue = Queue<Note>(TRACE_STATES);
-Queue<Note> trail_orange = Queue<Note>(TRACE_STATES);
+// Inicializa um vetor de filas para notas e rastros
+Queue<Note> note[4] = Queue<Note>(NOTE_STATES);
+Queue<Note> trail[4] = Queue<Note>(TRACE_STATES);
 
 // Gambiarra para inicializar nota
-Note note;
+Note initializer;
 
 /**************************************************************************/
 // COMMANDS
@@ -74,12 +72,11 @@ void setup()
   pinMode(R2_PIN, OUTPUT);
   pinMode(X_PIN, OUTPUT);
 
-  // delay(1000);
+  delay(1000);
 }
 
 void loop()
 {
-  int i;
   // São lidos 1 byte por vez, já que através do MATLAB
   // está sendo enviado um bit para cada ação no formato
   // indexicado no arquivo envia_comando.m
@@ -101,78 +98,46 @@ void loop()
 
     // Green (L2_PIN)
     if (bitRead(command, 0))
-    {
-      note.pin = L2_PIN;
-      note_green.push(note);
-    }
+      add_note_queue(GREEN, L2_PIN);
 
     // Red (L1_PIN)
     else if (bitRead(command, 1))
-    {
-      note.pin = L1_PIN;
-      note_red.push(note);
-    }
+      add_note_queue(RED, L1_PIN);
 
     // Yellow (R1_PIN)
     else if (bitRead(command, 2))
-    {
-      note.pin = R1_PIN;
-      note_yellow.push(note);
-    }
+      add_note_queue(YELLOW, R1_PIN);
 
     // Blue (R2_PIN)
     else if (bitRead(command, 3))
-    {
-      note.pin = R2_PIN;
-      note_blue.push(note);
-    }
+      add_note_queue(BLUE, R2_PIN);
 
     // Orange (X_PIN)
     else if (bitRead(command, 4))
-    {
-      note.pin = X_PIN;
-      note_orange.push(note);
-    }
+      add_note_queue(ORANGE, X_PIN);
 
     // ----------------------------------------------------- //
     // Comandos relacionados com o rastro
 
-    // Estado de rastro: Aperta sem soltar
-
     // Green (L2_PIN)
     else if (bitRead(command, 5))
-    {
-      note.pin = L2_PIN;
-      trail_green.push(note);
-    }
+      add_trail_queue(GREEN, L2_PIN);
 
     // Red (L1_PIN)
     else if (bitRead(command, 6))
-    {
-      note.pin = L1_PIN;
-      trail_red.push(note);
-    }
+      add_trail_queue(RED, L1_PIN);
 
     // Yellow (R1_PIN)
     else if (bitRead(command, 7))
-    {
-      note.pin = R1_PIN;
-      trail_yellow.push(note);
-    }
+      add_trail_queue(YELLOW, R1_PIN);
 
     // Blue (R2_PIN)
     else if (bitRead(command, 8))
-    {
-      note.pin = R2_PIN;
-      trail_blue.push(note);
-    }
+      add_trail_queue(BLUE, R2_PIN);
 
     // Orange (X_PIN)
     else if (bitRead(command, 9))
-    {
-      note.pin = X_PIN;
-      trail_orange.push(note);
-    }
+      add_trail_queue(ORANGE, X_PIN);
 
     // ----------------------------------------------------- //
     // Estado de rastro: Solta
@@ -184,43 +149,23 @@ void loop()
 
     // Green (R1_PIN)
     else if (bitRead(command, 10))
-    {
-      i = 0;
-      while (!(trail_green[i].drop))
-        trail_green[i++].drop = true;
-    }
+      remove_trail_queue(GREEN);
 
     // Red (L1_PIN)
     else if (bitRead(command, 11))
-    {
-      i = 0;
-      while (!(trail_red[i].drop))
-        trail_red[i++].drop = true;
-    }
+      remove_trail_queue(RED);
 
     // Yellow (R1_PIN)
     else if (bitRead(command, 12))
-    {
-      i = 0;
-      while (!(trail_yellow[i].drop))
-        trail_yellow[i++].drop = true;
-    }
+      remove_trail_queue(YELLOW);
 
     // Blue (R2_PIN)
     else if (bitRead(command, 13))
-    {
-      i = 0;
-      while (!(trail_blue[i].drop))
-        trail_blue[i++].drop = true;
-    }
+      remove_trail_queue(BLUE);
 
     // Orange (X_PIN)
     else if (bitRead(command, 14))
-    {
-      i = 0;
-      while (!(trail_orange[i].drop))
-        trail_orange[i++].drop = true;
-    }
+      remove_trail_queue(ORANGE);
 
     // Configuração de tempo
     else if (bitRead(command, 15))
@@ -232,7 +177,7 @@ void loop()
           String str = Serial.readStringUntil('b');
           OFFTIME = str.toInt();
           Serial.print(OFFTIME);
-          incomingByte = '\0';
+          // incomingByte = '\0';
           break;
         }
       }
@@ -246,79 +191,53 @@ void loop()
   update_states();
 }
 
+void add_note_queue(int note_color, int pin)
+{
+  initializer.pin = pin;
+  note[note_color].push(initializer);
+}
+
+void add_trail_queue(int note_color, int pin)
+{
+  initializer.pin = pin;
+  trail[note_color].push(initializer);
+}
+
+void remove_trail_queue(int note_color)
+{
+  int i = 0;
+
+  while (!(trail[note_color][i].drop))
+    trail[note_color][i++].drop = true;
+}
+
 // Atualiza todos os estados que estão ativos
 // E decrementa o índice se o estado for encerrado
 // durante a atualização. O algoritmo verifica se
 // é nota ou rastro para decrementar o índice corretamente
+
 void update_states(void)
 {
-  for (int i = 0; i < NOTE_STATES; i++)
+  for (int i = 0; i < N_COLORS; i++)
   {
-    if (note_green[i].open)
+    for (int j = 0; j < NOTE_STATES; j++)
     {
-      note_green[i].update_note(OFFTIME, PRESS_MIN_TIME);
-      if (!note_green[i].open)
-        note_green.pop();
+      if (note[i][j].open)
+      {
+        note[i][j].update_note(OFFTIME, PRESS_MIN_TIME);
+        if (!note[i][j].open)
+          note[i].pop();
+      }
     }
-    if (note_red[i].open)
-    {
-      note_red[i].update_note(OFFTIME, PRESS_MIN_TIME);
-      if (!note_red[i].open)
-        note_red.pop();
-    }
-    if (note_yellow[i].open)
-    {
-      note_yellow[i].update_note(OFFTIME, PRESS_MIN_TIME);
-      if (!note_yellow[i].open)
-        note_yellow.pop();
-    }
-    if (note_blue[i].open)
-    {
-      note_blue[i].update_note(OFFTIME, PRESS_MIN_TIME);
-      if (!note_blue[i].open)
-        note_blue.pop();
-    }
-    if (note_orange[i].open)
-    {
-      note_orange[i].update_note(OFFTIME, PRESS_MIN_TIME);
-      if (!note_orange[i].open)
-        note_orange.pop();
-    }
-  }
 
-  // Trails
-
-  for (int i = 0; i < TRACE_STATES; i++)
-  {
-    if (trail_green[i].open)
+    for (int j = 0; j < TRACE_STATES; j++)
     {
-      trail_green[i].update_trail(OFFTIME);
-      if (!trail_green[i].open)
-        trail_green.pop();
-    }
-    if (trail_red[i].open)
-    {
-      trail_red[i].update_trail(OFFTIME);
-      if (!trail_red[i].open)
-        trail_red.pop();
-    }
-    if (trail_yellow[i].open)
-    {
-      trail_yellow[i].update_trail(OFFTIME);
-      if (!trail_yellow[i].open)
-        trail_yellow.pop();
-    }
-    if (trail_blue[i].open)
-    {
-      trail_blue[i].update_trail(OFFTIME);
-      if (!trail_blue[i].open)
-        trail_blue.pop();
-    }
-    if (trail_orange[i].open)
-    {
-      trail_orange[i].update_trail(OFFTIME);
-      if (!trail_orange[i].open)
-        trail_orange.pop();
+      if (trail[i][j].open)
+      {
+        trail[i][j].update_trail(OFFTIME);
+        if (!trail[i][j].open)
+          trail[i].pop();
+      }
     }
   }
 }
