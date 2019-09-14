@@ -182,10 +182,6 @@ void loop()
         }
       }
     }
-
-    input_byte[0] = 0;
-    input_byte[1] = 0;
-    command = 0;
   }
 
   update_states();
