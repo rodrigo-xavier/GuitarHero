@@ -1,6 +1,8 @@
 #include "note.h"
 #include "queue.h"
 
+// TODO: REFAZER TODOS OS COMENTÁRIOS DESTE MÓDULO
+
 /**************************************************************************/
 /*DEFINES*/
 
@@ -142,11 +144,6 @@ void loop()
     // ----------------------------------------------------- //
     // Estado de rastro: Solta
 
-    // Um rastro pequeno, precedido de outro rastro
-    // pode ativar a flag drop enquanto o algoritmo espera
-    // para soltar o primeiro rastro, por isso é necessário
-    // verificar até achar uma flag drop==false
-
     // Green (R1_PIN)
     else if (bitRead(command, 10))
       remove_trail_queue(GREEN);
@@ -199,6 +196,13 @@ void add_trail_queue(int note_color, int pin)
   trail[note_color].push(initializer);
 }
 
+/* 
+  Se uma nota está sendo pressionada, então é acionado
+  o comando para soltar a nota. É necessário usar while para esta
+  verificação, por causa do offtime. Podem aparecer dois rastros pequenos
+  na mesma trilha e serem acionados duas flags de drop antes que o 
+  arduino tenha soltado a primeira nota.
+*/
 void remove_trail_queue(int note_color)
 {
   int i = 0;

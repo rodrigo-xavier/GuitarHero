@@ -37,6 +37,7 @@ Queue<T>::Queue(int _max_size)
   }
 }
 
+// TODO: REFAZER COMENTÁRIO
 /*
   Método destrutor de fila, destrói o espaço de memória alocado para a fila.
 */
@@ -46,6 +47,7 @@ Queue<T>::~Queue()
   delete[] queue;
 }
 
+// TODO: REFAZER COMENTÁRIO
 /*
   Método push, insere
 */
