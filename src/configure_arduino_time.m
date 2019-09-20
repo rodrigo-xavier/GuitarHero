@@ -16,7 +16,7 @@ function configure_arduino_time(arduino, time)
     time_format = strcat(num2str(time), 'z');
 
     fprintf(arduino, "%s", time_format);
-    pause(1.5);
+    pause(1);
 
     if (arduino.BytesAvailable > 0)
         arduino_output = fscanf(arduino,'%c',arduino.BytesAvailable);

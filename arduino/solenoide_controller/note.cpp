@@ -13,7 +13,7 @@ void Note::update_note(unsigned long offtime, unsigned int press_min_time)
     if (!(this->drop) && (this->current_time - this->previous_time) >= offtime)
     {
         digitalWrite(this->pin, HIGH);  // Aperta a nota
-        this->drop = true;              
+        this->drop = true;
         this->previous_time = millis(); // Reinicia deltatime
     }
 

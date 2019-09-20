@@ -1,8 +1,6 @@
 #include "note.h"
 #include "queue.h"
 
-// TODO: REFAZER TODOS OS COMENTÁRIOS DESTE MÓDULO
-
 /**************************************************************************/
 /*DEFINES*/
 
@@ -31,7 +29,7 @@
 uint8_t input_byte[] = {0, 0};
 uint16_t command = 0;
 volatile unsigned long OFFTIME = 9999999999;   // Definir um valor grande até que o valor verdadeiro seja setado
-const static unsigned int PRESS_MIN_TIME = 50; // Min time to press note in milli seconds
+const static unsigned int PRESS_MIN_TIME = 50; // Tempo mínimo para pressionar nota
 
 // Inicializa um vetor de filas para notas e rastros
 Queue<Note> note[4] = Queue<Note>(NOTE_STATES);
@@ -43,138 +41,106 @@ Note initializer;
 /**************************************************************************/
 // COMMANDS
 
-// #define B0 0000000000000000 // B0 - APERTO SIMPLES VERDE
-// #define B1 0000000000000001 // B1 - APERTO SIMPLES VERMELHO
-// #define B2 0000000000000010 // B2 - APERTO SIMPLES AMARELO
-// #define B3 0000000000000100 // B3 - APERTO SIMPLES AZUL
-// #define B4 0000000000001000 // B4 - APERTO SIMPLES LARANJADO
-// #define B5 0000000000010000 // B5 - APERTO SEM SOLTAR VERDE
-// #define B6 0000000000100000 // B6 - APERTO SEM SOLTAR VERMELHO
-// #define B7 0000000001000000 // B7 - APERTO SEM SOLTAR AMARELO
-// #define B8 0000000010000000 // B8 - APERTO SEM SOLTAR AZUL
-// #define B9 0000000100000000 // B9 - APERTO SEM SOLTAR LARANJADO
-// #define B10 0000010000000000 // B10 - SOLTA VERDE
-// #define B11 0000100000000000 // B11 - SOLTA VERMELHO
-// #define B12 0001000000000000 // B12 - SOLTA AMARELO
-// #define B13 0010000000000000 // B13 - SOLTA AZUL
-// #define B14 0100000000000000 // B14 - SOLTA LARANJADO
-// #define B15 1000000000000000 // B15 - 0 (será utilizado para configurações)
+/*
+  #define B0 0000000000000000 // B0 - APERTO SIMPLES VERDE
+  #define B1 0000000000000001 // B1 - APERTO SIMPLES VERMELHO
+  #define B2 0000000000000010 // B2 - APERTO SIMPLES AMARELO
+  #define B3 0000000000000100 // B3 - APERTO SIMPLES AZUL
+  #define B4 0000000000001000 // B4 - APERTO SIMPLES LARANJADO
+  #define B5 0000000000010000 // B5 - APERTO SEM SOLTAR VERDE
+  #define B6 0000000000100000 // B6 - APERTO SEM SOLTAR VERMELHO
+  #define B7 0000000001000000 // B7 - APERTO SEM SOLTAR AMARELO
+  #define B8 0000000010000000 // B8 - APERTO SEM SOLTAR AZUL
+  #define B9 0000000100000000 // B9 - APERTO SEM SOLTAR LARANJADO
+  #define B10 0000010000000000 // B10 - SOLTA VERDE
+  #define B11 0000100000000000 // B11 - SOLTA VERMELHO
+  #define B12 0001000000000000 // B12 - SOLTA AMARELO
+  #define B13 0010000000000000 // B13 - SOLTA AZUL
+  #define B14 0100000000000000 // B14 - SOLTA LARANJADO
+  #define B15 1000000000000000 // B15 - 0 (será utilizado para configurações)
+*/
 
 /**************************************************************************/
 
 void setup()
 {
-  // Configura quantidade de bits por segundo que o arduino deve receber
   Serial.begin(115200);
 
-  // Inicializa os pinos como saída
   pinMode(L1_PIN, OUTPUT);
   pinMode(L2_PIN, OUTPUT);
   pinMode(R1_PIN, OUTPUT);
   pinMode(R2_PIN, OUTPUT);
   pinMode(X_PIN, OUTPUT);
-
-  delay(1000);
 }
 
 void loop()
 {
-  // São lidos 1 byte por vez, já que através do MATLAB
-  // está sendo enviado um bit para cada ação no formato
-  // indexicado no arquivo envia_comando.m
-  // Ler a documentação dessa função para entender melhor
   if (Serial.available() >= 2)
   {
+    /*
+      Como é possível ler apenas 1 byte por vez utilizando Serial.read(),
+      utilizamos dois vetores de 8 bits e concatenamos para 16 bits, para formar 
+      um comando que possa ser lido por bitRead()
+    */
     input_byte[0] = Serial.read();                    // Least Significant byte
     input_byte[1] = Serial.read();                    // Most significante byte
-    command = ((input_byte[1] << 8) | input_byte[0]); // 16 bytes contatenando os 2 bytes acima
+    command = ((input_byte[1] << 8) | input_byte[0]); // 16 bits concatenados
 
-    // Os bits que estiverem como 1 indexicam ações que
-    // devem ser realizadas.
-
-    // Estado simples: aperta e solta automaticamente
-    // o mais rápido possível
-
-    // ----------------------------------------------------- //
-    // Comandos relacionados com aperto simples das notas
-
-    // Green (L2_PIN)
-    if (bitRead(command, 0))
+    
+    if (bitRead(command, 0))            // Green (L2_PIN)
       add_note_queue(GREEN, L2_PIN);
-
-    // Red (L1_PIN)
-    else if (bitRead(command, 1))
+    
+    else if (bitRead(command, 1))       // Red (L1_PIN)
       add_note_queue(RED, L1_PIN);
-
-    // Yellow (R1_PIN)
-    else if (bitRead(command, 2))
+    
+    else if (bitRead(command, 2))       // Yellow (R1_PIN)
       add_note_queue(YELLOW, R1_PIN);
-
-    // Blue (R2_PIN)
-    else if (bitRead(command, 3))
+    
+    else if (bitRead(command, 3))       // Blue (R2_PIN)
       add_note_queue(BLUE, R2_PIN);
-
-    // Orange (X_PIN)
-    else if (bitRead(command, 4))
+    
+    else if (bitRead(command, 4))       // Orange (X_PIN)
       add_note_queue(ORANGE, X_PIN);
-
-    // ----------------------------------------------------- //
-    // Comandos relacionados com o rastro
-
-    // Green (L2_PIN)
-    else if (bitRead(command, 5))
+    
+    else if (bitRead(command, 5))       // Green (L2_PIN)
       add_trail_queue(GREEN, L2_PIN);
-
-    // Red (L1_PIN)
-    else if (bitRead(command, 6))
+    
+    else if (bitRead(command, 6))       // Red (L1_PIN)
       add_trail_queue(RED, L1_PIN);
-
-    // Yellow (R1_PIN)
-    else if (bitRead(command, 7))
+    
+    else if (bitRead(command, 7))       // Yellow (R1_PIN)
       add_trail_queue(YELLOW, R1_PIN);
-
-    // Blue (R2_PIN)
-    else if (bitRead(command, 8))
+    
+    else if (bitRead(command, 8))       // Blue (R2_PIN)
       add_trail_queue(BLUE, R2_PIN);
-
-    // Orange (X_PIN)
-    else if (bitRead(command, 9))
+    
+    else if (bitRead(command, 9))       // Orange (X_PIN)
       add_trail_queue(ORANGE, X_PIN);
-
-    // ----------------------------------------------------- //
-    // Estado de rastro: Solta
-
-    // Green (R1_PIN)
-    else if (bitRead(command, 10))
+    
+    else if (bitRead(command, 10))      // Green (R1_PIN)
       remove_trail_queue(GREEN);
-
-    // Red (L1_PIN)
-    else if (bitRead(command, 11))
+    
+    else if (bitRead(command, 11))      // Red (L1_PIN)
       remove_trail_queue(RED);
-
-    // Yellow (R1_PIN)
-    else if (bitRead(command, 12))
+    
+    else if (bitRead(command, 12))      // Yellow (R1_PIN)
       remove_trail_queue(YELLOW);
-
-    // Blue (R2_PIN)
-    else if (bitRead(command, 13))
+    
+    else if (bitRead(command, 13))      // Blue (R2_PIN)
       remove_trail_queue(BLUE);
-
-    // Orange (X_PIN)
-    else if (bitRead(command, 14))
+    
+    else if (bitRead(command, 14))      // Orange (X_PIN)
       remove_trail_queue(ORANGE);
 
-    // Configuração de tempo
-    else if (bitRead(command, 15))
+    else if (bitRead(command, 15))      // Configuração do tempo
     {
       while (true)
       {
         if (Serial.available() > 0)
         {
-          String str = Serial.readStringUntil('b');
+          String str = Serial.readStringUntil('z');
           OFFTIME = str.toInt();
           Serial.print(OFFTIME);
-          // incomingByte = '\0';
           break;
         }
       }
@@ -210,11 +176,6 @@ void remove_trail_queue(int note_color)
   while (!(trail[note_color][i].drop))
     trail[note_color][i++].drop = true;
 }
-
-// Atualiza todos os estados que estão ativos
-// E decrementa o índice se o estado for encerrado
-// durante a atualização. O algoritmo verifica se
-// é nota ou rastro para decrementar o índice corretamente
 
 void update_states(void)
 {
