@@ -113,6 +113,5 @@ function press_buttons(vid, galileo)
         end
         
         envia_comando(galileo, comandoString);
-        end
     end
 end

@@ -23,7 +23,7 @@ function configure_arduino_time(arduino, time)
 
         if (str2num(arduino_output) == time)
             disp(msg + arduino_output);
-            break;
+            return;
         else
             error("Reenvie o código ao arduino.");
             fclose(arduino);
