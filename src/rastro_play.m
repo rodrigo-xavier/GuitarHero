@@ -1,4 +1,4 @@
-function [holding_buttons, holding_times, comandoString] = rastro_play(imgO, holding_buttons, holding_times, comandoString, tempo_espera)
+function [holding_buttons, holding_times, comandoString] = rastro_play(imgO, holding_buttons, holding_times, comandoString)
     % cores
     R = 1;
     G = 2;
@@ -53,10 +53,7 @@ function [holding_buttons, holding_times, comandoString] = rastro_play(imgO, hol
 
     %quando o rastro acaba solta
     %Se esta_apertando e nao ha mais rastro passando
-    if( holding_buttons('green') && ...
-        ~(imgO(312,230,G) >= green_min && imgO(312,230,G) <= green_max) && ...
-        toc(holding_times('green')) > tempo_espera)
-
+    if( holding_buttons('green') && ~(imgO(312,230,G) >= green_min && imgO(312,230,G) <= green_max))
         holding_buttons('green') = false;
         % fprintf(galileo,'%c', SOLTA_GREEN);  
         comandoString(6) = '1';
@@ -92,13 +89,13 @@ function [holding_buttons, holding_times, comandoString] = rastro_play(imgO, hol
     %quando o rastro acaba solta
     %Se esta_apertando e nao ha mais rastro passando
     if( holding_buttons('red') && ...
-        ~(imgO(311,274,R) >= red_min && imgO(311,274,R) <= red_max) && ...
-        toc(holding_times('red')) > tempo_espera)
+        ~(imgO(311,274,R) >= red_min && imgO(311,274,R) <= red_max) && toc(holding_times('red')))
 
         holding_buttons('red') = false;
 
         % fprintf(galileo,'%c', SOLTA_RED);  
         comandoString(5) = '1';
+
 
     end
 
@@ -145,8 +142,7 @@ function [holding_buttons, holding_times, comandoString] = rastro_play(imgO, hol
     %Se esta_apertando e nao ha mais rastro passando
     if( holding_buttons('yellow') && ...
         ~(imgO(312,311,R) >= yellowR_min && imgO(312,311,R) <= yellowR_max && ...
-          imgO(312,311,G) >= yellowG_min && imgO(312,311,G) <= yellowG_max) && ...
-        toc(holding_times('yellow')) > tempo_espera)
+          imgO(312,311,G) >= yellowG_min && imgO(312,311,G) <= yellowG_max))
 
         holding_buttons('yellow') = false;
         % fprintf(galileo,'%c', SOLTA_YELLOW);  
@@ -196,8 +192,7 @@ function [holding_buttons, holding_times, comandoString] = rastro_play(imgO, hol
     %Se esta_apertando e nao ha mais rastro passando
     if( holding_buttons('blue') && ...
         ~(imgO(312,311,B) >= blueB_min && imgO(312,311,B) <= blueB_max && ...
-          imgO(312,311,G) >= blueG_min && imgO(312,311,G) <= blueG_max) && ...
-        toc(holding_times('blue')) > tempo_espera)
+          imgO(312,311,G) >= blueG_min && imgO(312,311,G) <= blueG_max))
 
         holding_buttons('blue') = false;
         % fprintf(galileo,'%c', SOLTA_BLUE);  
@@ -247,8 +242,7 @@ function [holding_buttons, holding_times, comandoString] = rastro_play(imgO, hol
     %Se esta_apertando e nao ha mais rastro passando
     if( holding_buttons('orange') && ...
         ~(imgO(312,311,R) >= orangeR_min && imgO(312,311,R) <= orangeR_max && ...
-          imgO(312,311,G) >= orangeG_min && imgO(312,311,G) <= orangeG_max) && ...
-        toc(holding_times('orange')) > tempo_espera)
+          imgO(312,311,G) >= orangeG_min && imgO(312,311,G) <= orangeG_max))
 
         holding_buttons('orange') = false;
         % fprintf(galileo,'%c', SOLTA_ORANGE);  
