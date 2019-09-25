@@ -2,6 +2,7 @@ function [note_time, trail_time] = detect_times(vid)
 
     disp("Detectando os tempos.");
 
+    temp = 0;
     note_max = 10;
     note = 0;
 
