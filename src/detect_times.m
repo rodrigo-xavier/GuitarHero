@@ -4,6 +4,7 @@ function [note_time, trail_time] = detect_times(vid)
 
     note_max = 10;
     note = 0;
+    temp = 0;
 
     R               = 1;
     G               = 2;

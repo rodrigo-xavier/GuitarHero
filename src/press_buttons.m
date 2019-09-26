@@ -60,8 +60,6 @@ function press_buttons(vid, galileo)
         % get image from camera
         imgO = getdata(vid,1,'uint8');
 
-        [green_note_passed, red_note_passed, yellow_note_passed, blue_note_passed, orange_note_passed] = note_passed(imgO);
-
         % TODO: Verificar se os pixels estao corretos
         greenPixel = imgO(312,230,G);
         redPixel = imgO(311,274,R);
@@ -135,6 +133,8 @@ function press_buttons(vid, galileo)
         end
 
         envia_comando(galileo, comandoString);
+
+        [green_note_passed, red_note_passed, yellow_note_passed, blue_note_passed, orange_note_passed] = note_passed(imgO);
         
         comando_anterior = comandoString;
 
