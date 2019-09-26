@@ -1,6 +1,6 @@
 function [note_time, trail_time] = detect_times(vid)
 
-    disp("Detectando os tempos.");
+    disp("Detectando tempo.");
 
     temp = tic;
 

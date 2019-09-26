@@ -1,4 +1,7 @@
 function configure_arduino_time(arduino, time)
+
+    disp("Enviando tempo para o Arduino.");
+
     % Tempo deve ser enviado em segundos
 
     % Limpa o buffer

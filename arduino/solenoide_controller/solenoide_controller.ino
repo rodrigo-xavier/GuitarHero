@@ -71,10 +71,16 @@ void setup()
   pinMode(R1_PIN, OUTPUT);
   pinMode(R2_PIN, OUTPUT);
   pinMode(X_PIN, OUTPUT);
+
+  Serial.println("Iniciando arduino");
 }
 
 void loop()
 {
+  Serial.print(Serial.available());
+  delay(500);
+  Serial.println(" ");
+
   if (Serial.available() >= 2)
   {
     /*
@@ -86,54 +92,57 @@ void loop()
     input_byte[1] = Serial.read();                    // Most significante byte
     command = ((input_byte[1] << 8) | input_byte[0]); // 16 bits concatenados
 
-    
-    if (bitRead(command, 0))            // Green (L2_PIN)
+    Serial.print("command: ");
+    Serial.print(command);
+
+    if (bitRead(command, 0)) // Green (L2_PIN)
       add_note_queue(GREEN, L2_PIN);
-    
-    else if (bitRead(command, 1))       // Red (L1_PIN)
+
+    else if (bitRead(command, 1)) // Red (L1_PIN)
       add_note_queue(RED, L1_PIN);
-    
-    else if (bitRead(command, 2))       // Yellow (R1_PIN)
+
+    else if (bitRead(command, 2)) // Yellow (R1_PIN)
       add_note_queue(YELLOW, R1_PIN);
-    
-    else if (bitRead(command, 3))       // Blue (R2_PIN)
+
+    else if (bitRead(command, 3)) // Blue (R2_PIN)
       add_note_queue(BLUE, R2_PIN);
-    
-    else if (bitRead(command, 4))       // Orange (X_PIN)
+
+    else if (bitRead(command, 4)) // Orange (X_PIN)
       add_note_queue(ORANGE, X_PIN);
-    
-    else if (bitRead(command, 5))       // Green (L2_PIN)
+
+    else if (bitRead(command, 5)) // Green (L2_PIN)
       add_trail_queue(GREEN, L2_PIN);
-    
-    else if (bitRead(command, 6))       // Red (L1_PIN)
+
+    else if (bitRead(command, 6)) // Red (L1_PIN)
       add_trail_queue(RED, L1_PIN);
-    
-    else if (bitRead(command, 7))       // Yellow (R1_PIN)
+
+    else if (bitRead(command, 7)) // Yellow (R1_PIN)
       add_trail_queue(YELLOW, R1_PIN);
-    
-    else if (bitRead(command, 8))       // Blue (R2_PIN)
+
+    else if (bitRead(command, 8)) // Blue (R2_PIN)
       add_trail_queue(BLUE, R2_PIN);
-    
-    else if (bitRead(command, 9))       // Orange (X_PIN)
+
+    else if (bitRead(command, 9)) // Orange (X_PIN)
       add_trail_queue(ORANGE, X_PIN);
-    
-    else if (bitRead(command, 10))      // Green (R1_PIN)
+
+    else if (bitRead(command, 10)) // Green (R1_PIN)
       remove_trail_queue(GREEN);
-    
-    else if (bitRead(command, 11))      // Red (L1_PIN)
+
+    else if (bitRead(command, 11)) // Red (L1_PIN)
       remove_trail_queue(RED);
-    
-    else if (bitRead(command, 12))      // Yellow (R1_PIN)
+
+    else if (bitRead(command, 12)) // Yellow (R1_PIN)
       remove_trail_queue(YELLOW);
-    
-    else if (bitRead(command, 13))      // Blue (R2_PIN)
+
+    else if (bitRead(command, 13)) // Blue (R2_PIN)
       remove_trail_queue(BLUE);
-    
-    else if (bitRead(command, 14))      // Orange (X_PIN)
+
+    else if (bitRead(command, 14)) // Orange (X_PIN)
       remove_trail_queue(ORANGE);
 
-    else if (bitRead(command, 15))      // Configuração do tempo
+    else if (bitRead(command, 15)) // Configuração do tempo
     {
+      Serial.print("Configurando tempo no arduino");
       while (true)
       {
         if (Serial.available() > 0)
@@ -152,12 +161,14 @@ void loop()
 
 void add_note_queue(int note_color, int pin)
 {
+  Serial.print("Add note Queue");
   initializer.pin = pin;
   note[note_color].push(initializer);
 }
 
 void add_trail_queue(int note_color, int pin)
 {
+  Serial.print("Add trail Queue");
   initializer.pin = pin;
   trail[note_color].push(initializer);
 }
@@ -171,6 +182,7 @@ void add_trail_queue(int note_color, int pin)
 */
 void remove_trail_queue(int note_color)
 {
+  Serial.print("Remove trail Queue");
   int i = 0;
 
   while (!(trail[note_color][i].drop))
