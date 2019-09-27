@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include "note.h"
 #include "queue.h"
 
@@ -28,7 +29,7 @@
 
 uint8_t input_byte[] = {0, 0};
 uint16_t command = 0;
-volatile unsigned long OFFTIME = 9999999999;   // Definir um valor grande até que o valor verdadeiro seja setado
+volatile unsigned long OFFTIME = 99999999;     // Definir um valor grande até que o valor verdadeiro seja setado
 const static unsigned int PRESS_MIN_TIME = 50; // Tempo mínimo para pressionar nota
 
 // Inicializa um vetor de filas para notas e rastros

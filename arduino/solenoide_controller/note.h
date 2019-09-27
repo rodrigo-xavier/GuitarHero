@@ -16,22 +16,20 @@ public:
     bool drop; // Flag que aciona o comando de soltar nota
     bool open; // Flag que verifica se o estado está aberto
 
-    /* (Método Construtor de Nota)
-        Inicializa as flags e variáveis da nota. Não foi possível definir no .h
-    */
-    Note()
-    {
-        this->pin = 0;
-        this->open = true;
-        this->hold = false;
-        this->drop = false;
-        this->wait_offtime = false;
-        this->previous_time = millis();
-    }
-
+    Note(void);
     void update_note(unsigned long, unsigned int);
     void update_trail(unsigned long);
 };
+
+Note::Note(void)
+{
+    this->pin = 0;
+    this->open = true;
+    this->hold = false;
+    this->drop = false;
+    this->wait_offtime = false;
+    this->previous_time = millis();
+}
 
 void Note::update_note(unsigned long offtime, unsigned int press_min_time)
 {
