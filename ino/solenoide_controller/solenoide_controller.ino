@@ -77,7 +77,7 @@ void setup()
 void loop()
 {
   Serial.print(Serial.available());
-  delay(5);
+  // delay(5);
   Serial.println(" ");
 
   if (Serial.available() >= 2)
@@ -94,49 +94,49 @@ void loop()
     Serial.print("COMMAND: ");
     Serial.print(COMMAND);
 
-    if (bitRead(COMMAND, 0)) // Green (L2_PIN)
+    if (bitRead(COMMAND, 0))
       add_note_queue(GREEN, L2_PIN);
 
-    else if (bitRead(COMMAND, 1)) // Red (L1_PIN)
+    else if (bitRead(COMMAND, 1))
       add_note_queue(RED, L1_PIN);
 
-    else if (bitRead(COMMAND, 2)) // Yellow (R1_PIN)
+    else if (bitRead(COMMAND, 2))
       add_note_queue(YELLOW, R1_PIN);
 
-    else if (bitRead(COMMAND, 3)) // Blue (R2_PIN)
+    else if (bitRead(COMMAND, 3))
       add_note_queue(BLUE, R2_PIN);
 
-    else if (bitRead(COMMAND, 4)) // Orange (X_PIN)
+    else if (bitRead(COMMAND, 4))
       add_note_queue(ORANGE, X_PIN);
 
-    else if (bitRead(COMMAND, 5)) // Green (L2_PIN)
+    else if (bitRead(COMMAND, 5))
       add_trail_queue(GREEN, L2_PIN);
 
-    else if (bitRead(COMMAND, 6)) // Red (L1_PIN)
+    else if (bitRead(COMMAND, 6))
       add_trail_queue(RED, L1_PIN);
 
-    else if (bitRead(COMMAND, 7)) // Yellow (R1_PIN)
+    else if (bitRead(COMMAND, 7))
       add_trail_queue(YELLOW, R1_PIN);
 
-    else if (bitRead(COMMAND, 8)) // Blue (R2_PIN)
+    else if (bitRead(COMMAND, 8))
       add_trail_queue(BLUE, R2_PIN);
 
-    else if (bitRead(COMMAND, 9)) // Orange (X_PIN)
+    else if (bitRead(COMMAND, 9))
       add_trail_queue(ORANGE, X_PIN);
 
-    else if (bitRead(COMMAND, 10)) // Green (R1_PIN)
+    else if (bitRead(COMMAND, 10))
       remove_trail_queue(GREEN);
 
-    else if (bitRead(COMMAND, 11)) // Red (L1_PIN)
+    else if (bitRead(COMMAND, 11))
       remove_trail_queue(RED);
 
-    else if (bitRead(COMMAND, 12)) // Yellow (R1_PIN)
+    else if (bitRead(COMMAND, 12))
       remove_trail_queue(YELLOW);
 
-    else if (bitRead(COMMAND, 13)) // Blue (R2_PIN)
+    else if (bitRead(COMMAND, 13))
       remove_trail_queue(BLUE);
 
-    else if (bitRead(COMMAND, 14)) // Orange (X_PIN)
+    else if (bitRead(COMMAND, 14))
       remove_trail_queue(ORANGE);
 
     else if (bitRead(COMMAND, 15)) // Configuração do tempo
@@ -164,7 +164,7 @@ void add_note_queue(int note_color, int pin)
 {
   Serial.print("Add note Queue");
   initializer.pin = pin;
-  initializer.previous_time = millis(); // Gambiarra
+  initializer.previous_time = millis();
   note[note_color].push(initializer);
 }
 
@@ -174,7 +174,7 @@ void add_trail_queue(int note_color, int pin)
 {
   Serial.print("Add trail Queue");
   initializer.pin = pin;
-  initializer.previous_time = millis(); // Gambiarra
+  initializer.previous_time = millis();
   trail[note_color].push(initializer);
 }
 
