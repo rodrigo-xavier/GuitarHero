@@ -2,7 +2,7 @@
 #include "note.h"
 #include "queue.h"
 
-/**************************************************************************/
+/********************************************************************************************/
 /*DEFINES*/
 
 // Number of states
@@ -24,7 +24,7 @@
 #define ORANGE 4
 #define N_COLORS 5 // Define a quantidade de notas (verde, vermelho, amarelo, azul e laranja == 5)
 
-/**************************************************************************/
+/********************************************************************************************/
 /*VARIÁVEIS GLOBAIS*/
 
 uint8_t BYTE[] = {0, 0};
@@ -39,29 +39,26 @@ Queue<Note> trail[5] = Queue<Note>(TRACE_STATES);
 // Gambiarra para inicializar nota
 Note initializer;
 
-/**************************************************************************/
-// COMMANDS
+/********************************************************************************************
+COMMANDS
 
-/*
-  #define B0 0000000000000000 // B0 - APERTO SIMPLES VERDE
-  #define B1 0000000000000001 // B1 - APERTO SIMPLES VERMELHO
-  #define B2 0000000000000010 // B2 - APERTO SIMPLES AMARELO
-  #define B3 0000000000000100 // B3 - APERTO SIMPLES AZUL
-  #define B4 0000000000001000 // B4 - APERTO SIMPLES LARANJADO
-  #define B5 0000000000010000 // B5 - APERTO SEM SOLTAR VERDE
-  #define B6 0000000000100000 // B6 - APERTO SEM SOLTAR VERMELHO
-  #define B7 0000000001000000 // B7 - APERTO SEM SOLTAR AMARELO
-  #define B8 0000000010000000 // B8 - APERTO SEM SOLTAR AZUL
-  #define B9 0000000100000000 // B9 - APERTO SEM SOLTAR LARANJADO
-  #define B10 0000010000000000 // B10 - SOLTA VERDE
-  #define B11 0000100000000000 // B11 - SOLTA VERMELHO
-  #define B12 0001000000000000 // B12 - SOLTA AMARELO
-  #define B13 0010000000000000 // B13 - SOLTA AZUL
-  #define B14 0100000000000000 // B14 - SOLTA LARANJADO
-  #define B15 1000000000000000 // B15 - 0 (será utilizado para configurações)
-*/
-
-/**************************************************************************/
+00000000 00000000 - 0 - APERTO SIMPLES VERDE
+00000000 00000001 - 1 - APERTO SIMPLES VERMELHO
+00000000 00000010 - 2 - APERTO SIMPLES AMARELO
+00000000 00000100 - 3 - APERTO SIMPLES AZUL
+00000000 00001000 - 4 - APERTO SIMPLES LARANJADO
+00000000 00010000 - 5 - APERTO SEM SOLTAR VERDE
+00000000 00100000 - 6 - APERTO SEM SOLTAR VERMELHO
+00000000 01000000 - 7 - APERTO SEM SOLTAR AMARELO
+00000000 10000000 - 8 - APERTO SEM SOLTAR AZUL
+00000001 00000000 - 9 - APERTO SEM SOLTAR LARANJADO
+00000100 00000000 - 10 - SOLTA VERDE
+00001000 00000000 - 11 - SOLTA VERMELHO
+00010000 00000000 - 12 - SOLTA AMARELO
+00100000 00000000 - 13 - SOLTA AZUL
+01000000 00000000 - 14 - SOLTA LARANJADO
+10000000 00000000 - 15 - CONFIGURAÇÃO DO TEMPO OFFTIME
+********************************************************************************************/
 
 void setup()
 {
@@ -158,8 +155,15 @@ void loop()
   update_states();
 }
 
-/* 
-*/
+/********************************************************************************************  
+  Descrição Breve: Função para adicionar uma Nota à fila de notas
+
+  Descrição da Entrada:
+  (note_color) - Número da nota no vetor de notas
+  (pin) - 
+
+  Descrição Detalhada: 
+*********************************************************************************************/
 void add_note_queue(int note_color, int pin)
 {
   Serial.print("Add note Queue");
@@ -168,8 +172,15 @@ void add_note_queue(int note_color, int pin)
   note[note_color].push(initializer);
 }
 
-/* 
-*/
+/********************************************************************************************  
+  Descrição Breve: Função para adicionar um rastro à fila de rastros
+
+  Descrição da Entrada:
+  (note_color) - Numero do pino do arduino relacionado com a cor da nota avaliada
+  (pin) - 
+
+  Descrição Detalhada: 
+*********************************************************************************************/
 void add_trail_queue(int note_color, int pin)
 {
   Serial.print("Add trail Queue");
@@ -178,13 +189,18 @@ void add_trail_queue(int note_color, int pin)
   trail[note_color].push(initializer);
 }
 
-/* 
-  Se uma nota está sendo pressionada, então é acionado
+/********************************************************************************************  
+  Descrição Breve: Função para adicionar um rastro à fila de rastros
+
+  Descrição da Entrada:
+  (note_color) - Numero do pino do arduino relacionado com a cor da nota avaliada
+
+  Descrição Detalhada: Se uma nota está sendo pressionada, então é acionado
   o comando para soltar a nota. É necessário usar while para esta
   verificação, por causa do offtime. Podem aparecer dois rastros pequenos
   na mesma trilha e serem acionados duas flags de drop antes que o 
   arduino tenha soltado a primeira nota.
-*/
+*********************************************************************************************/
 void remove_trail_queue(int note_color)
 {
   Serial.print("Remove trail Queue");
@@ -194,8 +210,11 @@ void remove_trail_queue(int note_color)
     trail[note_color][i++].drop = true;
 }
 
-/* 
-*/
+/********************************************************************************************  
+  Descrição Breve: 
+
+  Descrição Detalhada: 
+*********************************************************************************************/
 void update_states(void)
 {
   for (int i = 0; i < N_COLORS; i++)

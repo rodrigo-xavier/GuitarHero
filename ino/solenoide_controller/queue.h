@@ -6,8 +6,8 @@
 
   Descrição da Entrada:
   (T *queue) - Ponteiro para variável fila do tipo T
-  (int max_size) - Define o tamanho máximo da fila
-  (int next) - Define o próximo espaço vazio da fila
+  (max_size) - Define o tamanho máximo da fila
+  (next) - Define o próximo espaço vazio da fila
   (IMPORTANTE: <class T> é um objeto de qualquer tipo)
 
   Descrição Detalhada: Define uma estrutura do tipo fila, com métodos

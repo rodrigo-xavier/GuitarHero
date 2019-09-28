@@ -3,24 +3,46 @@
 
 #include <Arduino.h>
 
+/********************************************************************************************  
+  Descrição Breve: Classe de Nota
+
+  Descrição da Entrada:
+  (pin) - Pino digital do arduino relacionado com a nota
+  (hold) - Flag que define se a nota está sendo pressionada ou não
+  (drop) - Flag que aciona o comando de soltar nota
+  (open) - Flag que verifica se o estado da nota está aberto
+  (wait_offtime) - Flag que faz update_trail() esperar o offtime do rastro para soltar a nota
+  (current_time) - Variável que pega o tempo atual
+  (previous_time) - Variável que pega o tempo anterior
+
+  Descrição Detalhada: Define a estrutura Nota, que contém o estado de aberto/fechado,
+  o pino do arduino equivalente à nota, e algumas flags utilizadas pelos métodos
+  da estrutura. A função principal desta estrutura é atualizar os pinos do arduino
+  de acordo com os comandos recebidos pelo matlab.
+*********************************************************************************************/
 class Note
 {
 private:
-    bool hold;                  // Flag de nota pressionada
-    bool wait_offtime;          // Flag que faz update_states() esperar o offtime do rastro para soltar,
-    unsigned long current_time; // Variável que pega o tempo atual
+    bool hold;
+    bool wait_offtime;
+    unsigned long current_time;
 
 public:
-    int pin;                     // Pino digital relacionado com a nota
-    bool drop;                   // Flag que aciona o comando de soltar nota
-    bool open;                   // Flag que verifica se o estado está aberto
-    unsigned long previous_time; // Variável que pega o tempo anterior
+    int pin;
+    bool drop;
+    bool open;
+    unsigned long previous_time;
 
     Note(void);
     void update_note(unsigned long, unsigned long);
     void update_trail(unsigned long);
 };
 
+/********************************************************************************************  
+  Descrição Breve: Construtor do Nota
+
+  Descrição Detalhada: 
+*********************************************************************************************/
 Note::Note(void)
 {
     this->pin = 0;
@@ -30,6 +52,16 @@ Note::Note(void)
     this->wait_offtime = false;
 }
 
+/********************************************************************************************  
+  Descrição Breve: Método atualizador de nota
+
+  Descrição da Entrada:
+  (offtime) - Setado no ínicio da execução, define o tempo que a nota leva para passar do
+  momento em que foi detectada até o momento de pressionar a nota.
+  (press_min_time) - Define o tempo mínimo que a nota deve ser pressionada no aperto simples.
+
+  Descrição Detalhada: 
+*********************************************************************************************/
 void Note::update_note(unsigned long offtime, unsigned long press_min_time)
 {
     this->current_time = millis();
@@ -59,6 +91,15 @@ void Note::update_note(unsigned long offtime, unsigned long press_min_time)
     }
 }
 
+/********************************************************************************************  
+  Descrição Breve: Método atualizador de rastro
+
+  Descrição da Entrada:
+  (offtime) - Setado no ínicio da execução, define o tempo que a nota leva para passar do
+  momento em que foi detectada até o momento de pressionar a nota.
+
+  Descrição Detalhada: 
+*********************************************************************************************/
 void Note::update_trail(unsigned long offtime)
 {
     this->current_time = millis();
