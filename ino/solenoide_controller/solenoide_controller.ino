@@ -1,0 +1,229 @@
+#include <Arduino.h>
+#include "note.h"
+#include "queue.h"
+
+/**************************************************************************/
+/*DEFINES*/
+
+// Number of states
+#define TRACE_STATES 3
+#define NOTE_STATES 5
+
+// Digital Pins
+#define L1_PIN 3
+#define L2_PIN 2
+#define R1_PIN 4
+#define R2_PIN 5
+#define X_PIN 6
+
+// Note colors
+#define GREEN 0
+#define RED 1
+#define YELLOW 2
+#define BLUE 3
+#define ORANGE 4
+#define N_COLORS 5 // Define a quantidade de notas (verde, vermelho, amarelo, azul e laranja == 5)
+
+/**************************************************************************/
+/*VARIÁVEIS GLOBAIS*/
+
+uint8_t BYTE[] = {0, 0};
+uint16_t COMMAND = 0;
+volatile unsigned long OFFTIME = 99999999;  // Definir um valor grande até que o valor verdadeiro seja setado
+volatile unsigned long PRESS_MIN_TIME = 50; // Tempo mínimo para pressionar nota
+
+// Inicializa um vetor de filas para notas e rastros
+Queue<Note> note[5] = Queue<Note>(NOTE_STATES);
+Queue<Note> trail[5] = Queue<Note>(TRACE_STATES);
+
+// Gambiarra para inicializar nota
+Note initializer;
+
+/**************************************************************************/
+// COMMANDS
+
+/*
+  #define B0 0000000000000000 // B0 - APERTO SIMPLES VERDE
+  #define B1 0000000000000001 // B1 - APERTO SIMPLES VERMELHO
+  #define B2 0000000000000010 // B2 - APERTO SIMPLES AMARELO
+  #define B3 0000000000000100 // B3 - APERTO SIMPLES AZUL
+  #define B4 0000000000001000 // B4 - APERTO SIMPLES LARANJADO
+  #define B5 0000000000010000 // B5 - APERTO SEM SOLTAR VERDE
+  #define B6 0000000000100000 // B6 - APERTO SEM SOLTAR VERMELHO
+  #define B7 0000000001000000 // B7 - APERTO SEM SOLTAR AMARELO
+  #define B8 0000000010000000 // B8 - APERTO SEM SOLTAR AZUL
+  #define B9 0000000100000000 // B9 - APERTO SEM SOLTAR LARANJADO
+  #define B10 0000010000000000 // B10 - SOLTA VERDE
+  #define B11 0000100000000000 // B11 - SOLTA VERMELHO
+  #define B12 0001000000000000 // B12 - SOLTA AMARELO
+  #define B13 0010000000000000 // B13 - SOLTA AZUL
+  #define B14 0100000000000000 // B14 - SOLTA LARANJADO
+  #define B15 1000000000000000 // B15 - 0 (será utilizado para configurações)
+*/
+
+/**************************************************************************/
+
+void setup()
+{
+  Serial.begin(115200);
+
+  pinMode(L1_PIN, OUTPUT);
+  pinMode(L2_PIN, OUTPUT);
+  pinMode(R1_PIN, OUTPUT);
+  pinMode(R2_PIN, OUTPUT);
+  pinMode(X_PIN, OUTPUT);
+}
+
+void loop()
+{
+  Serial.print(Serial.available());
+  delay(5);
+  Serial.println(" ");
+
+  if (Serial.available() >= 2)
+  {
+    /*
+      Como é possível ler apenas 1 byte por vez utilizando Serial.read(),
+      utilizamos dois vetores de 8 bits e concatenamos para 16 bits, para formar 
+      um comando que possa ser lido por bitRead()
+    */
+    BYTE[0] = Serial.read();              // Least Significant byte
+    BYTE[1] = Serial.read();              // Most significante byte
+    COMMAND = ((BYTE[1] << 8) | BYTE[0]); // 16 bits concatenados
+
+    Serial.print("COMMAND: ");
+    Serial.print(COMMAND);
+
+    if (bitRead(COMMAND, 0)) // Green (L2_PIN)
+      add_note_queue(GREEN, L2_PIN);
+
+    else if (bitRead(COMMAND, 1)) // Red (L1_PIN)
+      add_note_queue(RED, L1_PIN);
+
+    else if (bitRead(COMMAND, 2)) // Yellow (R1_PIN)
+      add_note_queue(YELLOW, R1_PIN);
+
+    else if (bitRead(COMMAND, 3)) // Blue (R2_PIN)
+      add_note_queue(BLUE, R2_PIN);
+
+    else if (bitRead(COMMAND, 4)) // Orange (X_PIN)
+      add_note_queue(ORANGE, X_PIN);
+
+    else if (bitRead(COMMAND, 5)) // Green (L2_PIN)
+      add_trail_queue(GREEN, L2_PIN);
+
+    else if (bitRead(COMMAND, 6)) // Red (L1_PIN)
+      add_trail_queue(RED, L1_PIN);
+
+    else if (bitRead(COMMAND, 7)) // Yellow (R1_PIN)
+      add_trail_queue(YELLOW, R1_PIN);
+
+    else if (bitRead(COMMAND, 8)) // Blue (R2_PIN)
+      add_trail_queue(BLUE, R2_PIN);
+
+    else if (bitRead(COMMAND, 9)) // Orange (X_PIN)
+      add_trail_queue(ORANGE, X_PIN);
+
+    else if (bitRead(COMMAND, 10)) // Green (R1_PIN)
+      remove_trail_queue(GREEN);
+
+    else if (bitRead(COMMAND, 11)) // Red (L1_PIN)
+      remove_trail_queue(RED);
+
+    else if (bitRead(COMMAND, 12)) // Yellow (R1_PIN)
+      remove_trail_queue(YELLOW);
+
+    else if (bitRead(COMMAND, 13)) // Blue (R2_PIN)
+      remove_trail_queue(BLUE);
+
+    else if (bitRead(COMMAND, 14)) // Orange (X_PIN)
+      remove_trail_queue(ORANGE);
+
+    else if (bitRead(COMMAND, 15)) // Configuração do tempo
+    {
+      Serial.print("Configurando tempo no arduino");
+      while (true)
+      {
+        if (Serial.available() > 0)
+        {
+          String str = Serial.readStringUntil('z');
+          OFFTIME = str.toInt();
+          Serial.print(OFFTIME);
+          break;
+        }
+      }
+    }
+  }
+
+  update_states();
+}
+
+/* 
+*/
+void add_note_queue(int note_color, int pin)
+{
+  Serial.print("Add note Queue");
+  initializer.pin = pin;
+  initializer.previous_time = millis(); // Gambiarra
+  note[note_color].push(initializer);
+}
+
+/* 
+*/
+void add_trail_queue(int note_color, int pin)
+{
+  Serial.print("Add trail Queue");
+  initializer.pin = pin;
+  initializer.previous_time = millis(); // Gambiarra
+  trail[note_color].push(initializer);
+}
+
+/* 
+  Se uma nota está sendo pressionada, então é acionado
+  o comando para soltar a nota. É necessário usar while para esta
+  verificação, por causa do offtime. Podem aparecer dois rastros pequenos
+  na mesma trilha e serem acionados duas flags de drop antes que o 
+  arduino tenha soltado a primeira nota.
+*/
+void remove_trail_queue(int note_color)
+{
+  Serial.print("Remove trail Queue");
+  int i = 0;
+
+  while (!(trail[note_color][i].drop))
+    trail[note_color][i++].drop = true;
+}
+
+/* 
+*/
+void update_states(void)
+{
+  for (int i = 0; i < N_COLORS; i++)
+  {
+    for (int j = 0; j < NOTE_STATES; j++)
+    {
+      if (note[i][j].open)
+      {
+        note[i][j].update_note(OFFTIME, PRESS_MIN_TIME);
+        if (!note[i][j].open)
+        {
+          Serial.println("delete note");
+          note[i].pop();
+        }
+      }
+    }
+
+    for (int j = 0; j < TRACE_STATES; j++)
+    {
+      if (trail[i][j].open)
+      {
+        trail[i][j].update_trail(OFFTIME);
+        if (!trail[i][j].open)
+        {
+          Serial.println("delete trail");
+          trail[i].pop();
+        }
+      }
+    }
+  }
+}
