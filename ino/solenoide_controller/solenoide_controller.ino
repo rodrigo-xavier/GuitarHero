@@ -1,4 +1,3 @@
-#include <Arduino.h>
 #include "note.h"
 #include "queue.h"
 
@@ -30,7 +29,7 @@
 uint8_t BYTE[] = {0, 0};
 uint16_t COMMAND = 0;
 volatile unsigned long OFFTIME = 99999999;  // Definir um valor grande até que o valor verdadeiro seja setado
-volatile unsigned long PRESS_MIN_TIME = 50; // Tempo mínimo para pressionar nota
+volatile unsigned long PRESS_MIN_TIME = 30; // Tempo mínimo para pressionar nota
 
 // Inicializa um vetor de filas para notas e rastros
 Queue<Note> note[5] = Queue<Note>(NOTE_STATES);
@@ -69,13 +68,12 @@ void setup()
   pinMode(R1_PIN, OUTPUT);
   pinMode(R2_PIN, OUTPUT);
   pinMode(X_PIN, OUTPUT);
+
+  initializer.open = true;
 }
 
 void loop()
 {
-  Serial.print(Serial.available());
-  // delay(5);
-  Serial.println(" ");
 
   if (Serial.available() >= 2)
   {
@@ -84,12 +82,11 @@ void loop()
       utilizamos dois vetores de 8 bits e concatenamos para 16 bits, para formar 
       um comando que possa ser lido por bitRead()
     */
-    BYTE[0] = Serial.read();              // Least Significant byte
-    BYTE[1] = Serial.read();              // Most significante byte
-    COMMAND = ((BYTE[1] << 8) | BYTE[0]); // 16 bits concatenados
 
-    Serial.print("COMMAND: ");
-    Serial.print(COMMAND);
+    BYTE[0] = Serial.read(); // Least Significant byte
+    BYTE[1] = Serial.read(); // Most significante byte
+
+    COMMAND = ((BYTE[1] << 8) | BYTE[0]); // 16 bits concatenados
 
     if (bitRead(COMMAND, 0))
       add_note_queue(GREEN, L2_PIN);
@@ -138,17 +135,19 @@ void loop()
 
     else if (bitRead(COMMAND, 15)) // Configuração do tempo
     {
-      Serial.print("Configurando tempo no arduino");
       while (true)
       {
         if (Serial.available() > 0)
         {
           String str = Serial.readStringUntil('z');
+          str[str.length()] = '\0';
           OFFTIME = str.toInt();
           Serial.print(OFFTIME);
           break;
         }
       }
+      while (Serial.available())
+        Serial.read();
     }
   }
 
@@ -159,16 +158,16 @@ void loop()
   Descrição Breve: Função para adicionar uma Nota à fila de notas
 
   Descrição da Entrada:
-  (note_color) - Número da nota no vetor de notas
+  (initializer)
+  (note_color) - 
   (pin) - 
 
   Descrição Detalhada: 
 *********************************************************************************************/
 void add_note_queue(int note_color, int pin)
 {
-  Serial.print("Add note Queue");
-  initializer.pin = pin;
   initializer.previous_time = millis();
+  initializer.pin = pin;
   note[note_color].push(initializer);
 }
 
@@ -176,14 +175,14 @@ void add_note_queue(int note_color, int pin)
   Descrição Breve: Função para adicionar um rastro à fila de rastros
 
   Descrição da Entrada:
-  (note_color) - Numero do pino do arduino relacionado com a cor da nota avaliada
+  (initializer)
+  (note_color) - 
   (pin) - 
 
   Descrição Detalhada: 
 *********************************************************************************************/
 void add_trail_queue(int note_color, int pin)
 {
-  Serial.print("Add trail Queue");
   initializer.pin = pin;
   initializer.previous_time = millis();
   trail[note_color].push(initializer);
@@ -193,7 +192,7 @@ void add_trail_queue(int note_color, int pin)
   Descrição Breve: Função para adicionar um rastro à fila de rastros
 
   Descrição da Entrada:
-  (note_color) - Numero do pino do arduino relacionado com a cor da nota avaliada
+  (note_color) - 
 
   Descrição Detalhada: Se uma nota está sendo pressionada, então é acionado
   o comando para soltar a nota. É necessário usar while para esta
@@ -203,7 +202,6 @@ void add_trail_queue(int note_color, int pin)
 *********************************************************************************************/
 void remove_trail_queue(int note_color)
 {
-  Serial.print("Remove trail Queue");
   int i = 0;
 
   while (!(trail[note_color][i].drop))
@@ -225,10 +223,7 @@ void update_states(void)
       {
         note[i][j].update_note(OFFTIME, PRESS_MIN_TIME);
         if (!note[i][j].open)
-        {
-          Serial.println("delete note");
           note[i].pop();
-        }
       }
     }
 
@@ -238,10 +233,7 @@ void update_states(void)
       {
         trail[i][j].update_trail(OFFTIME);
         if (!trail[i][j].open)
-        {
-          Serial.println("delete trail");
           trail[i].pop();
-        }
       }
     }
   }

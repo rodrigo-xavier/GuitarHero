@@ -1,9 +1,5 @@
 function configure_arduino_time(arduino, time)
 
-    disp("Enviando tempo para o Arduino.");
-
-    % Tempo deve ser enviado em segundos
-
     % Limpa o buffer
     if (arduino.BytesAvailable > 0)
         fscanf(arduino,'%c',arduino.BytesAvailable);
@@ -12,7 +8,7 @@ function configure_arduino_time(arduino, time)
     config = uint16(bin2dec('1000000000000000'));
     fwrite(arduino, config, 'uint16');
 
-    msg = "Tempo Simples: ";
+    msg = "OFFTIME: ";
     arduino_output = '';
 
     time = round(time*1000,0);

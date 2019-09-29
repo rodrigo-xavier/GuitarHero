@@ -111,6 +111,8 @@ void Queue<T>::pop()
     for (int i = 0; i < next - 1; i++)
       queue[i] = queue[i + 1];
   --next;
+  queue[next].open = false; //GAMBIARRA DO CARALHO
+  // delete &(queue[next]);
 }
 
 /********************************************************************************************  

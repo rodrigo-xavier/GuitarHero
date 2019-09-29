@@ -34,22 +34,34 @@ public:
     unsigned long previous_time;
 
     Note(void);
+    ~Note(void);
+    void close(void);
     void update_note(unsigned long, unsigned long);
     void update_trail(unsigned long);
 };
 
 /********************************************************************************************  
-  Descrição Breve: Construtor do Nota
+  Descrição Breve: Construtor de Nota
 
   Descrição Detalhada: 
 *********************************************************************************************/
 Note::Note(void)
 {
     this->pin = 0;
-    this->open = true;
+    this->open = false;
     this->hold = false;
     this->drop = false;
     this->wait_offtime = false;
+}
+
+/********************************************************************************************  
+  Descrição Breve: Destrutor de Nota
+
+  Descrição Detalhada: 
+*********************************************************************************************/
+Note::~Note(void)
+{
+    this->open = false;
 }
 
 /********************************************************************************************  
@@ -86,6 +98,7 @@ void Note::update_note(unsigned long offtime, unsigned long press_min_time)
     */
     else if (this->drop && (this->current_time - this->previous_time) >= press_min_time)
     {
+        Serial.println("Removendo nota true");
         digitalWrite(this->pin, LOW); // Solta a nota
         this->open = false;           // Finaliza o estado
     }
@@ -104,38 +117,16 @@ void Note::update_trail(unsigned long offtime)
 {
     this->current_time = millis();
 
-    // TODO: REFAZER COMENTÁRIO
-    /*
-        Verifica se é um rastro e
-        e se o tempo esperado se passou
-    */
     if (!(this->hold) && (this->current_time - this->previous_time) >= offtime)
     {
         digitalWrite(this->pin, HIGH);
         this->hold = true;
     }
-
-    // TODO: REFAZER COMENTÁRIO
-    /*
-        Reinicia o deltatime para soltar o rastro
-        depois de passado o tempo do offtime
-        É necessário para o arduíno não soltar o rastro
-        antes do final do rastro
-    */
     else if (this->hold && this->drop && !(this->wait_offtime))
     {
-        // this->previous_time = millis(); // reinicia deltatime
+        this->previous_time = millis(); // reinicia deltatime
         this->wait_offtime = true;
     }
-
-    // TODO: REFAZER COMENTÁRIO
-    /*
-        Verifica se deve soltar, se está pressionado
-        (caso contrário não faz sentido soltar,
-        mas não é uma checagem obrigatória)
-        e se se passou o offtime entre momento de
-        detecção e ação
-    */
     else if (this->wait_offtime && (this->current_time - this->previous_time) >= offtime)
     {
         digitalWrite(this->pin, LOW);
