@@ -96,8 +96,11 @@ void Queue<T>::push(const T &object)
 
   Descrição Detalhada: Verifica se a fila não está vazia (Do contrário não é possível remover)
   Se a fila não está vazia, então percorre todos os elementos da fila, copiando os elementos
-  da posição n+1 para a posição n. Importante notar, que os elementos são apenas sobrescritos
-  pelos próximos elementos da fila, e que o último elemento da fila não é realmente alterado.
+  da posição n+1 para a posição n. Importante notar, que há uma tremenda gambiarra na linha
+  final do método, aparentemente o compilador não trabalha bem com destrutores, por isso foi
+  necessário "destruir" manualmente o objeto, ou seja, setar o estado da nota para fechado
+  a linha seguinte, que está comentada, serve para chamar o método destrutor da forma correta,
+  caso seja necessário reutilizar esta biblioteca.
 *********************************************************************************************/
 template <class T>
 void Queue<T>::pop()

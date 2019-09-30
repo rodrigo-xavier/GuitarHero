@@ -24,18 +24,24 @@
 #define N_COLORS 5 // Define a quantidade de notas (verde, vermelho, amarelo, azul e laranja == 5)
 
 /********************************************************************************************/
-/*VARIÁVEIS GLOBAIS*/
+/*VARIÁVEIS GLOBAIS*/ /*
+
+  Descrição da Entrada:
+  (BYTE[]) - 
+  (COMMAND) - 
+  (OFFTIME) - Tempo que a nota leva para ser pressionada à partir da detecção da mesma.
+  (PRESS_MIN_TIME) - Tempo mínimo para pressionar nota
+  (note[5]) - Inicializa um vetor de filas para 5 notas
+  (trail[5]) - Inicializa um vetor de filas para 5 rastros
+  (initializer) - Gambiarra para inicializar nota
+*********************************************************************************************/
 
 uint8_t BYTE[] = {0, 0};
 uint16_t COMMAND = 0;
-volatile unsigned long OFFTIME = 99999999;  // Definir um valor grande até que o valor verdadeiro seja setado
-volatile unsigned long PRESS_MIN_TIME = 30; // Tempo mínimo para pressionar nota
-
-// Inicializa um vetor de filas para notas e rastros
+volatile unsigned long OFFTIME = 99999999; // Definir um valor grande até que o valor verdadeiro seja setado
+volatile unsigned long PRESS_MIN_TIME = 30;
 Queue<Note> note[5] = Queue<Note>(NOTE_STATES);
 Queue<Note> trail[5] = Queue<Note>(TRACE_STATES);
-
-// Gambiarra para inicializar nota
 Note initializer;
 
 /********************************************************************************************
@@ -77,16 +83,17 @@ void loop()
 
   if (Serial.available() >= 2)
   {
-    /*
-      Como é possível ler apenas 1 byte por vez utilizando Serial.read(),
-      utilizamos dois vetores de 8 bits e concatenamos para 16 bits, para formar 
-      um comando que possa ser lido por bitRead()
-    */
+
+    /****************************************************************************************
+  Descrição Detalhada: Como é possível ler 1 byte por vez utilizando Serial.read(), utilizamos 
+  duas variáveis de 8 bits que são concatenados para 16 bits, para formar um comando que possa 
+  ser lido por bitRead()
+*********************************************************************************************/
 
     BYTE[0] = Serial.read(); // Least Significant byte
     BYTE[1] = Serial.read(); // Most significante byte
 
-    COMMAND = ((BYTE[1] << 8) | BYTE[0]); // 16 bits concatenados
+    COMMAND = ((BYTE[1] << 8) | BYTE[0]);
 
     if (bitRead(COMMAND, 0))
       add_note_queue(GREEN, L2_PIN);

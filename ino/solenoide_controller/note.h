@@ -35,7 +35,6 @@ public:
 
     Note(void);
     ~Note(void);
-    void close(void);
     void update_note(unsigned long, unsigned long);
     void update_trail(unsigned long);
 };
@@ -43,7 +42,8 @@ public:
 /********************************************************************************************  
   Descrição Breve: Construtor de Nota
 
-  Descrição Detalhada: 
+  Descrição Detalhada: Seta os valores iniciais da nota. É importante que a nota seja criada
+  com open==false, para que não ocorram bugs.
 *********************************************************************************************/
 Note::Note(void)
 {
@@ -57,7 +57,9 @@ Note::Note(void)
 /********************************************************************************************  
   Descrição Breve: Destrutor de Nota
 
-  Descrição Detalhada: 
+  Descrição Detalhada: Seta o estado da nota para fechado/encerrado. Em teoria deve ser
+  utilizado pelo método pop() da fila. Porém não é realmente utilizado, pois ocorrem bugs
+  inesplicáveis. Provável que o compilador não lide bem com o método destrutor.
 *********************************************************************************************/
 Note::~Note(void)
 {
@@ -72,46 +74,49 @@ Note::~Note(void)
   momento em que foi detectada até o momento de pressionar a nota.
   (press_min_time) - Define o tempo mínimo que a nota deve ser pressionada no aperto simples.
 
-  Descrição Detalhada: 
+  Descrição Detalhada: Este método fica à todo momento capturando o tempo atual e comparando
+  com o tempo em que a nota foi inserida na fila, para que, desta forma seja possível realizar
+  o "processamento paralelo do código" em relação às outras notas, grosseiramente falando.
+  A primeira condiçao verifica se a nota não foi pressionada e se passou o OFFTIME, e então
+  ela pressiona a nota. 
+  A segunda condição, verifica se a nota está sendo pressionada e se passou o PRESS_MIN_TIME, 
+  e então ela solta a nota e fecha/encerra o estado da nota.
 *********************************************************************************************/
 void Note::update_note(unsigned long offtime, unsigned long press_min_time)
 {
     this->current_time = millis();
 
-    /*  (Neste momento arduino espera o offtime para pressionar a nota)
-        Verifica se a flag drop (soltar) está inativa e se já passou o offtime
-        desde a detecção da nota. Se essas condições forem satisfeitas, então
-        o arduino manda um pulso para pressionar a nota, reinicia o deltatime
-        e ativa a flag drop.
-    */
     if (!(this->drop) && (this->current_time - this->previous_time) >= offtime)
     {
         digitalWrite(this->pin, HIGH); // Aperta a nota
         this->drop = true;
-        this->previous_time = millis(); // Reinicia deltatime
+        this->previous_time = millis(); // Reinicia o deltatime (Para calcular o press_min_time corretamente)
     }
 
-    /*  (Neste momento arduino está pressionando a nota e espera press_min_time para soltar)
-        Verifica se a flag drop (soltar) está ativa e se já passou o tempo mínimo
-        para pressionar a nota. Se essas condições forem satisfeitas, então
-        o arduino manda um pulso para soltar a nota e finaliza o estado.
-    */
     else if (this->drop && (this->current_time - this->previous_time) >= press_min_time)
     {
-        Serial.println("Removendo nota true");
         digitalWrite(this->pin, LOW); // Solta a nota
-        this->open = false;           // Finaliza o estado
+        this->open = false;
     }
 }
 
 /********************************************************************************************  
-  Descrição Breve: Método atualizador de rastro
+  Descrição Breve: Método atualizador de nota
 
   Descrição da Entrada:
-  (offtime) - Setado no ínicio da execução, define o tempo que a nota leva para passar do
-  momento em que foi detectada até o momento de pressionar a nota.
+  (offtime) - Setado no ínicio da execução, define o tempo que o rastro leva para passar do
+  momento em que foi detectada até o momento de pressionar o rastro.
 
-  Descrição Detalhada: 
+  Descrição Detalhada: Este método fica à todo momento capturando o tempo atual e comparando
+  com o tempo em que o rastro foi inserido na fila, para que, desta forma seja possível realizar
+  o "processamento paralelo do código" em relação os outros rastros, grosseiramente falando.
+  A primeira condiçao verifica se o rastro não foi pressionado e se passou o OFFTIME, e então
+  ela pressiona o rastro. 
+  A segunda condição, verifica se o rastro está sendo pressionado e se foi lançado o comando
+  para soltar o rastro, e então é lançada uma flag para que o arduino espere o offtime para 
+  soltar o rastro.
+  A terceira e última condição, verifica se a flag para soltar o rastro foi ativada, e se 
+  passou o OFFTIME, e então ela solta o rastro e fecha/encerra o estado do rastro.
 *********************************************************************************************/
 void Note::update_trail(unsigned long offtime)
 {
