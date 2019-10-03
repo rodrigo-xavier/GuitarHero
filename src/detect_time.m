@@ -1,9 +1,8 @@
-function [note_time, trail_time] = detect_times(vid)
+function [note_time, trail_time] = detect_time(vid)
 
-    disp("Detectando tempo.");
+    disp("Detectando os tempos.");
 
-    temp = tic;
-
+    temp = 0;
     note_max = 10;
     note = 0;
 

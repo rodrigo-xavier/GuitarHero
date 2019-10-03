@@ -10,10 +10,9 @@
   (next) - Define o próximo espaço vazio da fila
   (IMPORTANTE: <class T> é um objeto de qualquer tipo)
 
-  Descrição Detalhada: Define uma estrutura do tipo fila, com métodos
-  construtor, destrutor, método de inserção no final da fila,
-  método de remoção no inicio da fila e operador colchete para acesso
-  dos indices da fila.
+  Descrição Detalhada: Define uma estrutura do tipo fila, com métodos construtor, destrutor, 
+  método de inserção no final da fila, método de remoção no inicio da fila e operador colchete 
+  para acesso dos índices da fila.
 *********************************************************************************************/
 
 template <class T>
@@ -37,12 +36,12 @@ public:
   Descrição Breve: Método construtor de fila
 
   Descrição da Entrada: 
-  (_max_size) - Define a quantidade de espaços que deve ser alocada, e o topo da fila
+  (_max_size) - Define a quantidade de espaços que deve ser alocada, e o tamanho da fila
 
-  Descrição Detalhada: Recebe um valor que define o tamanho máximo para a fila
-  aloca o espaço correspondente e define o valor de topo da fila.
-  Se não é possível alocar espaço, então é retornado um erro.
-  O espaço alocado é do tipo T (tipo inserido na chamada da função)
+  Descrição Detalhada: Recebe um valor que define o tamanho máximo para a fila aloca o espaço 
+  correspondente e define o valor do próximo espaço vazio da fila. Se não é possível alocar 
+  espaço, então é retornado um erro. O espaço alocado é do tipo T (tipo inserido na chamada 
+  da função)
 *********************************************************************************************/
 template <class T>
 Queue<T>::Queue(int _max_size)

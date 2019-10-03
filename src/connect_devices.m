@@ -1,16 +1,22 @@
-function [vid, arduino] = connect_devices()
+function [galileo] = connect_devices()
     counter = 1;
     ME2 = [];
     ME = [];
+    baudrate = 75;
+    buffer_size = 10000;
+
+    % TODO: implementar status() para verificar se o arduino está conectado
     
-    % Tenta iniciar conexão com arduino nas 25 primeiras portas
+    % Tenta iniciar conexão com galileo nas 25 primeiras portas
     while(counter <= 25)
         COMX = strcat('COM', int2str(counter));
 
         try
             ME = [];
-            arduino = serial(COMX);
-            fopen(arduino);
+            % galileo = serial(COMX, 'galileo', baudrate);
+            galileo = serial(COMX);
+            % galileo.InputBufferSize = buffer_size;
+            fopen(galileo);
             break;
         catch ME
             disp("Arduino: Porta " + COMX + " Falhou!");
