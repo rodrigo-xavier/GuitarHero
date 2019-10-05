@@ -14,7 +14,7 @@ end
 
 [galileo] = connect_devices();
 
-configure_arduino_time(galileo, 0.465);
+configure_arduino_time(galileo, 0.165);
 while(true)
     envia_comando(galileo, '0');
 end
