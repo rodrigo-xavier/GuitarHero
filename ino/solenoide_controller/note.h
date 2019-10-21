@@ -84,6 +84,8 @@ Note::~Note(void)
 *********************************************************************************************/
 void Note::update_note(unsigned long offtime, unsigned long press_min_time)
 {
+    noInterrupts();
+
     this->current_time = millis();
 
     if (!(this->drop) && (this->current_time - this->previous_time) >= offtime)
@@ -98,6 +100,8 @@ void Note::update_note(unsigned long offtime, unsigned long press_min_time)
         digitalWrite(this->pin, LOW); // Solta a nota
         this->open = false;
     }
+
+    interrupts();
 }
 
 /********************************************************************************************  
@@ -120,6 +124,8 @@ void Note::update_note(unsigned long offtime, unsigned long press_min_time)
 *********************************************************************************************/
 void Note::update_trail(unsigned long offtime)
 {
+    noInterrupts();
+
     this->current_time = millis();
 
     if (!(this->hold) && (this->current_time - this->previous_time) >= offtime)
@@ -138,6 +144,8 @@ void Note::update_trail(unsigned long offtime)
         this->hold = false;
         this->open = false;
     }
+
+    interrupts();
 }
 
 #endif

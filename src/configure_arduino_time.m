@@ -1,11 +1,15 @@
-function configure_arduino_time(galileo, time)
-    disp("Enviando tempo para o galileo");
+function configure_arduino_time(arduino_board, time)
     time = uint16(round(time*1000,0));
 
-    % clrdevice(galileo); % % Limpa o buffer de entrada e de saída
-    flushinput(galileo); % Limpa o buffer de entrada
-    flushoutput(galileo); % Limpa o buffer de saída
-    
-    fwrite(galileo, '?', 'uint8');
-    fwrite(galileo, 160, 'uint8');
+    flush(arduino_board); % Limpa o buffer de entrada e saída do arduino
+
+    write(arduino_board, time, 'uint16');
+
+    if (readline(arduino_board) ~= string(time))
+        error("Reenvie o código para o arduino.");
+        delete(arduino_board);
+    end
+
+    msg = "OFFTIME: ";
+    disp(msg + time);
 end

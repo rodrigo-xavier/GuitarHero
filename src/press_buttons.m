@@ -1,4 +1,4 @@
-function press_buttons(vid, galileo)
+function press_buttons(vid, arduino_board)
     % cores
     % salvar um arquivo em disco com as variaveis
     % para mudar para apenas load('cores.mat')
@@ -21,11 +21,11 @@ function press_buttons(vid, galileo)
 
     % tempos
     
-    % envia os tempos para o arduino, ou verifica se os tempos
-    % estão corretos, caso o arduino já possua o tempo
+    % envia os tempos para o arduino_board, ou verifica se os tempos
+    % estão corretos, caso o arduino_board já possua o tempo
     [tempo_simples, tempo_rastro] = detect_time(vid);
     tempo_espera = tempo_rastro - tempo_simples;
-    configure_arduino_time(galileo, 0.465);
+    configure_arduino_time(arduino_board, 0.465);
     
     R = 1;
     G = 2;
@@ -71,7 +71,7 @@ function press_buttons(vid, galileo)
         if( greenPixel >= green_min && greenPixel <= green_max &&  ...
             ~holding_buttons('green') && ...
             toc(green_time) > tempo_espera )
-            % fprintf(galileo,'%c', APERTA_E_SOLTA_GREEN);
+            % fprintf(arduino_board,'%c', APERTA_E_SOLTA_GREEN);
             comandoString(16) = '1';
             green_time = tic;
         end
@@ -81,7 +81,7 @@ function press_buttons(vid, galileo)
         if( redPixel >= red_min && redPixel <= red_max && ...
             ~holding_buttons('red') ...
             && toc(red_time) > tempo_espera )
-            % fprintf(galileo,'%c', APERTA_E_SOLTA_RED);
+            % fprintf(arduino_board,'%c', APERTA_E_SOLTA_RED);
             comandoString(15) = '1';
             red_time = tic;
         end
@@ -90,7 +90,7 @@ function press_buttons(vid, galileo)
         if(yellowPixelR >= yellowR_min && yellowPixelR <= yellowR_max && ...
            yellowPixelG >= yellowG_min && yellowPixelG <= yellowG_max && ...
            toc(yellow_time) > tempo_espera &&  ~holding_buttons('yellow'))
-        %    fprintf(galileo,'%c', APERTA_E_SOLTA_YELLOW);
+        %    fprintf(arduino_board,'%c', APERTA_E_SOLTA_YELLOW);
             comandoString(14) = '1';
             yellow_time = tic;
         end
@@ -99,7 +99,7 @@ function press_buttons(vid, galileo)
         if(bluePixelG >= blueG_min && bluePixelG <= blueG_max && ...
            bluePixelB >= blueB_min && bluePixelB <= blueB_max && ...
            toc(blue_time) > tempo_espera &&  ~holding_buttons('blue'))
-        %    fprintf(galileo,'%c', APERTA_E_SOLTA_BLUE);
+        %    fprintf(arduino_board,'%c', APERTA_E_SOLTA_BLUE);
             comandoString(13) = '1';
             blue_time = tic;
         end
@@ -108,12 +108,12 @@ function press_buttons(vid, galileo)
         if(orangePixelR >= orangeR_min && orangePixelR <= orangeR_max && ...
            orangePixelG >= orangeG_min && orangePixelG <= orangeG_max && ...
            toc(orange_time) > tempo_espera &&  ~holding_buttons('orange'))
-        %    fprintf(galileo,'%c', APERTA_E_SOLTA_ORANGE);
+        %    fprintf(arduino_board,'%c', APERTA_E_SOLTA_ORANGE);
             comandoString(12) = '1';
             orange_time = tic;
         end
         
-        envia_comando(galileo, comandoString);
+        envia_comando(arduino_board, comandoString);
         
     end
 end

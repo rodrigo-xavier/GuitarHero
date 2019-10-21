@@ -2,9 +2,9 @@
 just_video = false;
 has_external_monitor = true;
 
-% Encerra conexão com galileo se estiver conectado
-if exist('galileo','var') == true
-    fclose(galileo);    
+% Encerra conexão com arduino_board se estiver conectado
+if exist('arduino_board','var') == true
+    delete(arduino_board);    
 end
 
 % Encerra conexão com video se estiver conectado
@@ -12,11 +12,11 @@ if exist('vid','var') == true
     delete(vid);
 end
 
-[galileo] = connect_devices();
+[arduino_board] = connect_devices();
 
-configure_arduino_time(galileo, 0.165);
+configure_arduino_time(arduino_board, 0.125);
 while(true)
-    envia_comando(galileo, '0');
+    envia_comando(arduino_board, '0');
 end
 
 
@@ -25,5 +25,5 @@ end
 %     preview(vid);
 % end
 % if ~just_video
-%     press_buttons(vid, galileo);
+%     press_buttons(vid, arduino_board);
 % end

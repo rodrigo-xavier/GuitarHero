@@ -47,7 +47,7 @@ function [holding_buttons, holding_times, comandoString] = rastro_play(imgO, hol
         %segura botao
         holding_buttons('green') = true;
         holding_times('green') = tic;
-        % fprintf(galileo,'%c', APERTA_SEM_SOLTAR_GREEN); 
+        % fprintf(arduino_board,'%c', APERTA_SEM_SOLTAR_GREEN); 
         comandoString(11) = '1'; 
     end
 
@@ -58,7 +58,7 @@ function [holding_buttons, holding_times, comandoString] = rastro_play(imgO, hol
         toc(holding_times('green')) > tempo_espera)
 
         holding_buttons('green') = false;
-        % fprintf(galileo,'%c', SOLTA_GREEN);  
+        % fprintf(arduino_board,'%c', SOLTA_GREEN);  
         comandoString(6) = '1';
     end
 
@@ -85,7 +85,7 @@ function [holding_buttons, holding_times, comandoString] = rastro_play(imgO, hol
         holding_buttons('red') = true;
         holding_times('red') = tic;
         
-        % fprintf(galileo,'%c', APERTA_SEM_SOLTAR_RED); 
+        % fprintf(arduino_board,'%c', APERTA_SEM_SOLTAR_RED); 
         comandoString(10) = '1'; 
     end
 
@@ -97,7 +97,7 @@ function [holding_buttons, holding_times, comandoString] = rastro_play(imgO, hol
 
         holding_buttons('red') = false;
 
-        % fprintf(galileo,'%c', SOLTA_RED);  
+        % fprintf(arduino_board,'%c', SOLTA_RED);  
         comandoString(5) = '1';
 
     end
@@ -137,7 +137,7 @@ function [holding_buttons, holding_times, comandoString] = rastro_play(imgO, hol
         %segura botao
         holding_buttons('yellow') = true;
         holding_times('yellow') = tic;
-        % fprintf(galileo,'%c', APERTA_SEM_SOLTAR_YELLOW);
+        % fprintf(arduino_board,'%c', APERTA_SEM_SOLTAR_YELLOW);
         comandoString(9) = '1';  
     end
 
@@ -149,7 +149,7 @@ function [holding_buttons, holding_times, comandoString] = rastro_play(imgO, hol
         toc(holding_times('yellow')) > tempo_espera)
 
         holding_buttons('yellow') = false;
-        % fprintf(galileo,'%c', SOLTA_YELLOW);  
+        % fprintf(arduino_board,'%c', SOLTA_YELLOW);  
         comandoString(4) = '1';
     end
 
@@ -188,7 +188,7 @@ function [holding_buttons, holding_times, comandoString] = rastro_play(imgO, hol
         %segura botao
         holding_buttons('blue') = true;
         holding_times('blue') = tic;
-        % fprintf(galileo,'%c', APERTA_SEM_SOLTAR_BLUE); 
+        % fprintf(arduino_board,'%c', APERTA_SEM_SOLTAR_BLUE); 
         comandoString(8) = '1'; 
     end
 
@@ -200,7 +200,7 @@ function [holding_buttons, holding_times, comandoString] = rastro_play(imgO, hol
         toc(holding_times('blue')) > tempo_espera)
 
         holding_buttons('blue') = false;
-        % fprintf(galileo,'%c', SOLTA_BLUE);  
+        % fprintf(arduino_board,'%c', SOLTA_BLUE);  
         comandoString(3) = '1';
     end
 
@@ -239,7 +239,7 @@ function [holding_buttons, holding_times, comandoString] = rastro_play(imgO, hol
         %segura botao
         holding_buttons('orange') = true;
         holding_times('orange') = tic;
-        % fprintf(galileo,'%c', APERTA_SEM_SOLTAR_ORANGE);
+        % fprintf(arduino_board,'%c', APERTA_SEM_SOLTAR_ORANGE);
         comandoString(7) = '1';  
     end
 
@@ -251,7 +251,7 @@ function [holding_buttons, holding_times, comandoString] = rastro_play(imgO, hol
         toc(holding_times('orange')) > tempo_espera)
 
         holding_buttons('orange') = false;
-        % fprintf(galileo,'%c', SOLTA_ORANGE);  
+        % fprintf(arduino_board,'%c', SOLTA_ORANGE);  
         comandoString(2) = '1';
     end
 
