@@ -47,11 +47,11 @@ public:
 *********************************************************************************************/
 Note::Note(void)
 {
-    this->pin = 0;
-    this->open = false;
-    this->hold = false;
-    this->drop = false;
-    this->wait_offtime = false;
+    pin = 0;
+    open = false;
+    hold = false;
+    drop = false;
+    wait_offtime = false;
 }
 
 /********************************************************************************************  
@@ -63,7 +63,7 @@ Note::Note(void)
 *********************************************************************************************/
 Note::~Note(void)
 {
-    this->open = false;
+    open = false;
 }
 
 /********************************************************************************************  
@@ -86,19 +86,19 @@ void Note::update_note(unsigned long offtime, unsigned long press_min_time)
 {
     noInterrupts();
 
-    this->current_time = millis();
+    current_time = millis();
 
-    if (!(this->drop) && (this->current_time - this->previous_time) >= offtime)
+    if (!(drop) && (current_time - previous_time) >= offtime)
     {
-        digitalWrite(this->pin, HIGH); // Aperta a nota
-        this->drop = true;
-        this->previous_time = millis(); // Reinicia o deltatime (Para calcular o press_min_time corretamente)
+        digitalWrite(pin, HIGH); // Aperta a nota
+        drop = true;
+        previous_time = millis(); // Reinicia o deltatime (Para calcular o press_min_time corretamente)
     }
 
-    else if (this->drop && (this->current_time - this->previous_time) >= press_min_time)
+    else if (drop && (current_time - previous_time) >= press_min_time)
     {
-        digitalWrite(this->pin, LOW); // Solta a nota
-        this->open = false;
+        digitalWrite(pin, LOW); // Solta a nota
+        open = false;
     }
 
     interrupts();
@@ -124,25 +124,28 @@ void Note::update_note(unsigned long offtime, unsigned long press_min_time)
 *********************************************************************************************/
 void Note::update_trail(unsigned long offtime)
 {
+    // Serial.print("d");
     noInterrupts();
 
-    this->current_time = millis();
+    current_time = millis();
 
-    if (!(this->hold) && (this->current_time - this->previous_time) >= offtime)
+    if (!(hold) && (current_time - previous_time) >= offtime)
     {
-        digitalWrite(this->pin, HIGH);
-        this->hold = true;
+        // Serial.print("e");
+        digitalWrite(pin, HIGH);
+        hold = true;
     }
-    else if (this->hold && this->drop && !(this->wait_offtime))
+    else if (hold && drop && !(wait_offtime))
     {
-        this->previous_time = millis(); // reinicia deltatime
-        this->wait_offtime = true;
+        // Serial.print("f");
+        previous_time = millis(); // reinicia deltatime
+        wait_offtime = true;
     }
-    else if (this->wait_offtime && (this->current_time - this->previous_time) >= offtime)
+    else if (wait_offtime && (current_time - previous_time) >= offtime)
     {
-        digitalWrite(this->pin, LOW);
-        this->hold = false;
-        this->open = false;
+        digitalWrite(pin, LOW);
+        hold = false;
+        open = false;
     }
 
     interrupts();

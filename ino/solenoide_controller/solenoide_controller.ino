@@ -6,7 +6,7 @@
 /*DEFINES*/
 
 // Number of states
-#define TRACE_STATES 6
+#define TRACE_STATES 10
 #define NOTE_STATES 10
 
 // Digital Pins
@@ -37,12 +37,10 @@
   (initializer) - Gambiarra para inicializar nota
 *********************************************************************************************/
 
-bool flag = false;
-uint8_t BYTES[] = {0, 0};
+bool FLAG = false;
 uint16_t COMMAND = 0;
 uint16_t OFFTIME = 65535; // Definir um valor grande até que o valor verdadeiro seja setado
 const unsigned short PRESS_MIN_TIME = 50;
-unsigned long PREVIOUSTIME = 0, CURRENTTIME = 0, TIMEOUT = 99999999;
 Queue<Note> note[N_COLORS] = Queue<Note>(NOTE_STATES);
 Queue<Note> trail[N_COLORS] = Queue<Note>(TRACE_STATES);
 Note initializer;
@@ -70,8 +68,8 @@ COMMANDS
 
 void setup()
 {
-  // Serial.begin(115200);
-  Serial.begin(9600);
+  Serial.begin(115200);
+  // Serial.begin(9600);
 
   pinMode(L1_PIN, OUTPUT);
   pinMode(L2_PIN, OUTPUT);
@@ -85,7 +83,7 @@ void setup()
 
 void loop()
 {
-  if (flag && Serial.available() > 0)
+  if (FLAG && Serial.available() > 0)
   {
     /****************************************************************************************
   Descrição Detalhada: Como é possível ler 1 byte por vez utilizando Serial.read(), utilizamos 
@@ -94,6 +92,8 @@ void loop()
 *********************************************************************************************/
 
     COMMAND = ((Serial.read() << 8) | Serial.read());
+
+    // Serial.println(COMMAND);
 
     if (bitRead(COMMAND, 0))
       add_note_queue(GREEN, L2_PIN);
@@ -143,10 +143,10 @@ void loop()
     // if (bitRead(COMMAND, 15))
     //   reset_flag();
   }
-  else if (!flag && Serial.available() >= 2)
+  else if (!FLAG && Serial.available() >= 2)
   {
     OFFTIME = ((Serial.read() << 8) | Serial.read());
-    flag = true;
+    FLAG = true;
 
     Serial.println(OFFTIME);
   }
@@ -166,15 +166,9 @@ void loop()
 *********************************************************************************************/
 void add_note_queue(int note_color, int pin)
 {
-  noInterrupts();
-
-  // Serial.println("addnotequeue");
-  // Serial.println(pin);
   initializer.previous_time = millis();
   initializer.pin = pin;
   note[note_color].push(initializer);
-
-  interrupts();
 }
 
 /********************************************************************************************  
@@ -189,14 +183,10 @@ void add_note_queue(int note_color, int pin)
 *********************************************************************************************/
 void add_trail_queue(int note_color, int pin)
 {
-  noInterrupts();
-
-  // Serial.println("addtrailqueue");
+  // Serial.print("s");
   initializer.previous_time = millis();
   initializer.pin = pin;
   trail[note_color].push(initializer);
-
-  interrupts();
 }
 
 /********************************************************************************************  
@@ -213,7 +203,8 @@ void add_trail_queue(int note_color, int pin)
 *********************************************************************************************/
 void remove_trail_queue(int note_color)
 {
-  // Serial.println("removetrailqueue");
+  // Serial.print("d");
+
   int i = 0;
 
   while (!(trail[note_color][i].drop))

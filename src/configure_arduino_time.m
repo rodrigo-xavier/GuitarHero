@@ -1,13 +1,13 @@
-function configure_arduino_time(arduino_board, time)
+function configure_arduino_time(arduino, time)
     time = uint16(round(time*1000,0));
 
-    flush(arduino_board); % Limpa o buffer de entrada e saída do arduino
+    flush(arduino); % Limpa o buffer de entrada e saída do arduino
 
-    write(arduino_board, time, 'uint16');
+    write(arduino, time, 'uint16');
 
-    if (readline(arduino_board) ~= string(time))
+    if (readline(arduino) ~= string(time))
         error("Reenvie o código para o arduino.");
-        delete(arduino_board);
+        delete(arduino);
     end
 
     msg = "OFFTIME: ";

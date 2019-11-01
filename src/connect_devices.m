@@ -1,16 +1,16 @@
-function [arduino_board] = connect_devices()
+function [arduino, vid] = connect_devices()
     counter = 1;
     vid_message = [];
-    % baudrate = 115200;
-    baudrate = 9600;
+    baudrate = 115200;
+    % baudrate = 9600;
     terminator = "CR/LF";    % 0 em ascii
 
-    % TODO: implementar status() para verificar se o arduino_board está conectado
+    % TODO: implementar status() para verificar se o arduino está conectado
     
     COMX = serialportlist("available");
-    arduino_board = serialport(COMX, baudrate);
-    arduino_board.ByteOrder = "big-endian";
-    configureTerminator(arduino_board, terminator);
+    arduino = serialport(COMX, baudrate);
+    arduino.ByteOrder = "big-endian";
+    configureTerminator(arduino, terminator);
     disp("Arduino: Porta " + COMX + " Sucesso!");
 
     % Tenta iniciar conexão com video nas 2 primeiras portas

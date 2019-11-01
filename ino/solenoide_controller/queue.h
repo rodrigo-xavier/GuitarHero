@@ -81,6 +81,7 @@ Queue<T>::~Queue()
 template <class T>
 void Queue<T>::push(const T &object)
 {
+  // Serial.print("Problema 2");
   if (next <= max_size)
     queue[next++] = object;
   else
