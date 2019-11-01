@@ -83,7 +83,7 @@ void setup()
 
 void loop()
 {
-  if (FLAG && Serial.available() > 0)
+  if (FLAG && Serial.available() >= 2)
   {
     /****************************************************************************************
   Descrição Detalhada: Como é possível ler 1 byte por vez utilizando Serial.read(), utilizamos 
@@ -93,7 +93,7 @@ void loop()
 
     COMMAND = ((Serial.read() << 8) | Serial.read());
 
-    // Serial.println(COMMAND);
+    Serial.println(COMMAND);
 
     if (bitRead(COMMAND, 0))
       add_note_queue(GREEN, L2_PIN);
@@ -204,11 +204,7 @@ void add_trail_queue(int note_color, int pin)
 void remove_trail_queue(int note_color)
 {
   // Serial.print("d");
-
-  int i = 0;
-
-  while (!(trail[note_color][i].drop))
-    trail[note_color][i++].drop = true;
+  trail[note_color][0].drop = true;
 }
 
 /********************************************************************************************  

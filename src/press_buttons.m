@@ -25,8 +25,12 @@ function press_buttons(vid, arduino)
     % estão corretos, caso o arduino já possua o tempo
     % [tempo_simples, tempo_rastro] = detect_time(vid);
     % tempo_espera = tempo_rastro - tempo_simples;
-    tempo_espera = 0.1;
-    configure_arduino_time(arduino, 0.439);
+    tempo_espera = 0.000001;
+
+    time = 0.439;
+    msg = "OFFTIME: ";
+    disp(msg + time);
+    configure_arduino_time(arduino, time);
     
     R = 1;
     G = 2;
