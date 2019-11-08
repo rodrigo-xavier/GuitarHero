@@ -4,12 +4,13 @@ function envia_comando(arduino, command)
 
     data = '';
     if (arduino.NumBytesAvailable > 0)
-        data = read(arduino, arduino.NumBytesAvailable, 'uint8');
-        str = char(data);
-        disp("str: ");
+        str = char(read(arduino, arduino.NumBytesAvailable, 'uint8'));
         disp(str);
+
+        % data = read(arduino, arduino.NumBytesAvailable, 'uint8');
+        % str = char(data);
+        % disp("str: ");
+        % disp(str);
     end
-    disp("command: ");
-    disp(command);
 
 end

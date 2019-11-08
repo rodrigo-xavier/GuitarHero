@@ -124,31 +124,32 @@ void Note::update_note(unsigned long offtime, unsigned long press_min_time)
 *********************************************************************************************/
 void Note::update_trail(unsigned long offtime)
 {
-    // Serial.print("d");
     noInterrupts();
 
     current_time = millis();
 
     if (!(hold) && (current_time - previous_time) >= offtime)
     {
-        // Serial.print("e");
         digitalWrite(pin, HIGH);
         hold = true;
+        Serial.println("hold = true");
     }
     else if (hold && drop && !(wait_offtime))
     {
-        // Serial.print("f");
         previous_time = millis(); // reinicia deltatime
         wait_offtime = true;
+        Serial.println("wait_offtime = true");
     }
     else if (wait_offtime && (current_time - previous_time) >= offtime)
     {
         digitalWrite(pin, LOW);
         hold = false;
         open = false;
+        Serial.println("hold = false");
     }
 
     interrupts();
+    Serial.println(current_time);
 }
 
 #endif

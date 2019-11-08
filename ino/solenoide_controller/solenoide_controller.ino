@@ -6,8 +6,8 @@
 /*DEFINES*/
 
 // Number of states
-#define TRACE_STATES 10
-#define NOTE_STATES 10
+#define TRACE_STATES 20
+#define NOTE_STATES 20
 
 // Digital Pins
 #define L1_PIN 3
@@ -93,7 +93,7 @@ void loop()
 
     COMMAND = ((Serial.read() << 8) | Serial.read());
 
-    Serial.println(COMMAND);
+    // Serial.println(COMMAND);
 
     if (bitRead(COMMAND, 0))
       add_note_queue(GREEN, L2_PIN);
