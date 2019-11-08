@@ -1,4 +1,4 @@
-function [note_time, trail_time] = detect_times(vid)
+function [note_time, trail_time] = detect_time(vid)
 
     disp("Detectando os tempos.");
 

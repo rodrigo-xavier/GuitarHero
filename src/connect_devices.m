@@ -1,42 +1,31 @@
-function [vid, galileo] = connect_devices()
+function [arduino, vid] = connect_devices()
     counter = 1;
-    ME2 = [];
-    ME = [];
-    
-    % Tenta iniciar conexão com galileo nas 25 primeiras portas
-    while(counter <= 25)
-        COMX = strcat('COM', int2str(counter));
+    vid_message = [];
+    baudrate = 115200;
+    % baudrate = 9600;
+    terminator = "CR/LF";    % 0 em ascii
 
-        try
-            ME = [];
-            galileo = serial(COMX);
-            fopen(galileo);
-            break;
-        catch ME
-            disp("Arduino: Porta " + COMX + " Falhou!");
-        end
-
-        counter = counter + 1;
-    end
+    % TODO: implementar status() para verificar se o arduino está conectado
     
-    if isempty(ME)
-        disp("Arduino: Porta " + COMX + " Sucesso!");
-    end
-    counter = 1;
+    COMX = serialportlist("available");
+    arduino = serialport(COMX, baudrate);
+    arduino.ByteOrder = "big-endian";
+    configureTerminator(arduino, terminator);
+    disp("Arduino: Porta " + COMX + " Sucesso!");
 
     % Tenta iniciar conexão com video nas 2 primeiras portas
     while(counter <= 2)
         try
-            ME2 = [];
+            vid_message = [];
             vid = videoinput('winvideo', counter, 'I420_640x480');
             break;
-        catch ME2
+        catch vid_message
             disp("Vid: Porta " + int2str(counter) + " Falhou!");
         end
 
         counter = counter + 1;
     end
-    if isempty(ME2)
+    if isempty(vid_message)
         disp("Vid: Porta " + int2str(counter) + " Sucesso!");
     end
 end

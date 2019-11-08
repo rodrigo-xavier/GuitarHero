@@ -1,6 +1,6 @@
-% Encerra conexão com galileo se estiver conectado
-if exist('galileo','var') == true
-    fclose(galileo);
+% Encerra conexão com arduino se estiver conectado
+if exist('arduino','var') == true
+    fclose(arduino);
 end
 
 % Encerra conexão com video se estiver conectado
@@ -8,11 +8,11 @@ if exist('vid','var') == true
     delete(vid);
 end
 
-[vid, galileo] = connect_devices();
+[vid, arduino] = connect_devices();
 configure_video(vid);
-from_red_rastro(vid, galileo);
+from_red_rastro(vid, arduino);
 
-function from_one_red_note(vid, galileo)
+function from_one_red_note(vid, arduino)
         
     while true
         % get image from camera
@@ -33,7 +33,7 @@ function from_one_red_note(vid, galileo)
 
 end
 
-function from_red_rastro(vid, galileo)
+function from_red_rastro(vid, arduino)
 
     while true
         % get image from camera

@@ -1,6 +1,6 @@
-% Encerra conexão com galileo se estiver conectado
-if exist('galileo','var') == true
-    fclose(galileo);
+% Encerra conexão com arduino se estiver conectado
+if exist('arduino','var') == true
+    fclose(arduino);
 end
 
 % Encerra conexão com video se estiver conectado
