@@ -1,6 +1,4 @@
-function press_buttons(vid, galileo)
-    flag_debug = false;
-
+function press_buttons(vid, arduino)
     % cores
     % salvar um arquivo em disco com as variaveis
     % para mudar para apenas load('cores.mat')
@@ -25,9 +23,14 @@ function press_buttons(vid, galileo)
     
     % envia os tempos para o arduino, ou verifica se os tempos
     % estão corretos, caso o arduino já possua o tempo
-    [tempo_simples, tempo_rastro] = detect_times(vid);
-    tempo_espera = tempo_rastro - tempo_simples;
-    configure_arduino_time(galileo, tempo_simples, tempo_rastro);
+    % [tempo_simples, tempo_rastro] = detect_time(vid);
+    % tempo_espera = tempo_rastro - tempo_simples;
+    tempo_espera = 0.000001;
+
+    time = 0.480;
+    msg = "OFFTIME: ";
+    disp(msg + time);
+    configure_arduino_time(arduino, time);
     
     R = 1;
     G = 2;
@@ -73,7 +76,7 @@ function press_buttons(vid, galileo)
         if( greenPixel >= green_min && greenPixel <= green_max &&  ...
             ~holding_buttons('green') && ...
             toc(green_time) > tempo_espera )
-            % fprintf(galileo,'%c', APERTA_E_SOLTA_GREEN);
+            % fprintf(arduino,'%c', APERTA_E_SOLTA_GREEN);
             comandoString(16) = '1';
             green_time = tic;
         end
@@ -83,7 +86,7 @@ function press_buttons(vid, galileo)
         if( redPixel >= red_min && redPixel <= red_max && ...
             ~holding_buttons('red') ...
             && toc(red_time) > tempo_espera )
-            % fprintf(galileo,'%c', APERTA_E_SOLTA_RED);
+            % fprintf(arduino,'%c', APERTA_E_SOLTA_RED);
             comandoString(15) = '1';
             red_time = tic;
         end
@@ -92,7 +95,7 @@ function press_buttons(vid, galileo)
         if(yellowPixelR >= yellowR_min && yellowPixelR <= yellowR_max && ...
            yellowPixelG >= yellowG_min && yellowPixelG <= yellowG_max && ...
            toc(yellow_time) > tempo_espera &&  ~holding_buttons('yellow'))
-        %    fprintf(galileo,'%c', APERTA_E_SOLTA_YELLOW);
+        %    fprintf(arduino,'%c', APERTA_E_SOLTA_YELLOW);
             comandoString(14) = '1';
             yellow_time = tic;
         end
@@ -101,7 +104,7 @@ function press_buttons(vid, galileo)
         if(bluePixelG >= blueG_min && bluePixelG <= blueG_max && ...
            bluePixelB >= blueB_min && bluePixelB <= blueB_max && ...
            toc(blue_time) > tempo_espera &&  ~holding_buttons('blue'))
-        %    fprintf(galileo,'%c', APERTA_E_SOLTA_BLUE);
+        %    fprintf(arduino,'%c', APERTA_E_SOLTA_BLUE);
             comandoString(13) = '1';
             blue_time = tic;
         end
@@ -110,83 +113,12 @@ function press_buttons(vid, galileo)
         if(orangePixelR >= orangeR_min && orangePixelR <= orangeR_max && ...
            orangePixelG >= orangeG_min && orangePixelG <= orangeG_max && ...
            toc(orange_time) > tempo_espera &&  ~holding_buttons('orange'))
-        %    fprintf(galileo,'%c', APERTA_E_SOLTA_ORANGE);
+        %    fprintf(arduino,'%c', APERTA_E_SOLTA_ORANGE);
             comandoString(12) = '1';
             orange_time = tic;
         end
         
-        envia_comando(galileo, comandoString);
+        envia_comando(arduino, comandoString);
         
-        if(flag_debug)
-            % Colore de verde os pixels que estão sendo utilizados
-
-            % Simple Green
-            imgO(312,230,R) = 0;
-            imgO(312,230,G) = 255;
-            imgO(312,230,B) = 0;
-
-            % Simple Red
-            imgO(311,274,R) = 0;
-            imgO(311,274,G) = 255;
-            imgO(311,274,B) = 0;
-
-            % Simple Yellow
-            imgO(312,311,R) = 0;
-            imgO(312,311,G) = 255;
-            imgO(312,311,B) = 0;
-
-            % Simple Blue
-            imgO(312,354,R) = 0;
-            imgO(312,354,G) = 255;
-            imgO(312,354,B) = 0;
-
-            % Simple Orange
-            imgO(311,395,R) = 0;
-            imgO(311,395,G) = 255;
-            imgO(311,395,B) = 0;
-
-            % Rastro Vermelho
-            imgO(293,275,R) = 0;
-            imgO(293,275,G) = 255;
-            imgO(293,275,B) = 0;
-            imgO(292,275,R) = 0;
-            imgO(292,275,G) = 255;
-            imgO(292,275,B) = 0;
-            imgO(291,275,R) = 0;
-            imgO(291,275,G) = 255;
-            imgO(291,275,B) = 0;
-            imgO(290,276,R) = 0;
-            imgO(290,276,G) = 255;
-            imgO(290,276,B) = 0;
-            imgO(289,276,R) = 0;
-            imgO(289,276,G) = 255;
-            imgO(289,276,B) = 0;
-            imgO(288,276,R) = 0;
-            imgO(288,276,G) = 255;
-            imgO(288,276,B) = 0;
-            imgO(287,276,R) = 0;
-            imgO(287,276,G) = 255;
-            imgO(287,276,B) = 0;
-            imgO(286,276,R) = 0;
-            imgO(286,276,G) = 255;
-            imgO(286,276,B) = 0;
-            imgO(285,277,R) = 0;
-            imgO(285,277,G) = 255;
-            imgO(285,277,B) = 0;
-            imgO(284,277,R) = 0;
-            imgO(284,277,G) = 255;
-            imgO(284,277,B) = 0;
-            imgO(283,277,R) = 0;
-            imgO(283,277,G) = 255;
-            imgO(283,277,B) = 0;
-            imgO(282,277,R) = 0;
-            imgO(282,277,G) = 255;
-            imgO(282,277,B) = 0;
-            imgO(281,278,R) = 0;
-            imgO(281,278,G) = 255;
-            imgO(281,278,B) = 0;
-
-            imagesc(imgO);
-        end
     end
 end
