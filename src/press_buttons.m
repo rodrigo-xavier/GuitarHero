@@ -1,4 +1,4 @@
-function press_buttons(vid, arduino)
+function press_buttons(vid, arduino, simulating_on_pc)
     % cores
     % salvar um arquivo em disco com as variaveis
     % para mudar para apenas load('cores.mat')
@@ -30,7 +30,7 @@ function press_buttons(vid, arduino)
     time = 0.480;
     msg = "OFFTIME: ";
     disp(msg + time);
-    configure_arduino_time(arduino, time);
+    %configure_arduino_time(arduino, time);
     
     R = 1;
     G = 2;
@@ -50,27 +50,48 @@ function press_buttons(vid, arduino)
     yellow_time = tic;
     blue_time = tic;
     orange_time = tic;
+    
+    if simulating_on_pc
+        robot = java.awt.Robot();
+        beep;
+    end
 
     while true
+
         % get image from camera
-        imgO = getdata(vid,1,'uint8');
+        if simulating_on_pc
+            imgO = takeScreenshot(robot);
+        else
+            imgO = getdata(vid,1,'uint8');
+        end
 
         % TODO: Verificar se os pixels estao corretos
-        greenPixel = imgO(312,230,G);
-        redPixel = imgO(311,274,R);
-        yellowPixelR = imgO(312,311,R);
-        yellowPixelG = imgO(312,311,G);
-        bluePixelG = imgO(312,354,G);
-        bluePixelB = imgO(312,354,B);
-        orangePixelR = imgO(311,395,R);
-        orangePixelG = imgO(311,395,G);
+        if simulating_on_pc
+            greenPixel   = imgO(519,490,G);
+            redPixel     = imgO(519,567,R);
+            yellowPixelR = imgO(519,642,R);
+            yellowPixelG = imgO(519,642,G);
+            bluePixelG   = imgO(519,716,G);
+            bluePixelB   = imgO(519,716,B);
+            orangePixelR = imgO(519,792,R);
+            orangePixelG = imgO(519,792,G);
+        else
+            greenPixel   = imgO(312,230,G);
+            redPixel     = imgO(311,274,R);
+            yellowPixelR = imgO(312,311,R);
+            yellowPixelG = imgO(312,311,G);
+            bluePixelG   = imgO(312,354,G);
+            bluePixelB   = imgO(312,354,B);
+            orangePixelR = imgO(311,395,R);
+            orangePixelG = imgO(311,395,G);            
+        end
 
         % Reinicia a string de comandos
         comandoString = '0000000000000000';
         
         %Segura botao no rastro
         %Se nao esta apertando e passa o rastro pela primeira vez
-        [holding_buttons, holding_times, comandoString] = rastro_play(imgO, holding_buttons, holding_times, comandoString, tempo_espera);
+%         [holding_buttons, holding_times, comandoString] = rastro_play(imgO, holding_buttons, holding_times, comandoString, tempo_espera);
         
         %detect green
         if( greenPixel >= green_min && greenPixel <= green_max &&  ...
@@ -80,7 +101,6 @@ function press_buttons(vid, arduino)
             comandoString(16) = '1';
             green_time = tic;
         end
-
 
         %detect red   
         if( redPixel >= red_min && redPixel <= red_max && ...
@@ -118,7 +138,11 @@ function press_buttons(vid, arduino)
             orange_time = tic;
         end
         
-        envia_comando(arduino, comandoString);
-        
+        if simulating_on_pc
+            press_button_simulator(robot, comandoString);
+        else
+            envia_comando(arduino, comandoString);
+        end
+
     end
 end
