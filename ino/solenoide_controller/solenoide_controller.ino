@@ -93,7 +93,7 @@ void loop()
 
     COMMAND = ((Serial.read() << 8) | Serial.read());
 
-    // Serial.println(COMMAND);
+    Serial.println(COMMAND);
 
     if (bitRead(COMMAND, 0))
       add_note_queue(GREEN, L2_PIN);
@@ -183,7 +183,7 @@ void add_note_queue(int note_color, int pin)
 *********************************************************************************************/
 void add_trail_queue(int note_color, int pin)
 {
-  // Serial.print("s");
+  Serial.println("add_trail_queue");
   initializer.previous_time = millis();
   initializer.pin = pin;
   trail[note_color].push(initializer);
@@ -203,7 +203,7 @@ void add_trail_queue(int note_color, int pin)
 *********************************************************************************************/
 void remove_trail_queue(int note_color)
 {
-  // Serial.print("d");
+  Serial.println("remove_trail_queue");
   trail[note_color][0].drop = true;
 }
 
@@ -226,13 +226,13 @@ void update_states(void)
       }
     }
 
-    for (int j = 0; j < TRACE_STATES; j++)
+    for (int k = 0; k < TRACE_STATES; k++)
     {
-      if (trail[i][j].open)
+      if (trail[i][k].open)
       {
-        trail[i][j].update_trail(OFFTIME);
-        if (!trail[i][j].open)
-          trail[i].pop();
+        trail[i][k].update_trail(OFFTIME);
+        if (!trail[i][k].open)
+          trail[k].pop();
       }
     }
   }

@@ -3,7 +3,7 @@ function [arduino, vid] = connect_devices()
     vid_message = [];
     baudrate = 115200;
     % baudrate = 9600;
-    terminator = "CR/LF";    % 0 em ascii
+    terminator = "CR/LF";
 
     % TODO: implementar status() para verificar se o arduino está conectado
     
