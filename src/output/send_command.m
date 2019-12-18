@@ -1,4 +1,4 @@
-function envia_comando(arduino, command)
+function send_command(arduino, command)
     command = uint16(bin2dec(command));
     write(arduino, command, 'uint16');
 

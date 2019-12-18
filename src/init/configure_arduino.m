@@ -1,4 +1,4 @@
-function configure_arduino_time(arduino, time)
+function configure_arduino(arduino, time)
     time = uint16(round(time*1000,0));
 
     flush(arduino); % Limpa o buffer de entrada e saída do arduino

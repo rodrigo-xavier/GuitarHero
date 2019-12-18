@@ -1,4 +1,4 @@
-function [note_time, trail_time] = detect_time(vid)
+function [note_time, trail_time] = detect_time(video)
 
     disp("Detectando os tempos.");
 
@@ -46,7 +46,7 @@ function [note_time, trail_time] = detect_time(vid)
     tictoc_o2 = tic;
 
     while (note < note_max)
-        imgO = getdata(vid,1,'uint8');
+        imgO = getdata(video,1,'uint8');
 
         greenPixelUp        = imgO(293,238,G);
         greenPixelMidle     = imgO(312,230,G);

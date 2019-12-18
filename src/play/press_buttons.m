@@ -1,16 +1,16 @@
-function press_buttons(vid, arduino)
+function press_buttons(video, arduino)
     % tempos
     
     % envia os tempos para o arduino, ou verifica se os tempos
     % estão corretos, caso o arduino já possua o tempo
-    % [tempo_simples, tempo_rastro] = detect_time(vid);
+    % [tempo_simples, tempo_rastro] = detect_time(video);
     % tempo_espera = tempo_rastro - tempo_simples;
     tempo_espera = 0.000001;
 
     time = 0.480;
     msg = "OFFTIME: ";
     disp(msg + time);
-    configure_arduino_time(arduino, time);
+    configure_arduino(arduino, time);
 
     % situacao de rastro das cores
     keys = {'green', 'red', 'yellow', 'blue', 'orange'};
@@ -32,7 +32,7 @@ function press_buttons(vid, arduino)
     while true
 
         % get image from camera
-        imgO = getdata(vid,1,'uint8');
+        imgO = getdata(video,1,'uint8');
 
         detected_image.setSimpleDetection(imgO);
         detected_image.setTrailDetection(imgO);
@@ -45,7 +45,7 @@ function press_buttons(vid, arduino)
         [holding_buttons, holding_times, comandoString] = rastro_play(detected_image, holding_buttons, holding_times, comandoString, tempo_espera);
         [holding_buttons, holding_times, comandoString] = simple_note(detected_image, holding_buttons, green_time, red_time, yellow_time, blue_time, orange_time, comandoString, tempo_espera);
         
-        envia_comando(arduino, comandoString);
+        send_command(arduino, comandoString);
         
     end
 end
