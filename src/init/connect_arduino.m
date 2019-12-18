@@ -7,5 +7,6 @@ function [arduino] = connect_arduino()
     arduino = serialport(COMX, baudrate);
     arduino.ByteOrder = "big-endian";
     configureTerminator(arduino, terminator);
+    
     disp("Arduino: Porta " + COMX + " Sucesso!");
 end

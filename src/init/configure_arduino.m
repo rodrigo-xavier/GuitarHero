@@ -10,6 +10,5 @@ function configure_arduino(arduino, time)
         delete(arduino);
     end
 
-    msg = "OFFTIME: ";
-    disp(msg + time);
+    disp("OFFTIME: " + time);
 end
