@@ -5,10 +5,22 @@ function configure_arduino_time(arduino, time)
 
     write(arduino, time, 'uint16');
 
-    if (readline(arduino) ~= string(time))
-        error("Reenvie o código para o arduino.");
-        delete(arduino);
+    while (string(readline(arduino)) ~= string(time)) 
+
+        flush(arduino); % Limpa o buffer de entrada e saída do arduino
+
+        write(arduino, time, 'uint16');
+
     end
+
+%    flush(arduino); % Limpa o buffer de entrada e saída do arduino
+%
+%    write(arduino, time, 'uint16');
+%
+%    if (readline(arduino) ~= string(time))
+%        error("Reenvie o código para o arduino.");
+%        delete(arduino);
+%    end
 
     msg = "OFFTIME: ";
     disp(msg + time);
