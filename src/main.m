@@ -12,10 +12,19 @@ if exist('video','var') == true
 end
 
 video = connect_video();
-configure_video(video);
 arduino = connect_arduino();
-% detect_time
-% configure_arduino
+configure_video(video);
+% detect_time()
+% configure_arduino()
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+time = 0.480;
+configure_arduino(arduino, time);
+
+time = uint16(round(time*1000,0));
+msg = "OFFTIME: ";
+disp(msg + time);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 % Flags

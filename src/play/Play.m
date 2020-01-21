@@ -1,4 +1,4 @@
-classdef DetectedImage
+classdef Play
     properties (Constant)
         % cores
         R = 1;
@@ -22,8 +22,21 @@ classdef DetectedImage
         orangeR_max = 255;
         orangeG_min = 95;
         orangeG_max = 255;
+    end
 
-        % pixels that simple notes analyse
+    properties (Access = public)
+        note_green = false;
+        note_red = false;
+        note_blue = false;
+        note_yellow = false;
+        note_orange = false;
+
+        trail_green = false;
+        trail_red = false;
+        trail_blue = false;
+        trail_yellow = false;
+        trail_orange = false;
+
         greenPixel;
         redPixel;
         yellowPixelR;
@@ -32,118 +45,64 @@ classdef DetectedImage
         bluePixelB;
         orangePixelR;
         orangePixelG;
-    end
 
-    properties
-        % if trail was detected (array of boolean)
-        simple_note_detection;
-        trail_detection;
-        trail_last_note_detection;
+        arduino
     end
 
     methods
-        function DetectedImage()
-            
-            % situacao de notas simples
-            keys = {'green', 'red', 'yellow', 'blue', 'orange'};
-            values = [false false false false false];
-            simple_note_detection = containers.Map(keys, values);
-
-            % situacao de rastro das cores
-            keys = {'green', 'red', 'yellow', 'blue', 'orange'};
-            values = [false false false false false];
-            trail_detection = containers.Map(keys, values);
-
-            % situacao de rastro das cores
-            keys = {'green', 'red', 'yellow', 'blue', 'orange'};
-            values = [false false false false false];
-            trail_last_note_detection = containers.Map(keys, values);
-
-            % cores
-            R = 1;
-            G = 2;
-            B = 3;
-
-            % colors configuration
-            red_min = 175;
-            red_max = 255;
-            green_min = 175;
-            green_max = 255;
-            yellowR_min = 175;
-            yellowR_max = 255;
-            yellowG_min = 150;
-            yellowG_max = 255;
-            blueG_min = 125;
-            blueG_max = 255;
-            blueB_min = 175;
-            blueB_max = 255;
-            orangeR_min = 175;
-            orangeR_max = 255;
-            orangeG_min = 95;
-            orangeG_max = 255;
+        function play.arduino = Play(ino)
+            play.arduino = ino
         end
 
-        function reset()
-            % situacao de notas simples
-            keys = {'green', 'red', 'yellow', 'blue', 'orange'};
-            values = [false false false false false];
-            simple_note_detection = containers.Map(keys, values);
+        function imgO = get_pixels(play)
+            imgO = getdata(video,1,'uint8');
 
-            % situacao de rastro das cores
-            keys = {'green', 'red', 'yellow', 'blue', 'orange'};
-            values = [false false false false false];
-            trail_detection = containers.Map(keys, values);
+            play.greenPixel = imgO(312,230,G);
+            play.redPixel = imgO(311,274,R);
+            play.yellowPixelR = imgO(312,311,R);
+            play.yellowPixelG = imgO(312,311,G);
+            play.bluePixelG = imgO(312,354,G);
+            play.bluePixelB = imgO(312,354,B);
+            play.orangePixelR = imgO(311,395,R);
+            play.orangePixelG = imgO(311,395,G);
+        end
 
-            % situacao de rastro das cores
-            keys = {'green', 'red', 'yellow', 'blue', 'orange'};
-            values = [false false false false false];
-            trail_last_note_detection = containers.Map(keys, values);
-        end;
-
-        %detect green
-        function setSimpleDetetion()
-            
-            % Pixels
-            greenPixel = imgO(312,230,G);
-            redPixel = imgO(311,274,R);
-            yellowPixelR = imgO(312,311,R);
-            yellowPixelG = imgO(312,311,G);
-            bluePixelG = imgO(312,354,G);
-            bluePixelB = imgO(312,354,B);
-            orangePixelR = imgO(311,395,R);
-            orangePixelG = imgO(311,395,G);
-
+        function set_up(play)
             %detect green
-            if( greenPixel >= green_min && greenPixel <= green_max )
-                simple_note_detection('green') = true;
+            if(greenPixel >= green_min && greenPixel <= green_max)
+                find_trail_green();
+                play.note_green = true;
             end
 
-            %detect red   
-            if( redPixel >= red_min && redPixel <= red_max )
-                simple_note_detection('red') = true;
+            %detect red
+            if(redPixel >= red_min && redPixel <= red_max)
+                find_trail_red();
+                play.note_red = true;
             end
 
             %detect yellow
             if (yellowPixelR >= yellowR_min && yellowPixelR <= yellowR_max && ...
                 yellowPixelG >= yellowG_min && yellowPixelG <= yellowG_max)
-                simple_note_detection('yellow') = true;
+                find_trail_yellow();
+                play.note_yellow = true;
             end
 
             %detect blue
             if (bluePixelG >= blueG_min && bluePixelG <= blueG_max && ...
                 bluePixelB >= blueB_min && bluePixelB <= blueB_max)
-                simple_note_detection('blue') = true;
+                find_trail_blue();
+                play.note_blue = true;
             end
 
             %detect orange
             if  (orangePixelR >= orangeR_min && orangePixelR <= orangeR_max && ...
                 orangePixelG >= orangeG_min && orangePixelG <= orangeG_max)
-                simple_note_detection('orange') = true;
+                find_trail_orange();
+                play.note_orange = true;
             end
-        
         end
         
-        function setTrailDetection(imgO)
+        function find_trail_green()
             if ((imgO(293,238,G) >= green_min && imgO(293,238,G) <= green_max) && ...
                 (imgO(292,238,G) >= green_min && imgO(292,238,G) <= green_max) && ...
                 (imgO(291,239,G) >= green_min && imgO(291,239,G) <= green_max) && ...
@@ -157,9 +116,12 @@ classdef DetectedImage
                 (imgO(283,241,G) >= green_min && imgO(283,241,G) <= green_max) && ...
                 (imgO(282,242,G) >= green_min && imgO(282,242,G) <= green_max) && ...
                 (imgO(281,243,G) >= green_min && imgO(281,243,G) <= green_max) )
-                trail_detection('green') = true;
+                send_command(arduino, "0000010000000000");
+                trail_green = true;
             end
+        end
 
+        function find_trail_red()
             if ((imgO(293,275,R) >= red_min && imgO(293,275,R) <= red_max) && ...
                 (imgO(292,275,R) >= red_min && imgO(292,275,R) <= red_max) && ...
                 (imgO(291,275,R) >= red_min && imgO(291,275,R) <= red_max) && ...
@@ -173,9 +135,12 @@ classdef DetectedImage
                 (imgO(283,277,R) >= red_min && imgO(283,277,R) <= red_max) && ...
                 (imgO(282,277,R) >= red_min && imgO(282,277,R) <= red_max) && ...
                 (imgO(281,278,R) >= red_min && imgO(281,278,R) <= red_max))
-                trail_detection('red') = true;
+                send_command(arduino, "0000001000000000");
+                trail_red = true;
             end
+        end
 
+        function find_trail_yellow()
             if ((imgO(293,312,R) >= yellowR_min && imgO(293,312,R) <= yellowR_max) && ...
                 (imgO(293,312,G) >= yellowG_min && imgO(293,312,G) <= yellowG_max) && ...
                 (imgO(292,312,R) >= yellowR_min && imgO(292,312,R) <= yellowR_max) && ...
@@ -202,9 +167,12 @@ classdef DetectedImage
                 (imgO(282,312,G) >= yellowG_min && imgO(282,312,G) <= yellowG_max) && ...
                 (imgO(281,312,R) >= yellowR_min && imgO(281,312,R) <= yellowR_max) && ...
                 (imgO(281,312,G) >= yellowG_min && imgO(281,312,G) <= yellowG_max))
-                trail_detection('yellow') = true;
+                send_command(arduino, "0000000100000000");
+                trail_yellow = true;
             end
+        end
 
+        function find_trail_blue()
             if ((imgO(291,349,B) >= blueB_min && imgO(291,349,B) <= blueB_max) && ...
                 (imgO(291,349,G) >= blueG_min && imgO(291,349,G) <= blueG_max) && ...
                 (imgO(290,349,B) >= blueB_min && imgO(290,349,B) <= blueB_max) && ...
@@ -231,9 +199,12 @@ classdef DetectedImage
                 (imgO(280,348,G) >= blueG_min && imgO(280,348,G) <= blueG_max) && ...
                 (imgO(279,348,B) >= blueB_min && imgO(279,348,B) <= blueB_max) && ...
                 (imgO(279,348,G) >= blueG_min && imgO(279,348,G) <= blueG_max))
-                trail_detection('blue') = true;
+                send_command(arduino, "0000000010000000");
+                trail_blue = true;
             end
+        end
 
+        function find_trail_orange()
             if ((imgO(294,387,R) >= orangeR_min && imgO(294,387,G) <= orangeR_max) && ...
                 (imgO(294,387,G) >= orangeG_min && imgO(294,387,G) <= orangeG_max) && ...
                 (imgO(293,387,R) >= orangeR_min && imgO(293,387,R) <= orangeR_max) && ...
@@ -260,48 +231,72 @@ classdef DetectedImage
                 (imgO(283,383,G) >= orangeG_min && imgO(283,383,G) <= orangeG_max) && ...
                 (imgO(282,382,R) >= orangeR_min && imgO(282,382,R) <= orangeR_max) && ...
                 (imgO(282,382,G) >= orangeG_min && imgO(282,382,G) <= orangeG_max))
-                trail_detection('orange') = true;
+                send_command(arduino, "0000000001000000");
+                trail_orange = true;
             end
         end
 
-        function setTrailLastNoteDetection(imgO)
+        function tear_down(play)
+            %detect green
+            if(note_green && ...
+                ~(greenPixel >= green_min && greenPixel <= green_max))
+                send_command(arduino, "1000000000000000");
+                play.note_green = false;
+            elseif (trail_green && ...
+                ~(greenPixel >= green_min && greenPixel <= green_max))
+                send_command(arduino, "0000010000000000");
+                play.trail_green = false;
+            end
 
-            if (imgO(312,230,G) >= green_min && imgO(312,230,G) <= green_max)
-                trail_last_note_detection('green') = true;
-            end;
+            %detect red   
+            if(note_red && ...
+                ~(redPixel >= red_min && redPixel <= red_max))
+                send_command(arduino, "0100000000000000");
+                play.note_red = false;
+            elseif(trail_red && ...
+                ~(redPixel >= red_min && redPixel <= red_max))
+                send_command(arduino, "0000001000000000");
+                play.trail_red = false;
+            end
 
-            if (imgO(311,274,R) >= red_min && imgO(311,274,R) <= red_max)
-                trail_last_note_detection('red') = true;
-            end;
+            %detect yellow
+            if (note_yellow && ...
+                ~(yellowPixelR >= yellowR_min && yellowPixelR <= yellowR_max && ...
+                yellowPixelG >= yellowG_min && yellowPixelG <= yellowG_max))
+                send_command(arduino, "0010000000000000");
+                play.note_yellow = false;
+            elseif (trail_yellow && ...
+                ~(yellowPixelR >= yellowR_min && yellowPixelR <= yellowR_max && ...
+                yellowPixelG >= yellowG_min && yellowPixelG <= yellowG_max))
+                send_command(arduino, "0000000100000000");
+                play.trail_yellow = false;
+            end
 
-            if (imgO(312,311,R) >= yellowR_min && imgO(312,311,R) <= yellowR_max && ...
-                imgO(312,311,G) >= yellowG_min && imgO(312,311,G) <= yellowG_max)
-                trail_last_note_detection('yellow') = true;
-            end;
+            %detect blue
+            if (note_blue && ...
+                ~(bluePixelG >= blueG_min && bluePixelG <= blueG_max && ...
+                bluePixelB >= blueB_min && bluePixelB <= blueB_max))
+                send_command(arduino, "0001000000000000");
+                play.note_blue = false;
+            elseif (trail_blue && ...
+                ~(bluePixelG >= blueG_min && bluePixelG <= blueG_max && ...
+                bluePixelB >= blueB_min && bluePixelB <= blueB_max))
+                send_command(arduino, "0000000010000000");
+                play.trail_blue = false;
+            end
 
-            if (imgO(312,311,B) >= blueB_min && imgO(312,311,B) <= blueB_max && ...
-                imgO(312,311,G) >= blueG_min && imgO(312,311,G) <= blueG_max)
-                trail_last_note_detection('blue') = true;
-            end;
-
-            if (imgO(312,311,R) >= orangeR_min && imgO(312,311,R) <= orangeR_max && ...
-                imgO(312,311,G) >= orangeG_min && imgO(312,311,G) <= orangeG_max)
-                trail_last_note_detection('orange') = true;
-            end;
-
-        end;
-
-        function getTrailDetection(note)
-            return trail_detection(note);
+            %detect orange
+            if (note_orange && ...
+                ~(orangePixelR >= orangeR_min && orangePixelR <= orangeR_max && ...
+                orangePixelG >= orangeG_min && orangePixelG <= orangeG_max))
+                send_command(arduino, "0000100000000000");
+                play.note_orange = false;
+            elseif (trail_orange && ...
+                ~(orangePixelR >= orangeR_min && orangePixelR <= orangeR_max && ...
+                orangePixelG >= orangeG_min && orangePixelG <= orangeG_max))
+                send_command(arduino, "0000000001000000");
+                play.trail_orange = false;
+            end
         end
-
-        function getSimpleDetection(note)
-            return simple_note_detection(note);
-        end
-
-        function getTrailLastNoteDetection(note)
-            return trail_last_note_detection(note);
-        end;
-
     end
 end
